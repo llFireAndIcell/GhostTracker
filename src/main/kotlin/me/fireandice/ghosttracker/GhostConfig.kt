@@ -11,7 +11,7 @@ import me.fireandice.ghosttracker.hud.SessionHud
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.SessionTracker
 
-object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json", true) {
+object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
     // SESSION TRACKER (this one is listed first because the controls need to be more easily accessible
     @Button(
