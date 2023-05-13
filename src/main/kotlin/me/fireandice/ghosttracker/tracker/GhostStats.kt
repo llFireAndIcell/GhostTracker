@@ -21,32 +21,20 @@ object GhostStats {
     fun load() {
         try {
             val reader = GhostTracker.statsFile.bufferedReader()
-            val gson = Gson()
-            val map: Map<*, *>? = gson.fromJson(reader, Map::class.java)
-
-            if (map != null) {
-//                sorrowCount = map["sorrowCount"] as Int
-//                voltaCount = map["voltaCount"] as Int
-//                plasmaCount = map["plasmaCount"] as Int
-//                bootsCount = map["bootsCount"] as Int
-//                coinsCount = map["coinsCount"] as Int
-//                kills = map["kills"] as Int
-//                totalMf = map["totalMf"] as Int
-//                mfDropCount = map["mfDropCount"] as Int
-//                totalXp = map["totalXp"] as Float
-
-                for (entry in map) {
-                    val key = entry.key as String
-                    val value = entry.value as Number
-                    
-                    // attempts storing the value in the field with the same name, ignoring it if there is none
-                    try {
-                        this.javaClass.getField(key).set(this, value)
-                    } catch (_: NoSuchFieldException) {
-                    }
-                }
-            }
+            val jsonString = reader.readText()
             reader.close()
+            val gson = Gson()
+            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+
+            sorrowCount = jsonObject["sorrowCount"]?.asInt ?: 0
+            voltaCount = jsonObject["voltaCount"]?.asInt ?: 0
+            plasmaCount = jsonObject["plasmaCount"]?.asInt ?: 0
+            bootsCount = jsonObject["bootsCount"]?.asInt ?: 0
+            coinsCount = jsonObject["coinsCount"]?.asInt ?: 0
+            kills = jsonObject["kills"]?.asInt ?: 0
+            totalMf = jsonObject["totalMf"]?.asInt ?: 0
+            mfDropCount = jsonObject["mfDropCount"]?.asInt ?: 0
+            totalXp = jsonObject["totalXp"]?.asFloat ?: 0f
         } catch (_: Exception) {
         }
     }

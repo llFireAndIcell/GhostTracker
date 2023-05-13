@@ -50,7 +50,7 @@ class GhostHud : BasicHud(true) {
             textY += 9 * scale
             longestLine = longestLine.coerceAtLeast(mc.fontRendererObj.getStringWidth(line) * scale)
         }
-        width = longestLine
+        width = longestLine * scale
         height = (lines.size * (FONT_SIZE + LINE_PADDING) - LINE_PADDING) * scale
     }
 
@@ -58,7 +58,7 @@ class GhostHud : BasicHud(true) {
         TextRenderer.drawScaledString(text, x, y, color, TextRenderer.TextType.SHADOW, scale)
     }
 
-    override fun getWidth(scale: Float, example: Boolean): Float = width * scale
+    override fun getWidth(scale: Float, example: Boolean): Float = width
 
     override fun getHeight(scale: Float, example: Boolean): Float = height
 

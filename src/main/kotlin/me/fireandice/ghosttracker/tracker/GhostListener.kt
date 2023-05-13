@@ -13,9 +13,9 @@ import kotlin.math.roundToInt
 object GhostListener {
 
     private val RARE_DROP_PATTERN = Pattern.compile("§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r")
-    private val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
+    private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
     private val COMBAT_XP_PATTERN = Pattern.compile("\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)")
-    private var prevValue = 0f
+    private var prevValue = -1f
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
@@ -50,11 +50,9 @@ object GhostListener {
     }
 
     /**
-     * Most of the logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
+     * Some of the logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
      */
-    @SubscribeEvent(
-        priority = EventPriority.HIGHEST
-    )
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onActionBar(event: ClientChatReceivedEvent) {
         if (!ScoreboardUtils.inMists || event.type != 2.toByte()) return
         val message = event.message.unformattedText.stripColorCodes()
@@ -71,19 +69,24 @@ object GhostListener {
             if (Regex("[\\d,]+/0").matches(progress)) progress = progress.substring(0, progress.length - 2)
 
             val newValue = numberFormat.parse(progress).toFloat()
+            // if there are no previously tracked kills (during this minecraft instance)
+            if (prevValue == -1f) trackKills(1, gained)
+
             val actualXpGained = newValue - prevValue
             val killsGained = (actualXpGained / gained).roundToInt()
 
-            if (prevValue != 0f && killsGained >= 0) {
-                GhostStats.kills += killsGained
-                GhostStats.totalXp += actualXpGained
-
-                if (SessionTracker.isTracking && !SessionTracker.isPaused) {
-                    SessionTracker.sessionStats.kills += killsGained
-                    SessionTracker.sessionStats.totalXp += actualXpGained
-                }
-            }
+            if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, actualXpGained)
             prevValue = newValue
+        }
+    }
+
+    private fun trackKills(killsGained: Int, xpGained: Float) {
+        GhostStats.kills += killsGained
+        GhostStats.totalXp += xpGained
+
+        if (SessionTracker.isTracking && !SessionTracker.isPaused) {
+            SessionTracker.sessionStats.kills += killsGained
+            SessionTracker.sessionStats.totalXp += xpGained
         }
     }
 }
