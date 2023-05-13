@@ -71,11 +71,12 @@ object GhostListener {
             val newValue = numberFormat.parse(progress).toFloat()
             // if there are no previously tracked kills (during this minecraft instance)
             if (prevValue == -1f) trackKills(1, gained)
+            else {
+                val actualXpGained = newValue - prevValue
+                val killsGained = (actualXpGained / gained).roundToInt()
 
-            val actualXpGained = newValue - prevValue
-            val killsGained = (actualXpGained / gained).roundToInt()
-
-            if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, actualXpGained)
+                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, actualXpGained)
+            }
             prevValue = newValue
         }
     }
