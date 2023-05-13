@@ -1,5 +1,8 @@
 package me.fireandice.ghosttracker
 
+import cc.polyfrost.oneconfig.events.EventManager
+import cc.polyfrost.oneconfig.events.event.PreShutdownEvent
+import cc.polyfrost.oneconfig.libs.eventbus.Subscribe
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import me.fireandice.ghosttracker.command.MainCommand
@@ -43,10 +46,14 @@ object GhostTracker {
     @EventHandler
     fun onInit(event: FMLInitializationEvent) {
         config.init()
+
         arrayOf(
             this,
             GhostListener
         ).forEach { MinecraftForge.EVENT_BUS.register(it) }
+
+        // registering to the OneConfig event handler to use the PreShutDownEvent
+        EventManager.INSTANCE.register(this)
     }
 
     @SubscribeEvent
@@ -57,16 +64,8 @@ object GhostTracker {
         ScoreboardUtils.checkLocations()
     }
 
-    private var ticks = 0
-    @SubscribeEvent
-    fun saveEveryMinute(event: ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.START) return
-        ticks++
-        if (ticks % 1200 != 0) return
-
-        GhostStats.save()
-        ticks = 0
-    }
+    @Subscribe
+    fun onClose(event: PreShutdownEvent) = GhostStats.save()
 
     const val MODID = "@ID@"
     const val NAME = "@NAME@"
