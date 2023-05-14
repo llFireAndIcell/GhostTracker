@@ -5,17 +5,13 @@ import cc.polyfrost.oneconfig.libs.universal.UChat
 import me.fireandice.ghosttracker.GhostTracker
 import kotlin.properties.Delegates
 
-object SessionTracker {
+object GhostTimer {
 
     private var startTime by Delegates.notNull<Long>()  //  stores the time of the last start OR unpause
     private var totalTime: Long = 0
     var sessionStats = SessionStats
     var isTracking = false
     var isPaused = false
-
-    fun elapsedTime(): Long {
-        return totalTime + if (!isPaused) System.currentTimeMillis() - startTime else 0
-    }
 
     fun start() {
         startTime = System.currentTimeMillis()
@@ -36,6 +32,10 @@ object SessionTracker {
         SessionStats.reset()
         totalTime = 0
         UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Session tracker reset")
+    }
+
+    fun elapsedTime(): Long {
+        return totalTime + if (!isPaused) System.currentTimeMillis() - startTime else 0
     }
 
     object SessionStats {

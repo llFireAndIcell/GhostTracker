@@ -9,7 +9,7 @@ import cc.polyfrost.oneconfig.hud.BasicHud
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe
 import cc.polyfrost.oneconfig.libs.universal.UMatrixStack
 import cc.polyfrost.oneconfig.renderer.TextRenderer
-import me.fireandice.ghosttracker.GhostTracker
+import me.fireandice.ghosttracker.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.mc
@@ -20,9 +20,6 @@ class GhostHud : BasicHud(true) {
     private var lines: ArrayList<String> = ArrayList(9)
     private var height = 0f
     private var width = 0f
-
-    private val FONT_SIZE = 8f
-    private val LINE_PADDING = 1
 
     init {
         EventManager.INSTANCE.register(this)
@@ -50,8 +47,8 @@ class GhostHud : BasicHud(true) {
             textY += 9 * scale
             longestLine = longestLine.coerceAtLeast(mc.fontRendererObj.getStringWidth(line) * scale)
         }
-        width = longestLine * scale
-        height = (lines.size * (FONT_SIZE + LINE_PADDING) - LINE_PADDING) * scale
+        width = longestLine
+        height = (lines.size * 9 - 1) * scale
     }
 
     private fun drawLine(text: String, x: Float, y: Float, color: Int, scale: Float) {
@@ -73,7 +70,7 @@ class GhostHud : BasicHud(true) {
         if (ticks % 10 != 0) return
 
         lines.clear()
-        val config = GhostTracker.config
+        val config = GhostConfig
         if (config.showKills) lines.add("Kills: ${GhostStats.kills}")
         if (config.showSorrow) lines.add("Sorrows: ${GhostStats.sorrowCount}")
         if (config.showVolta) lines.add("Voltas: ${GhostStats.voltaCount}")

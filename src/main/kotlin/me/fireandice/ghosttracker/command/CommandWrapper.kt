@@ -11,6 +11,7 @@ abstract class CommandWrapper(
     private val name: String,
     private val aliases: List<String> = emptyList()
 ) : CommandBase() {
+
     final override fun getCommandName(): String = name
     final override fun getCommandAliases(): List<String> = aliases
     final override fun getRequiredPermissionLevel() = 0
