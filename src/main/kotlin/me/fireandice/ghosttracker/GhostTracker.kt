@@ -29,23 +29,23 @@ import java.io.File
 )
 object GhostTracker {
 
-    var config: GhostConfig = GhostConfig
+    const val MODID = "@ID@"
+    const val NAME = "@NAME@"
+    const val VERSION = "@VER@"
+    val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker ${ChatColor.DARK_GRAY}»${ChatColor.RESET}"
     private val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
-    lateinit var statsFile: File
+    var statsFile: File = File(modDir, "GhostStats.json")
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
         modDir.mkdirs()
-        statsFile = File(modDir, "GhostStats.json")
         if (statsFile.createNewFile()) GhostStats.save()
         else GhostStats.load()
-
-        ClientCommandHandler.instance.registerCommand(MainCommand)
     }
 
     @EventHandler
     fun onInit(event: FMLInitializationEvent) {
-        config.init()
+        GhostConfig
 
         arrayOf(
             this,
@@ -54,6 +54,8 @@ object GhostTracker {
 
         // registering to the OneConfig event handler to use the PreShutDownEvent
         EventManager.INSTANCE.register(this)
+
+        ClientCommandHandler.instance.registerCommand(MainCommand)
     }
 
     @SubscribeEvent
@@ -66,9 +68,4 @@ object GhostTracker {
 
     @Subscribe
     fun onClose(event: PreShutdownEvent) = GhostStats.save()
-
-    const val MODID = "@ID@"
-    const val NAME = "@NAME@"
-    const val VERSION = "@VER@"
-    val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker ${ChatColor.DARK_GRAY}»${ChatColor.RESET}"
 }

@@ -39,9 +39,9 @@ object GhostListener {
             GhostStats.totalMf += mf.toInt()
             GhostStats.mfDropCount++
 
-            if (SessionTracker.isTracking && !SessionTracker.isPaused) {
-                SessionTracker.sessionStats.totalMf += mf.toInt()
-                SessionTracker.sessionStats.mfDropCount++
+            if (GhostTimer.isTracking && !GhostTimer.isPaused) {
+                GhostTimer.sessionStats.totalMf += mf.toInt()
+                GhostTimer.sessionStats.mfDropCount++
             }
         }
 
@@ -85,9 +85,9 @@ object GhostListener {
         GhostStats.kills += killsGained
         GhostStats.totalXp += xpGained
 
-        if (SessionTracker.isTracking && !SessionTracker.isPaused) {
-            SessionTracker.sessionStats.kills += killsGained
-            SessionTracker.sessionStats.totalXp += xpGained
+        if (GhostTimer.isTracking && !GhostTimer.isPaused) {
+            GhostTimer.sessionStats.kills += killsGained
+            GhostTimer.sessionStats.totalXp += xpGained
         }
     }
 }

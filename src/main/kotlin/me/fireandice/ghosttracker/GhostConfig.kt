@@ -9,7 +9,7 @@ import cc.polyfrost.oneconfig.config.data.ModType
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.SessionHud
 import me.fireandice.ghosttracker.tracker.GhostStats
-import me.fireandice.ghosttracker.tracker.SessionTracker
+import me.fireandice.ghosttracker.tracker.GhostTimer
 
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
@@ -20,21 +20,21 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Tracker",
         subcategory = "Control Panel"
     )
-    var startButton = Runnable { SessionTracker.start() }
+    var startButton = Runnable { GhostTimer.start() }
     @Button(
         name = "Reset session",
         text = "Reset",
         category = "Session Tracker",
         subcategory = "Control Panel"
     )
-    var resetButton = Runnable { SessionTracker.clear() }
+    var resetButton = Runnable { GhostTimer.clear() }
     @Button(
-        name = "Stop/pause session",
+        name = "Pause session",
         text = "Pause",
         category = "Session Tracker",
         subcategory = "Control Panel"
     )
-    var pauseButton = Runnable { SessionTracker.pause() }
+    var pauseButton = Runnable { GhostTimer.pause() }
 
     @HUD(
         name = "Session tracker HUD",
@@ -114,7 +114,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var ghostHud = GhostHud()
 
-    fun init() {
+    init {
         initialize()
     }
 }

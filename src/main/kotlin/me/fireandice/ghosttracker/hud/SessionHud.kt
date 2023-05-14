@@ -9,7 +9,7 @@ import cc.polyfrost.oneconfig.hud.BasicHud
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe
 import cc.polyfrost.oneconfig.libs.universal.UMatrixStack
 import cc.polyfrost.oneconfig.renderer.TextRenderer
-import me.fireandice.ghosttracker.tracker.SessionTracker
+import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.mc
 import java.text.DecimalFormat
@@ -19,9 +19,6 @@ class SessionHud : BasicHud(true) {
     private var lines: ArrayList<String> = ArrayList(6)
     private var height = 0f
     private var width = 0f
-
-    private val FONT_SIZE = 8f
-    private val LINE_PADDING = 1
 
     init {
         EventManager.INSTANCE.register(this)
@@ -50,7 +47,7 @@ class SessionHud : BasicHud(true) {
             longestLine = longestLine.coerceAtLeast(mc.fontRendererObj.getStringWidth(line) * scale)
         }
         width = longestLine
-        height = (lines.size * (FONT_SIZE + LINE_PADDING) - LINE_PADDING) * scale
+        height = (lines.size * 9 - 1) * scale
     }
 
     private fun drawLine(text: String, x: Float, y: Float, color: Int, scale: Float) {
@@ -62,7 +59,7 @@ class SessionHud : BasicHud(true) {
     override fun getHeight(scale: Float, example: Boolean): Float = height
 
     override fun shouldShow(): Boolean =
-        isEnabled && ScoreboardUtils.inDwarvenMines && (SessionTracker.isTracking || SessionTracker.isPaused)
+        isEnabled && ScoreboardUtils.inDwarvenMines && (GhostTimer.isTracking || GhostTimer.isPaused)
 
     private val format = DecimalFormat("#,##0.##")
     private var ticks = 0
@@ -73,8 +70,8 @@ class SessionHud : BasicHud(true) {
         if (ticks % 10 != 0) return
 
         lines.clear()
-        val stats = SessionTracker.sessionStats
-        val time = SessionTracker.elapsedTime()
+        val stats = GhostTimer.sessionStats
+        val time = GhostTimer.elapsedTime()
         var seconds: Int = (time / 1000f).toInt()
 
         val killRate =

@@ -2,7 +2,7 @@ package me.fireandice.ghosttracker.command
 
 import me.fireandice.ghosttracker.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostStats
-import me.fireandice.ghosttracker.tracker.SessionTracker
+import me.fireandice.ghosttracker.tracker.GhostTimer
 import net.minecraft.command.ICommandSender
 
 object MainCommand : CommandWrapper("ghost") {
@@ -14,9 +14,9 @@ object MainCommand : CommandWrapper("ghost") {
         }
 
         when (args[0]) {
-            "start" -> SessionTracker.start()
-            "stop", "pause" -> SessionTracker.pause()
-            "clear", "reset" -> SessionTracker.clear()
+            "start" -> GhostTimer.start()
+            "stop", "pause" -> GhostTimer.pause()
+            "clear", "reset" -> GhostTimer.clear()
             "cleargen", "resetgen" -> GhostStats.reset()
             else -> GhostConfig.openGui()
         }

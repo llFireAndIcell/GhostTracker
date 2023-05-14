@@ -30,7 +30,7 @@ blossom {
 version = mod_version
 group = "cc.polyfrost"
 base {
-    archivesName.set(mod_id)
+    archivesName.set(mod_name)
 }
 
 loom {
