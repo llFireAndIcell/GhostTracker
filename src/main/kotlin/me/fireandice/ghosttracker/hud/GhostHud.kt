@@ -51,9 +51,8 @@ class GhostHud : BasicHud(true) {
         height = (lines.size * 9 - 1) * scale
     }
 
-    private fun drawLine(text: String, x: Float, y: Float, color: Int, scale: Float) {
+    private fun drawLine(text: String, x: Float, y: Float, color: Int, scale: Float) =
         TextRenderer.drawScaledString(text, x, y, color, TextRenderer.TextType.SHADOW, scale)
-    }
 
     override fun getWidth(scale: Float, example: Boolean): Float = width
 
@@ -62,6 +61,7 @@ class GhostHud : BasicHud(true) {
     override fun shouldShow(): Boolean = isEnabled && ScoreboardUtils.inDwarvenMines
 
     private var format = DecimalFormat("#,##0.##")
+    private var killFormat = DecimalFormat("#,###")
     private var ticks = 0
     @Subscribe
     fun onTick(event: TickEvent) {
@@ -71,7 +71,7 @@ class GhostHud : BasicHud(true) {
 
         lines.clear()
         val config = GhostConfig
-        if (config.showKills) lines.add("Kills: ${GhostStats.kills}")
+        if (config.showKills) lines.add("Kills: ${killFormat.format(GhostStats.kills)}")
         if (config.showSorrow) lines.add("Sorrows: ${GhostStats.sorrowCount}")
         if (config.showVolta) lines.add("Voltas: ${GhostStats.voltaCount}")
         if (config.showPlasma) lines.add("Plasmas: ${GhostStats.plasmaCount}")

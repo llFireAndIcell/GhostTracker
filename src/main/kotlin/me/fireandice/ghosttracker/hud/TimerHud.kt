@@ -14,7 +14,7 @@ import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.mc
 import java.text.DecimalFormat
 
-class SessionHud : BasicHud(true) {
+class TimerHud : BasicHud(true) {
 
     private var lines: ArrayList<String> = ArrayList(6)
     private var height = 0f
