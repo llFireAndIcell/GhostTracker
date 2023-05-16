@@ -31,19 +31,17 @@ class GhostHud : BasicHud(true) {
     var color = OneColor(0, 255, 255)
 
     override fun draw(matrices: UMatrixStack?, x: Float, y: Float, scale: Float, example: Boolean) {
+        if (example) {
+            drawExample(x, y, scale)
+            return
+        }
         if (lines.size == 0) return
 
         var longestLine = 0f
         var textY = y
 
         for (line in lines) {
-            drawLine(
-                line,
-                x,
-                textY,
-                color.rgb,
-                scale
-            )
+            TextRenderer.drawScaledString(line, x, textY, color.rgb, TextRenderer.TextType.SHADOW, scale)
             textY += 9 * scale
             longestLine = longestLine.coerceAtLeast(mc.fontRendererObj.getStringWidth(line) * scale)
         }
@@ -51,12 +49,25 @@ class GhostHud : BasicHud(true) {
         height = (lines.size * 9 - 1) * scale
     }
 
-    private fun drawLine(text: String, x: Float, y: Float, color: Int, scale: Float) =
-        TextRenderer.drawScaledString(text, x, y, color, TextRenderer.TextType.SHADOW, scale)
+    private var exampleLines: ArrayList<String> = ArrayList(9)
+    private var exampleWidth = 0f
+    private var exampleHeight= 0f
 
-    override fun getWidth(scale: Float, example: Boolean): Float = width
+    private fun drawExample(x: Float, y: Float, scale: Float) {
+        var textY = y
+        var longestLine = 0f
+        for (line in exampleLines) {
+            TextRenderer.drawScaledString(line, x, textY, color.rgb, TextRenderer.TextType.SHADOW, scale)
+            textY += 9 * scale
+            longestLine = longestLine.coerceAtLeast(mc.fontRendererObj.getStringWidth(line) * scale)
+        }
+        exampleWidth = longestLine
+        exampleHeight = (exampleLines.size * 9 - 1) * scale
+    }
 
-    override fun getHeight(scale: Float, example: Boolean): Float = height
+    override fun getWidth(scale: Float, example: Boolean): Float = if (example) exampleWidth else width
+
+    override fun getHeight(scale: Float, example: Boolean): Float = if (example) exampleHeight else height
 
     override fun shouldShow(): Boolean = isEnabled && ScoreboardUtils.inDwarvenMines
 
@@ -65,24 +76,46 @@ class GhostHud : BasicHud(true) {
     private var ticks = 0
     @Subscribe
     fun onTick(event: TickEvent) {
-        if (event.stage != Stage.START || !shouldShow()) return
+        if (event.stage != Stage.START) return
         ticks++
         if (ticks % 10 != 0) return
+        ticks = 0
 
         lines.clear()
+        exampleLines.clear()
+
         val config = GhostConfig
-        if (config.showKills) lines.add("Kills: ${killFormat.format(GhostStats.kills)}")
-        if (config.showSorrow) lines.add("Sorrows: ${GhostStats.sorrowCount}")
-        if (config.showVolta) lines.add("Voltas: ${GhostStats.voltaCount}")
-        if (config.showPlasma) lines.add("Plasmas: ${GhostStats.plasmaCount}")
-        if (config.showBoots) lines.add("Ghostly boots: ${GhostStats.bootsCount}")
-        if (config.showCoins) lines.add("1m coins: ${GhostStats.coinsCount}")
+        if (config.showKills) {
+            lines.add("Kills: ${killFormat.format(GhostStats.kills)}")
+            exampleLines.add("Kills: 1,000")
+        }
+        if (config.showSorrow) {
+            lines.add("Sorrows: ${GhostStats.sorrowCount}")
+            exampleLines.add("Sorrows: 100")
+        }
+        if (config.showVolta) {
+            lines.add("Voltas: ${GhostStats.voltaCount}")
+            exampleLines.add("Voltas: 200")
+        }
+        if (config.showPlasma) {
+            lines.add("Plasmas: ${GhostStats.plasmaCount}")
+            exampleLines.add("Plasmas: 50")
+        }
+        if (config.showBoots) {
+            lines.add("Ghostly boots: ${GhostStats.bootsCount}")
+            exampleLines.add("Ghostly boots: 5")
+        }
+        if (config.showCoins) {
+            lines.add("1m coins: ${GhostStats.coinsCount}")
+            exampleLines.add("1m coins: 1")
+        }
 
         if (config.showMf) {
             val mf =
                 if (GhostStats.mfDropCount == 0) "-"
                 else format.format(GhostStats.totalMf.toFloat() / GhostStats.mfDropCount)
             lines.add("Average magic find: $mf")
+            exampleLines.add("Average magic find: 152.33")
         }
 
         if (config.showAverageXp) {
@@ -90,9 +123,12 @@ class GhostHud : BasicHud(true) {
                 if (GhostStats.kills == 0) "-"
                 else format.format(GhostStats.totalXp / GhostStats.kills)
             lines.add("Average XP: $averageXp")
+            exampleLines.add("Average XP: 231.55")
         }
 
-        if (config.showTotalXp) lines.add("Total XP: ${format.format(GhostStats.totalXp)}")
-        ticks = 0
+        if (config.showTotalXp) {
+            lines.add("Total XP: ${format.format(GhostStats.totalXp)}")
+            exampleLines.add("Total XP: 1,100,000")
+        }
     }
 }

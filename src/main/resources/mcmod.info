@@ -5,10 +5,10 @@
     "description": "",
     "version": "${version}",
     "mcversion": "${mcVersionStr}",
-    "url": "",
+    "url": "https://github.com/llFireAndIcell/GhostTracker",
     "updateUrl": "",
     "authorList": [
-      "Your Name"
+      "llFireAndIcell"
     ],
     "credits": "",
     "logoFile": "",
