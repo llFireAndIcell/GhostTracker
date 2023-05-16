@@ -19,7 +19,7 @@ object GhostListener {
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inMists || event.type !in 0..1) return
+        if (!ScoreboardUtils.inMists || !(event.type == 0.toByte() || event.type == 1.toByte())) return
         val message = event.message.formattedText
 
         // Detecting one of the various normal rng drops
@@ -39,7 +39,7 @@ object GhostListener {
             GhostStats.totalMf += mf.toInt()
             GhostStats.mfDropCount++
 
-            if (GhostTimer.isTracking && !GhostTimer.isPaused) {
+            if (GhostTimer.isTracking) {
                 GhostTimer.sessionStats.totalMf += mf.toInt()
                 GhostTimer.sessionStats.mfDropCount++
             }
@@ -85,7 +85,7 @@ object GhostListener {
         GhostStats.kills += killsGained
         GhostStats.totalXp += xpGained
 
-        if (GhostTimer.isTracking && !GhostTimer.isPaused) {
+        if (GhostTimer.isTracking) {
             GhostTimer.sessionStats.kills += killsGained
             GhostTimer.sessionStats.totalXp += xpGained
         }
