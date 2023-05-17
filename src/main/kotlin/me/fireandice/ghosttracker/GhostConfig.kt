@@ -55,55 +55,55 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     @Switch(
         name = "Show kill count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showKills = true
     @Switch(
         name = "Show sorrow count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showSorrow = true
     @Switch(
         name = "Show volta count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showVolta = true
     @Switch(
         name = "Show plasma count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showPlasma = true
     @Switch(
         name = "Show ghostly boots count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showBoots = true
     @Switch(
         name = "Show 1m coin drop count",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showCoins = true
     @Switch(
         name = "Show average magic find",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showMf = true
     @Switch(
         name = "Show average combat XP",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showAverageXp = true
     @Switch(
         name = "Show total combat XP",
         category = "Stat Tracker",
-        subcategory = "Display Settings"
+        subcategory = "Display Information"
     )
     var showTotalXp = true
 
