@@ -47,6 +47,7 @@ object ScoreboardUtils {
         if (!inSkyblock()) {
             inDwarvenMines = false
             inMists = false
+            return
         }
 
         val lines = getLines()

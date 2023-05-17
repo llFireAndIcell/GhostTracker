@@ -16,13 +16,15 @@ import java.text.DecimalFormat
 
 class TimerHud : BasicHud(true) {
 
-    private var lines: ArrayList<String> = ArrayList(6)
-    private var height = 0f
-    private var width = 0f
+    @Transient private var lines: ArrayList<String> = ArrayList(6)
+    @Transient private var height = 0f
+    @Transient private var width = 0f
 
-    init {
-        EventManager.INSTANCE.register(this)
-    }
+    @Transient private var exampleLines: ArrayList<String> = ArrayList(6)
+    @Transient private var exampleWidth = 0f
+    @Transient private var exampleHeight = 0f
+
+    @Transient private val format = DecimalFormat("#,##0.##")
 
     @Color(
         name = "Text Color"
@@ -48,10 +50,6 @@ class TimerHud : BasicHud(true) {
         height = (lines.size * 9 - 1) * scale
     }
 
-    private var exampleLines: ArrayList<String> = ArrayList(6)
-    private var exampleWidth = 0f
-    private var exampleHeight = 0f
-
     private fun drawExample(x: Float, y: Float, scale: Float) {
         var textY = y
         var longestLine = 0f
@@ -70,8 +68,7 @@ class TimerHud : BasicHud(true) {
 
     override fun shouldShow(): Boolean = isEnabled && ScoreboardUtils.inDwarvenMines
 
-    private val format = DecimalFormat("#,##0.##")
-    private var ticks = 0
+    @Transient private var ticks = 0
     @Subscribe
     fun onTick(event: TickEvent) {
         if (event.stage != Stage.START) return
@@ -125,5 +122,9 @@ class TimerHud : BasicHud(true) {
 
         lines.add("Time: $timeString")
         exampleLines.add("Time: 1h 0m 0s")
+    }
+
+    init {
+        EventManager.INSTANCE.register(this)
     }
 }

@@ -17,13 +17,16 @@ import java.text.DecimalFormat
 
 class GhostHud : BasicHud(true) {
 
-    private var lines: ArrayList<String> = ArrayList(9)
-    private var height = 0f
-    private var width = 0f
+    @Transient private var lines: ArrayList<String> = ArrayList(9)
+    @Transient private var height = 0f
+    @Transient private var width = 0f
 
-    init {
-        EventManager.INSTANCE.register(this)
-    }
+    @Transient private var exampleLines: ArrayList<String> = ArrayList(9)
+    @Transient private var exampleWidth = 0f
+    @Transient private var exampleHeight= 0f
+
+    @Transient private var intFormat = DecimalFormat("#,###")
+    @Transient private var decimalFormat = DecimalFormat("#,##0.##")
 
     @Color(
         name = "Text Color"
@@ -49,10 +52,6 @@ class GhostHud : BasicHud(true) {
         height = (lines.size * 9 - 1) * scale
     }
 
-    private var exampleLines: ArrayList<String> = ArrayList(9)
-    private var exampleWidth = 0f
-    private var exampleHeight= 0f
-
     private fun drawExample(x: Float, y: Float, scale: Float) {
         var textY = y
         var longestLine = 0f
@@ -71,9 +70,7 @@ class GhostHud : BasicHud(true) {
 
     override fun shouldShow(): Boolean = isEnabled && ScoreboardUtils.inDwarvenMines
 
-    private var format = DecimalFormat("#,##0.##")
-    private var killFormat = DecimalFormat("#,###")
-    private var ticks = 0
+    @Transient private var ticks = 0
     @Subscribe
     fun onTick(event: TickEvent) {
         if (event.stage != Stage.START) return
@@ -86,7 +83,7 @@ class GhostHud : BasicHud(true) {
 
         val config = GhostConfig
         if (config.showKills) {
-            lines.add("Kills: ${killFormat.format(GhostStats.kills)}")
+            lines.add("Kills: ${intFormat.format(GhostStats.kills)}")
             exampleLines.add("Kills: 1,000")
         }
         if (config.showSorrow) {
@@ -113,7 +110,7 @@ class GhostHud : BasicHud(true) {
         if (config.showMf) {
             val mf =
                 if (GhostStats.mfDropCount == 0) "-"
-                else format.format(GhostStats.totalMf.toFloat() / GhostStats.mfDropCount)
+                else decimalFormat.format(GhostStats.totalMf.toFloat() / GhostStats.mfDropCount)
             lines.add("Average magic find: $mf")
             exampleLines.add("Average magic find: 152.33")
         }
@@ -121,14 +118,18 @@ class GhostHud : BasicHud(true) {
         if (config.showAverageXp) {
             val averageXp: String =
                 if (GhostStats.kills == 0) "-"
-                else format.format(GhostStats.totalXp / GhostStats.kills)
+                else decimalFormat.format(GhostStats.totalXp / GhostStats.kills)
             lines.add("Average XP: $averageXp")
             exampleLines.add("Average XP: 231.55")
         }
 
         if (config.showTotalXp) {
-            lines.add("Total XP: ${format.format(GhostStats.totalXp)}")
+            lines.add("Total XP: ${decimalFormat.format(GhostStats.totalXp)}")
             exampleLines.add("Total XP: 1,100,000")
         }
+    }
+
+    init {
+        EventManager.INSTANCE.register(this)
     }
 }
