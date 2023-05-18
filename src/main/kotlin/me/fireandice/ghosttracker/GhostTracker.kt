@@ -33,14 +33,17 @@ object GhostTracker {
     const val NAME = "@NAME@"
     const val VERSION = "@VER@"
     val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker ${ChatColor.DARK_GRAY}»${ChatColor.RESET}"
+
     private val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
     var statsFile: File = File(modDir, "GhostStats.json")
+
+    val ghostStats = GhostStats()
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
         modDir.mkdirs()
-        if (statsFile.createNewFile()) GhostStats.save()
-        else GhostStats.load()
+        if (statsFile.createNewFile()) ghostStats.save()
+        else ghostStats.load()
     }
 
     @EventHandler
@@ -67,5 +70,5 @@ object GhostTracker {
     }
 
     @Subscribe
-    fun onClose(event: PreShutdownEvent) = GhostStats.save()
+    fun onClose(event: PreShutdownEvent) = ghostStats.save()
 }

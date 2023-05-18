@@ -6,9 +6,10 @@ import cc.polyfrost.oneconfig.config.annotations.HUD
 import cc.polyfrost.oneconfig.config.annotations.Switch
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
+import cc.polyfrost.oneconfig.libs.universal.ChatColor
+import cc.polyfrost.oneconfig.libs.universal.UChat
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
-import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
 
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
@@ -36,6 +37,73 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var pauseButton = Runnable { GhostTimer.pause() }
 
+    @Switch(
+        name = "Show kills per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showKillsPerHour = true
+    @Switch(
+        name = "Show sorrows per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showSorrowsPerHour = true
+    @Switch(
+        name = "Show voltas per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showVoltasPerHour = true
+    @Switch(
+        name = "Show plasmas per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showPlasmasPerHour = true
+    @Switch(
+        name = "Show ghostly boots per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showBootsPerHour = true
+    @Switch(
+        name = "Show 1m coins per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showCoinDropsPerHour = true
+    @Switch(
+        name = "Show average magic find",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showAverageMf = true
+    @Switch(
+        name = "Show average combat XP",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showAverageXp = true
+    @Switch(
+        name = "Show combat XP per hour",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showXpPerHour = true
+    @Switch(
+        name = "Show total combat XP",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showSessionXp = true
+    @Switch(
+        name = "Show session time",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showTime = true
+
     @HUD(
         name = "Session timer HUD",
         category = "Session Timer",
@@ -50,7 +118,10 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var genResetButton = Runnable { GhostStats.reset() }
+    var genResetButton = Runnable {
+        GhostTracker.ghostStats.reset()
+        UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+    }
 
     @Switch(
         name = "Show kill count",
@@ -88,18 +159,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Display Information"
     )
     var showCoins = true
-    @Switch(
-        name = "Show average magic find",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showMf = true
-    @Switch(
-        name = "Show average combat XP",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showAverageXp = true
     @Switch(
         name = "Show total combat XP",
         category = "Stat Tracker",

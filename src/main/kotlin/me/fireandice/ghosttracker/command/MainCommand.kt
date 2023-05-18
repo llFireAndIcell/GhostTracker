@@ -1,7 +1,9 @@
 package me.fireandice.ghosttracker.command
 
+import cc.polyfrost.oneconfig.libs.universal.ChatColor
+import cc.polyfrost.oneconfig.libs.universal.UChat
 import me.fireandice.ghosttracker.GhostConfig
-import me.fireandice.ghosttracker.tracker.GhostStats
+import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import net.minecraft.command.ICommandSender
 
@@ -17,7 +19,10 @@ object MainCommand : CommandWrapper("ghost") {
             "start" -> GhostTimer.start()
             "stop", "pause" -> GhostTimer.pause()
             "clear", "reset" -> GhostTimer.clear()
-            "cleargen", "resetgen" -> GhostStats.reset()
+            "cleargen", "resetgen" -> {
+                GhostTracker.ghostStats.reset()
+                UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+            }
             else -> GhostConfig.openGui()
         }
     }
