@@ -2,8 +2,10 @@ package me.fireandice.ghosttracker
 
 import cc.polyfrost.oneconfig.config.Config
 import cc.polyfrost.oneconfig.config.annotations.Button
+import cc.polyfrost.oneconfig.config.annotations.Color
 import cc.polyfrost.oneconfig.config.annotations.HUD
 import cc.polyfrost.oneconfig.config.annotations.Switch
+import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
@@ -73,6 +75,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Display Information"
     )
     var showCoinDropsPerHour = true
+    @Switch(
+        name = "Show percent difference",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var showTimerMargins = true
     @Switch(
         name = "Show average magic find",
         category = "Session Timer",
@@ -160,6 +168,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var showCoins = true
     @Switch(
+        name = "Show percent difference",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showMargins = true
+    @Switch(
         name = "Show total combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
@@ -172,6 +186,37 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "HUD Settings"
     )
     var ghostHud = GhostHud()
+
+    @Color(
+        name = "Kill color",
+        category = "Colors"
+    )
+    var killColor = OneColor(85, 255, 255)      // aqua
+    @Color(
+        name = "Drop color",
+        category = "Colors"
+    )
+    var dropColor = OneColor(85, 85, 255)       // blue
+    @Color(
+        name = "Percent difference color",
+        category = "Colors"
+    )
+    var marginColor = OneColor(85, 85, 85)      // dark gray
+    @Color(
+        name = "Magic find color",
+        category = "Colors"
+    )
+    var mfColor = OneColor(255, 170, 0)         // gold
+    @Color(
+        name = "Combat XP color",
+        category = "Colors"
+    )
+    var xpColor = OneColor(255, 85, 85)         // red
+    @Color(
+        name = "Time color",
+        category = "Colors"
+    )
+    var timeColor = OneColor(85, 255, 255)      // aqua
 
     init {
         initialize()
