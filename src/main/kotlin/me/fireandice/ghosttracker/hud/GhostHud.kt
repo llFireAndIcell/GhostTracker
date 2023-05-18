@@ -1,6 +1,5 @@
 package me.fireandice.ghosttracker.hud
 
-import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.events.EventManager
 import cc.polyfrost.oneconfig.events.event.Stage
 import cc.polyfrost.oneconfig.events.event.TickEvent
@@ -18,11 +17,6 @@ class GhostHud : BasicHud(true) {
     @Transient private var lines: ArrayList<TextComponent> = ArrayList(9)
     @Transient private var height = 0f
     @Transient private var width = 0f
-
-    @Transient private val killColor = OneColor(85, 255, 255)   // aqua
-    @Transient private val dropColor = OneColor(85, 85, 255)    // blue
-    @Transient private val xpColor = OneColor(255, 85, 85)      // red
-    @Transient private val marginColor = OneColor(85, 85, 85)   // dark gray
 
     @Transient private var exampleLines: ArrayList<TextComponent> = ArrayList(9)
     @Transient private var exampleWidth = 0f
@@ -64,53 +58,53 @@ class GhostHud : BasicHud(true) {
 
         if (config.showKills) {
             lines.add(TextComponent {
-                it.add("Kills: ${intFormat.format(stats.kills)}", killColor)
+                it.add("Kills: ${intFormat.format(stats.kills)}", config.killColor)
             })
         }
 
         if (config.showSorrow) {
             lines.add(TextComponent {
-                it.add("Sorrows: ${stats.sorrowCount}", dropColor)
+                it.add("Sorrows: ${stats.sorrowCount}", config.dropColor)
                 val diff = stats.getPercentDiffString(GhostDrops.SORROW)
-                if (stats.sorrowCount != 0 && diff != "") it.add(" ($diff)", marginColor)
+                if (config.showMargins && stats.sorrowCount != 0 && diff != "") it.add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showVolta) {
             lines.add(TextComponent {
-                it.add("Voltas: ${stats.voltaCount}", dropColor)
+                it.add("Voltas: ${stats.voltaCount}", config.dropColor)
                 val diff = stats.getPercentDiffString(GhostDrops.VOLTA)
-                if (stats.voltaCount != 0 && diff != "") it.add(" ($diff)", marginColor)
+                if (config.showMargins && stats.voltaCount != 0 && diff != "") it.add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showPlasma) {
             lines.add(TextComponent {
-                it.add("Plasmas: ${stats.plasmaCount}", dropColor)
+                it.add("Plasmas: ${stats.plasmaCount}", config.dropColor)
                 val diff = stats.getPercentDiffString(GhostDrops.PLASMA)
-                if (stats.plasmaCount != 0 && diff != "") it.add(" ($diff)", marginColor)
+                if (config.showMargins && stats.plasmaCount != 0 && diff != "") it.add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showBoots) {
             lines.add(TextComponent {
-                it.add("Ghostly boots: ${stats.bootsCount}", dropColor)
+                it.add("Ghostly boots: ${stats.bootsCount}", config.dropColor)
                 val diff = stats.getPercentDiffString(GhostDrops.BOOTS)
-                if (stats.bootsCount != 0 && diff != "") it.add(" ($diff)", marginColor)
+                if (config.showMargins && stats.bootsCount != 0 && diff != "") it.add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showCoins) {
             lines.add(TextComponent {
-                it.add("1m coins: ${stats.coinsCount}", dropColor)
+                it.add("1m coins: ${stats.coinsCount}", config.dropColor)
                 val diff = stats.getPercentDiffString(GhostDrops.COINS)
-                if (stats.coinsCount != 0 && diff != "") it.add(" ($diff)", marginColor)
+                if (config.showMargins && stats.coinsCount != 0 && diff != "") it.add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showTotalXp) {
             lines.add(TextComponent {
-                it.add("Total XP: ${decimalFormat.format(stats.totalXp)}", xpColor)
+                it.add("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor)
             })
         }
     }
@@ -136,48 +130,48 @@ class GhostHud : BasicHud(true) {
 
         if (config.showKills) {
             exampleLines.add(TextComponent {
-                it.add("Kills: 1,000", killColor)
+                it.add("Kills: 1,000", config.killColor)
             })
         }
 
         if (config.showSorrow) {
             exampleLines.add(TextComponent {
-                it.add("Sorrows: 100", dropColor)
-                it.add(" (+0.50%)", marginColor)
+                it.add("Sorrows: 100", config.dropColor)
+                if (config.showMargins) it.add(" (+0.50%)", config.marginColor)
             })
         }
 
         if (config.showVolta) {
             exampleLines.add(TextComponent {
-                it.add("Voltas: 200", dropColor)
-                it.add(" (+0.50%)", marginColor)
+                it.add("Voltas: 200", config.dropColor)
+                if (config.showMargins) it.add(" (+0.50%)", config.marginColor)
             })
         }
 
         if (config.showPlasma) {
             exampleLines.add(TextComponent {
-                it.add("Plasmas: 50", dropColor)
-                it.add(" (+0.50%)", marginColor)
+                it.add("Plasmas: 50", config.dropColor)
+                if (config.showMargins) it.add(" (+0.50%)", config.marginColor)
             })
         }
 
         if (config.showBoots) {
             exampleLines.add(TextComponent {
-                it.add("Ghostly boots: 5", dropColor)
-                it.add(" (+0.50%)", marginColor)
+                it.add("Ghostly boots: 5", config.dropColor)
+                if (config.showMargins) it.add(" (+0.50%)", config.marginColor)
             })
         }
 
         if (config.showCoins) {
             exampleLines.add(TextComponent {
-                it.add("1m coins: 1", dropColor)
-                it.add(" (+0.50%)", marginColor)
+                it.add("1m coins: 1", config.dropColor)
+                if (config.showMargins) it.add(" (+0.50%)", config.marginColor)
             })
         }
 
         if (config.showTotalXp) {
             exampleLines.add(TextComponent {
-                it.add("Total XP: 1,100,000", xpColor)
+                it.add("Total XP: 1,100,000", config.xpColor)
             })
         }
     }
