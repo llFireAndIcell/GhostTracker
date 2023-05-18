@@ -1,12 +1,13 @@
 package me.fireandice.ghosttracker.tracker
 
-import cc.polyfrost.oneconfig.libs.universal.ChatColor
-import cc.polyfrost.oneconfig.libs.universal.UChat
-import com.google.gson.*
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
+import com.google.gson.JsonPrimitive
 import me.fireandice.ghosttracker.GhostTracker
-import java.lang.Exception
+import java.text.DecimalFormat
 
-object GhostStats {
+class GhostStats {
 
     var sorrowCount: Int = 0
     var voltaCount: Int = 0
@@ -17,6 +18,44 @@ object GhostStats {
     var totalMf: Int = 0
     var mfDropCount: Int = 0
     var totalXp: Float = 0f
+
+    fun getAverageMf(): Float? {
+        if (mfDropCount > 0) return (totalMf / mfDropCount).toFloat()
+        return null
+    }
+
+    fun getPercentDifference(drop: GhostDrops): Float? {
+        if (kills == 0) return null
+        val theoretical = kills * drop.baseChance * if (drop != GhostDrops.COINS) 1 + ((getAverageMf() ?: 0f)/100) else 1f
+        val actual = when (drop) {
+            GhostDrops.SORROW -> sorrowCount
+            GhostDrops.VOLTA -> voltaCount
+            GhostDrops.PLASMA -> plasmaCount
+            GhostDrops.BOOTS -> bootsCount
+            GhostDrops.COINS -> coinsCount
+        }
+        return (actual - theoretical) / theoretical
+    }
+
+    private val format = DecimalFormat("0.00")
+    fun getPercentDiffString(drop: GhostDrops): String {
+        val diff = getPercentDifference(drop) ?: return ""
+        val percentString = format.format(diff * 100)
+        if (diff >= 0) return "+$percentString%"
+        return "$percentString%"    // it already puts the - sign there if negative
+    }
+
+    fun reset() {
+        sorrowCount = 0
+        voltaCount = 0
+        plasmaCount = 0
+        bootsCount = 0
+        coinsCount = 0
+        kills = 0
+        totalMf = 0
+        mfDropCount = 0
+        totalXp = 0f
+    }
 
     fun load() {
         try {
@@ -56,19 +95,5 @@ object GhostStats {
         val writer = GhostTracker.statsFile.bufferedWriter()
         writer.write(jsonString)
         writer.close()
-    }
-
-    fun reset() {
-        sorrowCount = 0
-        voltaCount = 0
-        plasmaCount = 0
-        bootsCount = 0
-        coinsCount = 0
-        kills = 0
-        totalMf = 0
-        mfDropCount = 0
-        totalXp = 0f
-
-        UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
     }
 }

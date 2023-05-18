@@ -1,5 +1,6 @@
 package me.fireandice.ghosttracker.tracker
 
+import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stripColorCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -22,31 +23,61 @@ object GhostListener {
         if (!ScoreboardUtils.inMists || !(event.type == 0.toByte() || event.type == 1.toByte())) return
         val message = event.message.formattedText
 
+        // Detecting if 1m coins dropped
+        if (COIN_DROP_MESSAGE == message) {
+            GhostTracker.ghostStats.coinsCount++
+            if (GhostTimer.isTracking) GhostTimer.sessionStats.coinsCount++
+            return
+        }
+
         // Detecting one of the various normal rng drops
         val matcher = RARE_DROP_PATTERN.matcher(message)
+        val drop: GhostDrops
 
         if (matcher.matches()) {
-
-            when (matcher.group("drop")) {
-                "Sorrow" -> GhostStats.sorrowCount++
-                "Volta" -> GhostStats.voltaCount++
-                "Plasma" -> GhostStats.plasmaCount++
-                "Ghostly Boots" -> GhostStats.bootsCount++
+            val dropStr = matcher.group("drop")
+            drop = when (dropStr) {
+                "Sorrow" -> GhostDrops.SORROW
+                "Volta" -> GhostDrops.VOLTA
+                "Plasma" -> GhostDrops.PLASMA
+                "Ghostly Boots" -> GhostDrops.BOOTS
                 else -> return  // do not count magic find of non-ghost drops
             }
             val numberFormat = NumberFormat.getInstance(Locale.US)
-            val mf = numberFormat.parse(matcher.group("mf"))
-            GhostStats.totalMf += mf.toInt()
-            GhostStats.mfDropCount++
+            val mf = numberFormat.parse(matcher.group("mf")).toInt()
 
-            if (GhostTimer.isTracking) {
-                GhostTimer.sessionStats.totalMf += mf.toInt()
-                GhostTimer.sessionStats.mfDropCount++
-            }
+            trackDrops(drop, mf)
+        }
+    }
+
+    private fun trackDrops(drop: GhostDrops, magicFind: Int) {
+        val ghostStats = GhostTracker.ghostStats
+        val timerStats = GhostTimer.sessionStats
+
+        // drop will never be a coin drop but it has to be added
+        when (drop) {
+            GhostDrops.SORROW -> ghostStats.sorrowCount++
+            GhostDrops.VOLTA -> ghostStats.voltaCount++
+            GhostDrops.PLASMA -> ghostStats.plasmaCount++
+            GhostDrops.BOOTS -> ghostStats.bootsCount++
+            GhostDrops.COINS -> {}
         }
 
-        // Detecting if 1m coins dropped
-        if (COIN_DROP_MESSAGE == message) GhostStats.coinsCount++
+        if (GhostTimer.isTracking) when (drop) {
+            GhostDrops.SORROW -> timerStats.sorrowCount++
+            GhostDrops.VOLTA -> timerStats.voltaCount++
+            GhostDrops.PLASMA -> timerStats.plasmaCount++
+            GhostDrops.BOOTS -> timerStats.bootsCount++
+            GhostDrops.COINS -> {}
+        }
+
+        ghostStats.totalMf += magicFind
+        ghostStats.mfDropCount++
+
+        if (GhostTimer.isTracking) {
+            timerStats.totalMf += magicFind
+            timerStats.mfDropCount++
+        }
     }
 
     /**
@@ -75,15 +106,15 @@ object GhostListener {
                 val actualXpGained = newValue - prevValue
                 val killsGained = (actualXpGained / gained).roundToInt()
 
-                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, actualXpGained)
+                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, gained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
             }
             prevValue = newValue
         }
     }
 
     private fun trackKills(killsGained: Int, xpGained: Float) {
-        GhostStats.kills += killsGained
-        GhostStats.totalXp += xpGained
+        GhostTracker.ghostStats.kills += killsGained
+        GhostTracker.ghostStats.totalXp += xpGained
 
         if (GhostTimer.isTracking) {
             GhostTimer.sessionStats.kills += killsGained
