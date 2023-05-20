@@ -19,9 +19,11 @@ object MainCommand : CommandWrapper("ghost") {
             "start" -> GhostTimer.start()
             "stop", "pause" -> GhostTimer.pause()
             "clear", "reset" -> GhostTimer.clear()
-            "cleargen", "resetgen" -> {
-                GhostTracker.ghostStats.reset()
-                UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+            "stats" -> if (args.size >= 2) when (args[1]) {
+                "reset", "clear" -> {
+                    GhostTracker.ghostStats.reset()
+                    UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+                }
             }
             else -> GhostConfig.openGui()
         }

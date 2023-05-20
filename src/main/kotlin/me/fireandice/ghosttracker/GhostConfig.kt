@@ -1,11 +1,10 @@
 package me.fireandice.ghosttracker
 
 import cc.polyfrost.oneconfig.config.Config
-import cc.polyfrost.oneconfig.config.annotations.Button
-import cc.polyfrost.oneconfig.config.annotations.Color
-import cc.polyfrost.oneconfig.config.annotations.HUD
-import cc.polyfrost.oneconfig.config.annotations.Switch
+import cc.polyfrost.oneconfig.config.annotations.*
+import cc.polyfrost.oneconfig.config.annotations.Number
 import cc.polyfrost.oneconfig.config.core.OneColor
+import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
@@ -16,7 +15,138 @@ import me.fireandice.ghosttracker.tracker.GhostTimer
 
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
-    // SESSION TIMER (this one is listed first because the controls need to be more easily accessible
+    // GENERAL SETTINGS
+    @Number(
+        name = "Looting level",
+        category = "General",
+        subcategory = "Enchants",
+        min = 0f,
+        max = 10f,  // in case they add more levels or something idk
+        step = 1
+    )
+    var lootingLevel = 5
+    @Number(
+        name = "Luck level",
+        category = "General",
+        subcategory = "Enchants",
+        min = 0f,
+        max = 10f,  // in case they add more levels or something idk
+        step = 1
+    )
+    var luckLevel = 7
+
+    @Color(
+        name = "Kill color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var killColor = OneColor(85, 255, 255)      // aqua
+    @Color(
+        name = "Drop color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var dropColor = OneColor(85, 85, 255)       // blue
+    @Color(
+        name = "Percent difference color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var marginColor = OneColor(85, 85, 85)      // dark gray
+    @Color(
+        name = "Magic find color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var mfColor = OneColor(255, 170, 0)         // gold
+    @Color(
+        name = "Combat XP color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var xpColor = OneColor(255, 85, 85)         // red
+    @Color(
+        name = "Time color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var timeColor = OneColor(85, 255, 255)      // aqua
+
+    // STAT TRACKER
+    @Button(
+        name = "Reset stats",
+        text = "Reset",
+        category = "Stat Tracker",
+        subcategory = "Control Panel"
+    )
+    var genResetButton = Runnable {
+        GhostTracker.ghostStats.reset()
+        UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+    }
+    @KeyBind(
+        name = "Stat reset keybind",
+        category = "Stat Tracker",
+        subcategory = "Control Panel"
+    )
+    var genResetKb = OneKeyBind()
+
+    @Switch(
+        name = "Show kill count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showKills = true
+    @Switch(
+        name = "Show sorrow count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showSorrow = true
+    @Switch(
+        name = "Show volta count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showVolta = true
+    @Switch(
+        name = "Show plasma count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showPlasma = true
+    @Switch(
+        name = "Show ghostly boots count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showBoots = true
+    @Switch(
+        name = "Show 1m coin drop count",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showCoins = true
+    @Switch(
+        name = "Show percent difference",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showMargins = true
+    @Switch(
+        name = "Show total combat XP",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showTotalXp = true
+
+    @HUD(
+        name = "Stats HUD",
+        category = "Stat Tracker",
+        subcategory = "HUD Settings"
+    )
+    var ghostHud = GhostHud()
+
+    // SESSION TIMER
     @Button(
         name = "Start/resume timer",
         text = "Start",
@@ -24,6 +154,27 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Control Panel"
     )
     var startButton = Runnable { GhostTimer.start() }
+    @KeyBind(
+        name = "Start/resume timer keybind",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var startTimerKb = OneKeyBind()
+
+    @Button(
+        name = "Pause timer",
+        text = "Pause",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var pauseButton = Runnable { GhostTimer.pause() }
+    @KeyBind(
+        name = "Pause timer keybind",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var pauseTimerKb = OneKeyBind()
+
     @Button(
         name = "Reset timer",
         text = "Reset",
@@ -31,13 +182,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Control Panel"
     )
     var resetButton = Runnable { GhostTimer.clear() }
-    @Button(
-        name = "Pause session",
-        text = "Pause",
+    @KeyBind(
+        name = "Reset timer keybind",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
-    var pauseButton = Runnable { GhostTimer.pause() }
+    var resetTimerKb = OneKeyBind()
 
     @Switch(
         name = "Show kills per hour",
@@ -119,106 +269,14 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var timerHud = TimerHud()
 
-    // STAT TRACKER
-    @Button(
-        name = "Reset stats",
-        text = "Reset",
-        category = "Stat Tracker",
-        subcategory = "Control Panel"
-    )
-    var genResetButton = Runnable {
-        GhostTracker.ghostStats.reset()
-        UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
-    }
-
-    @Switch(
-        name = "Show kill count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showKills = true
-    @Switch(
-        name = "Show sorrow count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showSorrow = true
-    @Switch(
-        name = "Show volta count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showVolta = true
-    @Switch(
-        name = "Show plasma count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showPlasma = true
-    @Switch(
-        name = "Show ghostly boots count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showBoots = true
-    @Switch(
-        name = "Show 1m coin drop count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showCoins = true
-    @Switch(
-        name = "Show percent difference",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showMargins = true
-    @Switch(
-        name = "Show total combat XP",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var showTotalXp = true
-
-    @HUD(
-        name = "Stats HUD",
-        category = "Stat Tracker",
-        subcategory = "HUD Settings"
-    )
-    var ghostHud = GhostHud()
-
-    @Color(
-        name = "Kill color",
-        category = "Colors"
-    )
-    var killColor = OneColor(85, 255, 255)      // aqua
-    @Color(
-        name = "Drop color",
-        category = "Colors"
-    )
-    var dropColor = OneColor(85, 85, 255)       // blue
-    @Color(
-        name = "Percent difference color",
-        category = "Colors"
-    )
-    var marginColor = OneColor(85, 85, 85)      // dark gray
-    @Color(
-        name = "Magic find color",
-        category = "Colors"
-    )
-    var mfColor = OneColor(255, 170, 0)         // gold
-    @Color(
-        name = "Combat XP color",
-        category = "Colors"
-    )
-    var xpColor = OneColor(255, 85, 85)         // red
-    @Color(
-        name = "Time color",
-        category = "Colors"
-    )
-    var timeColor = OneColor(85, 255, 255)      // aqua
-
     init {
         initialize()
+        registerKeyBind(genResetKb) {
+            GhostTracker.ghostStats.reset()
+            UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+        }
+        registerKeyBind(startTimerKb) { GhostTimer.start() }
+        registerKeyBind(pauseTimerKb) { GhostTimer.pause() }
+        registerKeyBind(resetTimerKb) { GhostTimer.clear() }
     }
 }

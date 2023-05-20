@@ -6,4 +6,4 @@
 ### Command usage
 - /ghost - Opens the config
 - /ghost <start/pause/reset> - Starts/pauses/resets the timed tracker
-- /ghost resetgen - Resets stats from the non-timed tracker
+- /ghost stats reset - Resets stats from the non-timed tracker
