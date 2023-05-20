@@ -61,10 +61,14 @@ sourceSets {
 
 repositories {
     maven("https://repo.polyfrost.cc/releases")
+    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
 }
 
 dependencies {
     modCompileOnly("cc.polyfrost:oneconfig-$platform:0.2.0-alpha+")
+    val devAuthModule = "forge-legacy"
+    val devAuthVersion = "1.1.2"
+    modRuntimeOnly("me.djtheredstoner:DevAuth-${devAuthModule}:${devAuthVersion}")
 
     if (platform.isLegacyForge) {
 //        compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")

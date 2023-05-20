@@ -4,6 +4,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import me.fireandice.ghosttracker.GhostConfig
 import me.fireandice.ghosttracker.GhostTracker
 import java.text.DecimalFormat
 
@@ -19,21 +20,39 @@ class GhostStats {
     var mfDropCount: Int = 0
     var totalXp: Float = 0f
 
-    fun getAverageMf(): Float? {
+    private fun getAverageMf(): Float? {
         if (mfDropCount > 0) return (totalMf / mfDropCount).toFloat()
         return null
     }
 
-    fun getPercentDifference(drop: GhostDrops): Float? {
+    private fun getPercentDifference(drop: GhostDrops): Float? {
         if (kills == 0) return null
-        val theoretical = kills * drop.baseChance * if (drop != GhostDrops.COINS) 1 + ((getAverageMf() ?: 0f)/100) else 1f
+        var chanceModifier = 1f
         val actual = when (drop) {
-            GhostDrops.SORROW -> sorrowCount
-            GhostDrops.VOLTA -> voltaCount
-            GhostDrops.PLASMA -> plasmaCount
-            GhostDrops.BOOTS -> bootsCount
+            GhostDrops.SORROW -> {
+                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                sorrowCount
+            }
+            GhostDrops.VOLTA -> {
+                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                voltaCount
+            }
+            GhostDrops.PLASMA -> {
+                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                plasmaCount
+            }
+            GhostDrops.BOOTS -> {
+                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += GhostConfig.luckLevel.toFloat() * 0.05f
+                bootsCount
+            }
             GhostDrops.COINS -> coinsCount
         }
+        val theoretical = kills * drop.baseChance * chanceModifier
+
         return (actual - theoretical) / theoretical
     }
 

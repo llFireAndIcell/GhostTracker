@@ -29,7 +29,7 @@ class TextComponent(private val shadowType: TextType = TextType.SHADOW, init: (T
         for (comp in components) {
             TextRenderer.drawScaledString(comp.text, textX, y, comp.color.rgb, shadowType, scale)
             val compWidth = UMinecraft.getFontRenderer().getStringWidth(comp.text) * scale
-            textX += UMinecraft.getFontRenderer().getStringWidth(comp.text)
+            textX += compWidth
             width += compWidth
         }
     }
