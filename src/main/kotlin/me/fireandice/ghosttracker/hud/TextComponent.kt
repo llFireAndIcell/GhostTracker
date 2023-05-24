@@ -9,9 +9,9 @@ import cc.polyfrost.oneconfig.renderer.TextRenderer.TextType
  * Stores a single line of text to be rendered, composed of many strings that can be different colors. NOTE: Spaces
  * are not automatically added between components, remember to add them if you want them.
  * @param shadowType The type of text shadow to be rendered (NONE, SHADOW, or FULL), as a `TextRenderer.TextType`
- * @param init A block where the object being created is supplied as `it`. This should mainly be used to add components
+ * @param init A block where the `this` object is the receiver. Should be used to add components
  */
-class TextComponent(private val shadowType: TextType = TextType.SHADOW, init: (TextComponent) -> Unit) {
+class TextComponent(private val shadowType: TextType = TextType.SHADOW, init: TextComponent.() -> Unit) {
 
     private var components: ArrayList<ColoredText> = ArrayList()
     var width: Float = 0f
@@ -35,7 +35,7 @@ class TextComponent(private val shadowType: TextType = TextType.SHADOW, init: (T
     }
 
     init {
-        init(this)
+        this.init()
     }
 
     data class ColoredText(val text: String, val color: OneColor)

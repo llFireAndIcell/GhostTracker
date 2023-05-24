@@ -8,12 +8,10 @@ import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
-import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.mc
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
