@@ -20,7 +20,7 @@ class GhostStats {
     var mfDropCount: Int = 0
     var totalXp: Float = 0f
 
-    private fun getAverageMf(): Float? {
+    fun getAverageMf(): Float? {
         if (mfDropCount > 0) return (totalMf / mfDropCount).toFloat()
         return null
     }
