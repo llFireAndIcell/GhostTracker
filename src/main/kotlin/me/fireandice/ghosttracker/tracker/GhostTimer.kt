@@ -12,7 +12,7 @@ object GhostTimer {
     var isTracking = false  // if timer is currently running
 
     fun start(message: Boolean = true) {
-        if (isTracking) {
+        if (isTracking && message) {
             UChat.chat("${GhostTracker.PREFIX} ${ChatColor.GREEN}Session timer is already running")
             return
         }
@@ -22,7 +22,7 @@ object GhostTimer {
     }
 
     fun pause(message: Boolean = true) {
-        if (!isTracking) {
+        if (!isTracking && message) {
             UChat.chat("${GhostTracker.PREFIX} ${ChatColor.YELLOW}Session timer is already inactive")
             return
         }
