@@ -133,6 +133,18 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var showMargins = true
     @Switch(
+        name = "Show average magic find",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showMf = true
+    @Switch(
+        name = "Show average combat XP",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var showXp = true
+    @Switch(
         name = "Show total combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
@@ -236,13 +248,13 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showAverageMf = true
+    var showTimerMf = true
     @Switch(
         name = "Show average combat XP",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showAverageXp = true
+    var showTimerXp = true
     @Switch(
         name = "Show combat XP per hour",
         category = "Session Timer",
@@ -254,7 +266,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showSessionXp = true
+    var showTotalTimerXp = true
     @Switch(
         name = "Show session time",
         category = "Session Timer",

@@ -20,13 +20,13 @@ object GhostListener {
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inMists || !(event.type == 0.toByte() || event.type == 1.toByte())) return
+        if (!ScoreboardUtils.inDwarvenMines || !(event.type == 0.toByte() || event.type == 1.toByte())) return
         val message = event.message.formattedText
 
         // Detecting if 1m coins dropped
         if (COIN_DROP_MESSAGE == message) {
             GhostTracker.ghostStats.coinsCount++
-            if (GhostTimer.isTracking) GhostTimer.sessionStats.coinsCount++
+            if (GhostTimer.isTracking) GhostTimer.stats.coinsCount++
             return
         }
 
@@ -50,9 +50,41 @@ object GhostListener {
         }
     }
 
+    /**
+     * Some of the logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
+     */
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    fun onActionBar(event: ClientChatReceivedEvent) {
+        if (!ScoreboardUtils.inDwarvenMines || event.type != 2.toByte()) return
+        val message = event.message.unformattedText.stripColorCodes()
+
+        // Detecting kills
+        val matcher = COMBAT_XP_PATTERN.matcher(message)
+
+        // Detecting skill xp gain message
+        if (matcher.find()) {
+            val numberFormat = NumberFormat.getInstance(Locale.US)
+            val gained = numberFormat.parse(matcher.group("gained")).toFloat()
+
+            var progress: String = matcher.group("progress")
+            if (Regex("[\\d,]+/0").matches(progress)) progress = progress.substring(0, progress.length - 2)
+
+            val newValue = numberFormat.parse(progress).toFloat()
+            // if there are no previously tracked kills (during this minecraft instance)
+            if (prevValue == -1f) trackKills(1, gained)
+            else {
+                val actualXpGained = newValue - prevValue
+                val killsGained = (actualXpGained / gained).roundToInt()
+
+                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, gained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
+            }
+            prevValue = newValue
+        }
+    }
+
     private fun trackDrops(drop: GhostDrops, magicFind: Int) {
         val ghostStats = GhostTracker.ghostStats
-        val timerStats = GhostTimer.sessionStats
+        val timerStats = GhostTimer.stats
 
         // drop will never be a coin drop but it has to be added
         when (drop) {
@@ -80,45 +112,13 @@ object GhostListener {
         }
     }
 
-    /**
-     * Some of the logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
-     */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
-    fun onActionBar(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inMists || event.type != 2.toByte()) return
-        val message = event.message.unformattedText.stripColorCodes()
-
-        // Detecting kills
-        val matcher = COMBAT_XP_PATTERN.matcher(message)
-
-        // Detecting skill xp gain message
-        if (matcher.find()) {
-            val numberFormat = NumberFormat.getInstance(Locale.US)
-            val gained = numberFormat.parse(matcher.group("gained")).toFloat()
-
-            var progress: String = matcher.group("progress")
-            if (Regex("[\\d,]+/0").matches(progress)) progress = progress.substring(0, progress.length - 2)
-
-            val newValue = numberFormat.parse(progress).toFloat()
-            // if there are no previously tracked kills (during this minecraft instance)
-            if (prevValue == -1f) trackKills(1, gained)
-            else {
-                val actualXpGained = newValue - prevValue
-                val killsGained = (actualXpGained / gained).roundToInt()
-
-                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, gained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
-            }
-            prevValue = newValue
-        }
-    }
-
     private fun trackKills(killsGained: Int, xpGained: Float) {
         GhostTracker.ghostStats.kills += killsGained
         GhostTracker.ghostStats.totalXp += xpGained
 
         if (GhostTimer.isTracking) {
-            GhostTimer.sessionStats.kills += killsGained
-            GhostTimer.sessionStats.totalXp += xpGained
+            GhostTimer.stats.kills += killsGained
+            GhostTimer.stats.totalXp += xpGained
         }
     }
 }

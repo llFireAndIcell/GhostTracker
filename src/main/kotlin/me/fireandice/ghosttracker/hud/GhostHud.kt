@@ -24,6 +24,7 @@ class GhostHud : BasicHud(true) {
 
     @Transient private val intFormat = DecimalFormat("#,###")
     @Transient private val decimalFormat = DecimalFormat("#,##0.##")
+    @Transient private val marginFormat = DecimalFormat("0.00")
 
     override fun getWidth(scale: Float, example: Boolean): Float = if (example) exampleWidth else width
 
@@ -46,6 +47,7 @@ class GhostHud : BasicHud(true) {
             textY += 9 * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
+
         width = longestLine
         height = (lines.size * 9 - 1) * scale
     }
@@ -77,41 +79,53 @@ class GhostHud : BasicHud(true) {
 
         if (config.showSorrow) {
             lines.add(TextComponent {
-                add("Sorrows: ${stats.sorrowCount}", config.dropColor)
-                val diff = stats.getPercentDiffString(GhostDrops.SORROW)
-                if (config.showMargins && stats.sorrowCount != 0 && diff != "") add(" ($diff)", config.marginColor)
+                add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor)
+                val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
+                if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showVolta) {
             lines.add(TextComponent {
-                add("Voltas: ${stats.voltaCount}", config.dropColor)
-                val diff = stats.getPercentDiffString(GhostDrops.VOLTA)
-                if (config.showMargins && stats.voltaCount != 0 && diff != "") add(" ($diff)", config.marginColor)
+                add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor)
+                val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
+                if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showPlasma) {
             lines.add(TextComponent {
-                add("Plasmas: ${stats.plasmaCount}", config.dropColor)
-                val diff = stats.getPercentDiffString(GhostDrops.PLASMA)
-                if (config.showMargins && stats.plasmaCount != 0 && diff != "") add(" ($diff)", config.marginColor)
+                add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor)
+                val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
+                if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showBoots) {
             lines.add(TextComponent {
-                add("Ghostly boots: ${stats.bootsCount}", config.dropColor)
-                val diff = stats.getPercentDiffString(GhostDrops.BOOTS)
-                if (config.showMargins && stats.bootsCount != 0 && diff != "") add(" ($diff)", config.marginColor)
+                add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor)
+                val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
+                if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
             })
         }
 
         if (config.showCoins) {
             lines.add(TextComponent {
-                add("1m coins: ${stats.coinsCount}", config.dropColor)
-                val diff = stats.getPercentDiffString(GhostDrops.COINS)
-                if (config.showMargins && stats.coinsCount != 0 && diff != "") add(" ($diff)", config.marginColor)
+                add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor)
+                val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
+                if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+            })
+        }
+
+        if (config.showMf) {
+            lines.add(TextComponent {
+                add("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor)
+            })
+        }
+
+        if (config.showXp) {
+            lines.add(TextComponent {
+                add("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor)
             })
         }
 
@@ -166,6 +180,18 @@ class GhostHud : BasicHud(true) {
             exampleLines.add(TextComponent {
                 add("1m coins: 1", config.dropColor)
                 if (config.showMargins) add(" (+0.50%)", config.marginColor)
+            })
+        }
+
+        if (config.showMf) {
+            exampleLines.add(TextComponent {
+                add("Average MF: 300.5", config.mfColor)
+            })
+        }
+
+        if (config.showXp) {
+            exampleLines.add(TextComponent {
+                add("Average XP: 250.5", config.xpColor)
             })
         }
 

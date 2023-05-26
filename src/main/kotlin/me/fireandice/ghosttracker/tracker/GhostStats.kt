@@ -25,27 +25,43 @@ class GhostStats {
         return null
     }
 
-    private fun getPercentDifference(drop: GhostDrops): Float? {
+    fun getAverageMf(format: DecimalFormat): String {
+        val mf = getAverageMf() ?: return "-"
+        return format.format(mf)
+    }
+
+    fun getAverageXp(): Float? {
+        if (kills > 0) return (totalXp / kills)
+        return null
+    }
+
+    fun getAverageXp(format: DecimalFormat): String {
+        val xp = getAverageXp() ?: return "-"
+        return format.format(xp)
+    }
+
+    private fun getRelativeDifference(drop: GhostDrops): Float? {
         if (kills == 0) return null
         var chanceModifier = 1f
+
         val actual = when (drop) {
             GhostDrops.SORROW -> {
-                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
                 sorrowCount
             }
             GhostDrops.VOLTA -> {
-                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
                 voltaCount
             }
             GhostDrops.PLASMA -> {
-                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
                 plasmaCount
             }
             GhostDrops.BOOTS -> {
-                chanceModifier += (getAverageMf() ?: 0f)/100
+                chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.luckLevel.toFloat() * 0.05f
                 bootsCount
             }
@@ -56,9 +72,8 @@ class GhostStats {
         return (actual - theoretical) / theoretical
     }
 
-    private val format = DecimalFormat("0.00")
-    fun getPercentDiffString(drop: GhostDrops): String {
-        val diff = getPercentDifference(drop) ?: return ""
+    fun getPercentDifference(drop: GhostDrops, format: DecimalFormat): String? {
+        val diff = getRelativeDifference(drop) ?: return null
         val percentString = format.format(diff * 100)
         if (diff >= 0) return "+$percentString%"
         return "$percentString%"    // it already puts the - sign there if negative
