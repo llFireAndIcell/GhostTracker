@@ -4,7 +4,7 @@ import net.minecraft.scoreboard.Score
 import net.minecraft.scoreboard.ScorePlayerTeam
 
 /**
- * Taken and modified from https://github.com/inglettronald/DulkirMod
+ * Modified from https://github.com/inglettronald/DulkirMod under the GNU Affero General Public License v3.0
  */
 object ScoreboardUtils {
 
