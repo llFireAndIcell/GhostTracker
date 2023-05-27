@@ -4,13 +4,14 @@ import cc.polyfrost.oneconfig.events.EventManager
 import cc.polyfrost.oneconfig.events.event.PreShutdownEvent
 import cc.polyfrost.oneconfig.libs.eventbus.Subscribe
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
+import cc.polyfrost.oneconfig.libs.universal.UChat
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
+import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
-import me.fireandice.ghosttracker.utils.mc
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.world.WorldEvent
@@ -76,4 +77,9 @@ object GhostTracker {
 
     @Subscribe
     fun onClose(event: PreShutdownEvent) = ghostStats.save()
+
+    fun resetStats(message: Boolean = true) {
+        ghostStats.reset()
+        if (message) UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+    }
 }

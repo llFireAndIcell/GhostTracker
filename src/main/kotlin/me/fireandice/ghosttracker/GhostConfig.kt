@@ -7,8 +7,6 @@ import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
-import cc.polyfrost.oneconfig.libs.universal.ChatColor
-import cc.polyfrost.oneconfig.libs.universal.UChat
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
@@ -79,16 +77,13 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var genResetButton = Runnable {
-        GhostTracker.ghostStats.reset()
-        UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
-    }
+    var genResetButton = Runnable { GhostTracker.resetStats() }
     @KeyBind(
         name = "Stat reset keybind",
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var genResetKb = OneKeyBind()
+    var resetStatsKb = OneKeyBind()
 
     @Switch(
         name = "Show kill count",
@@ -193,7 +188,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Timer",
         subcategory = "Control Panel"
     )
-    var resetButton = Runnable { GhostTimer.clear() }
+    var resetButton = Runnable { GhostTimer.reset() }
     @KeyBind(
         name = "Reset timer keybind",
         category = "Session Timer",
@@ -283,12 +278,9 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
 
     init {
         initialize()
-        registerKeyBind(genResetKb) {
-            GhostTracker.ghostStats.reset()
-            UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
-        }
+        registerKeyBind(resetStatsKb) { GhostTracker.resetStats() }
         registerKeyBind(startTimerKb) { GhostTimer.start() }
         registerKeyBind(pauseTimerKb) { GhostTimer.pause() }
-        registerKeyBind(resetTimerKb) { GhostTimer.clear() }
+        registerKeyBind(resetTimerKb) { GhostTimer.reset() }
     }
 }

@@ -12,8 +12,8 @@ object GhostTimer {
     var isTracking = false  // if timer is currently running
 
     fun start(message: Boolean = true) {
-        if (isTracking && message) {
-            UChat.chat("${GhostTracker.PREFIX} ${ChatColor.GREEN}Session timer is already running")
+        if (isTracking) {
+            if (message) UChat.chat("${GhostTracker.PREFIX} ${ChatColor.GREEN}Session timer is already running")
             return
         }
         startTime = System.currentTimeMillis()
@@ -22,8 +22,8 @@ object GhostTimer {
     }
 
     fun pause(message: Boolean = true) {
-        if (!isTracking && message) {
-            UChat.chat("${GhostTracker.PREFIX} ${ChatColor.YELLOW}Session timer is already inactive")
+        if (!isTracking) {
+            if (message) UChat.chat("${GhostTracker.PREFIX} ${ChatColor.YELLOW}Session timer is already inactive")
             return
         }
         totalTime += System.currentTimeMillis() - startTime
@@ -31,7 +31,7 @@ object GhostTimer {
         if (message) UChat.chat("${GhostTracker.PREFIX} ${ChatColor.YELLOW}Session timer paused")
     }
 
-    fun clear(message: Boolean = true) {
+    fun reset(message: Boolean = true) {
         isTracking = false
         stats.reset()
         startTime = -1L
