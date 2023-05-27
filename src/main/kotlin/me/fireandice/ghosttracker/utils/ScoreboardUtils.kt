@@ -1,5 +1,6 @@
 package me.fireandice.ghosttracker.utils
 
+import cc.polyfrost.oneconfig.utils.dsl.mc
 import net.minecraft.scoreboard.Score
 import net.minecraft.scoreboard.ScorePlayerTeam
 
@@ -9,9 +10,8 @@ import net.minecraft.scoreboard.ScorePlayerTeam
 object ScoreboardUtils {
 
     var inDwarvenMines = false
-    var inMists = false
 
-    fun getLines(): MutableList<String> {
+    private fun getLines(): MutableList<String> {
         if (mc.thePlayer == null || mc.theWorld == null) return emptyList<String>().toMutableList()
 
         val scoreboard = mc.thePlayer.worldScoreboard
@@ -28,7 +28,7 @@ object ScoreboardUtils {
         return lines
     }
 
-    fun inSkyblock(): Boolean {
+    private fun inSkyblock(): Boolean {
         if (mc.theWorld == null || mc.thePlayer == null) return false
         if (mc.isSingleplayer) return false
         if (mc.thePlayer.clientBrand?.contains("hypixel", true) == false) return false
@@ -46,7 +46,6 @@ object ScoreboardUtils {
     fun checkLocations() {
         if (!inSkyblock()) {
             inDwarvenMines = false
-            inMists = false
             return
         }
 
@@ -54,7 +53,7 @@ object ScoreboardUtils {
 
         if (lines.size < 5) {
             inDwarvenMines = false
-            inMists = false
+            return
         }
 
         var line = lines.getOrNull(4)
@@ -62,11 +61,6 @@ object ScoreboardUtils {
         if (line != null) {
             line = line.stripColorCodes()
 
-            if (line.contains("The Mist", true)) {
-                inDwarvenMines = true
-                inMists = true
-                return
-            }
             for (loc in locations) if (line.contains(loc, true)) inDwarvenMines = true
         }
     }
