@@ -8,7 +8,7 @@ import cc.polyfrost.oneconfig.libs.universal.UChat
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.command.MainCommand
-import me.fireandice.ghosttracker.tracker.GhostListener
+import me.fireandice.ghosttracker.event.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
@@ -73,13 +73,16 @@ object GhostTracker {
     }
 
     @SubscribeEvent
-    fun onWorldUnload(event: WorldEvent.Unload) = GhostTimer.pause(false)
+    fun onWorldUnload(event: WorldEvent.Unload) {
+        GhostTimer.pause(false)
+        GhostListener.prevValue = -1f
+    }
 
     @Subscribe
     fun onClose(event: PreShutdownEvent) = ghostStats.save()
 
     fun resetStats(message: Boolean = true) {
         ghostStats.reset()
-        if (message) UChat.chat("${GhostTracker.PREFIX} ${ChatColor.RED}Main tracker reset")
+        if (message) UChat.chat("$PREFIX ${ChatColor.RED}Main tracker reset")
     }
 }

@@ -1,6 +1,8 @@
-package me.fireandice.ghosttracker.tracker
+package me.fireandice.ghosttracker.event
 
 import me.fireandice.ghosttracker.GhostTracker
+import me.fireandice.ghosttracker.tracker.GhostDrops
+import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stripColorCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -16,7 +18,7 @@ object GhostListener {
     private val RARE_DROP_PATTERN = Pattern.compile("§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r")
     private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
     private val COMBAT_XP_PATTERN = Pattern.compile("\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)")
-    private var prevValue = -1f
+    var prevValue = -1f
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
@@ -67,10 +69,10 @@ object GhostListener {
             val gained = numberFormat.parse(matcher.group("gained")).toFloat()
 
             var progress: String = matcher.group("progress")
-            if (Regex("[\\d,]+/0").matches(progress)) progress = progress.substring(0, progress.length - 2)
+            if (progress.endsWith("/0")) progress = progress.substring(0, progress.length - 2)
 
             val newValue = numberFormat.parse(progress).toFloat()
-            // if there are no previously tracked kills (during this minecraft instance)
+            // if there are no previously tracked kills, or there was a world swap
             if (prevValue == -1f) trackKills(1, gained)
             else {
                 val actualXpGained = newValue - prevValue
@@ -86,27 +88,25 @@ object GhostListener {
         val ghostStats = GhostTracker.ghostStats
         val timerStats = GhostTimer.stats
 
-        // drop will never be a coin drop but it has to be added
+        // coin drops are already handled before this method is called
         when (drop) {
             GhostDrops.SORROW -> ghostStats.sorrowCount++
             GhostDrops.VOLTA -> ghostStats.voltaCount++
             GhostDrops.PLASMA -> ghostStats.plasmaCount++
             GhostDrops.BOOTS -> ghostStats.bootsCount++
-            GhostDrops.COINS -> {}
+            else -> {}
         }
-
-        if (GhostTimer.isTracking) when (drop) {
-            GhostDrops.SORROW -> timerStats.sorrowCount++
-            GhostDrops.VOLTA -> timerStats.voltaCount++
-            GhostDrops.PLASMA -> timerStats.plasmaCount++
-            GhostDrops.BOOTS -> timerStats.bootsCount++
-            GhostDrops.COINS -> {}
-        }
-
         ghostStats.totalMf += magicFind
         ghostStats.mfDropCount++
 
         if (GhostTimer.isTracking) {
+            when (drop) {
+                GhostDrops.SORROW -> timerStats.sorrowCount++
+                GhostDrops.VOLTA -> timerStats.voltaCount++
+                GhostDrops.PLASMA -> timerStats.plasmaCount++
+                GhostDrops.BOOTS -> timerStats.bootsCount++
+                else -> {}
+            }
             timerStats.totalMf += magicFind
             timerStats.mfDropCount++
         }

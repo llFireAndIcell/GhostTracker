@@ -60,7 +60,6 @@ object ScoreboardUtils {
 
         if (line != null) {
             line = line.stripColorCodes()
-
             for (loc in locations) if (line.contains(loc, true)) inDwarvenMines = true
         }
     }
