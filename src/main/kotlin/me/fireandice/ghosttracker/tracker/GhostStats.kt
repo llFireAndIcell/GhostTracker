@@ -47,17 +47,17 @@ class GhostStats {
         val actual = when (drop) {
             GhostDrops.SORROW -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
-                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 sorrowCount
             }
             GhostDrops.VOLTA -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
-                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 voltaCount
             }
             GhostDrops.PLASMA -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
-                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.05f
+                chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 plasmaCount
             }
             GhostDrops.BOOTS -> {
@@ -76,7 +76,7 @@ class GhostStats {
         val diff = getRelativeDifference(drop) ?: return null
         val percentString = format.format(diff * 100)
         if (diff >= 0) return "+$percentString%"
-        return "$percentString%"    // it already puts the - sign there if negative
+        return "$percentString%"    // it already puts the - sign there if it's negative
     }
 
     fun reset() {
