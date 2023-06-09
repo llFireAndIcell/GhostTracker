@@ -69,6 +69,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Colors"
     )
     var timeColor = OneColor(85, 255, 255)      // aqua
+    @Color(
+        name = "Pause indicator color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var pauseColor = OneColor(85, 85, 85)       // dark gray
 
     // STAT TRACKER
     @Button(
