@@ -175,6 +175,7 @@ class TimerHud : BasicHud(true) {
 
             lines.add(TextComponent {
                 add("Time: $timeString", config.timeColor)  // making it the same color as kills idk
+                if (!GhostTimer.isTracking && time > 0) add(" (Paused)", GhostConfig.pauseColor)
             })
         }
     }
