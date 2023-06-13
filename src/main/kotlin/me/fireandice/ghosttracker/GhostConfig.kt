@@ -14,6 +14,12 @@ import me.fireandice.ghosttracker.tracker.GhostTimer
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
     // GENERAL SETTINGS
+    @Switch(
+        name = "Show everywhere",
+        description = "Show everywhere, instead of only in dwarven mines",
+        category = "General"
+    )
+    var showEverywhere = false
     @Number(
         name = "Looting level",
         category = "General",

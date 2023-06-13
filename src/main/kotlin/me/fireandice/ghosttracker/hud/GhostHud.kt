@@ -30,14 +30,16 @@ class GhostHud : BasicHud(true) {
 
     override fun getHeight(scale: Float, example: Boolean): Float = if (example) exampleHeight else height
 
-    override fun shouldShow(): Boolean = isEnabled && ScoreboardUtils.inDwarvenMines
+    override fun shouldShow(): Boolean = isEnabled && (GhostConfig.showEverywhere || ScoreboardUtils.inDwarvenMines)
 
     override fun draw(matrices: UMatrixStack?, x: Float, y: Float, scale: Float, example: Boolean) {
         if (example) {
+            refreshExampleLines()
+            if (exampleLines.isEmpty()) return
             drawExample(x, y, scale)
             return
         }
-        if (lines.size == 0) return
+        if (lines.isEmpty()) return
 
         var longestLine = 0f
         var textY = y
@@ -53,7 +55,6 @@ class GhostHud : BasicHud(true) {
     }
 
     private fun drawExample(x: Float, y: Float, scale: Float) {
-        refreshExampleLines()
         var textY = y
         var longestLine = 0f
         for (line in exampleLines) {
@@ -202,14 +203,9 @@ class GhostHud : BasicHud(true) {
         }
     }
 
-    @Transient private var ticks = 0
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
         if (event.phase != TickEvent.Phase.START) return
-        ticks++
-        if (ticks % 10 != 0) return
-        ticks = 0
-
         refreshLines()
     }
 
