@@ -72,69 +72,47 @@ class GhostHud : BasicHud(true) {
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
-        if (config.showKills) {
-            lines.add(TextComponent {
-                add("Kills: ${intFormat.format(stats.kills)}", config.killColor)
-            })
-        }
+        if (config.showKills)
+            lines.add(SingleColorText("Kills: ${intFormat.format(stats.kills)}", config.killColor.rgb))
 
-        if (config.showSorrow) {
-            lines.add(TextComponent {
-                add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor)
-                val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
-                if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor)
-            })
-        }
+        if (config.showSorrow) lines.add(MultiColorText().apply {
+            add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
+            if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+        })
 
-        if (config.showVolta) {
-            lines.add(TextComponent {
-                add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor)
-                val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
-                if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
-            })
-        }
+        if (config.showVolta) lines.add(MultiColorText().apply {
+            add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
+            if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+        })
 
-        if (config.showPlasma) {
-            lines.add(TextComponent {
-                add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor)
-                val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
-                if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
-            })
-        }
+        if (config.showPlasma) lines.add(MultiColorText().apply {
+            add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
+            if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+        })
 
-        if (config.showBoots) {
-            lines.add(TextComponent {
-                add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor)
-                val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
-                if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
-            })
-        }
+        if (config.showBoots) lines.add(MultiColorText().apply {
+            add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
+            if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+        })
 
-        if (config.showCoins) {
-            lines.add(TextComponent {
-                add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor)
-                val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
-                if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
-            })
-        }
+        if (config.showCoins) lines.add(MultiColorText().apply {
+            add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
+            if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+        })
 
-        if (config.showMf) {
-            lines.add(TextComponent {
-                add("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor)
-            })
-        }
+        if (config.showMf)
+            lines.add(SingleColorText("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor.rgb))
 
-        if (config.showXp) {
-            lines.add(TextComponent {
-                add("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor)
-            })
-        }
+        if (config.showXp)
+            lines.add(SingleColorText("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor.rgb))
 
-        if (config.showTotalXp) {
-            lines.add(TextComponent {
-                add("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor)
-            })
-        }
+        if (config.showTotalXp)
+            lines.add(SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb))
     }
 
     private fun refreshExampleLines() {
@@ -143,64 +121,38 @@ class GhostHud : BasicHud(true) {
         val config = GhostConfig
         GhostTracker.ghostStats
 
-        if (config.showKills) {
-            exampleLines.add(TextComponent {
-                add("Kills: 1,000", config.killColor)
-            })
-        }
+        if (config.showKills) exampleLines.add(SingleColorText("Kills: 1,000", config.killColor.rgb))
 
-        if (config.showSorrow) {
-            exampleLines.add(TextComponent {
-                add("Sorrows: 100", config.dropColor)
-                if (config.showMargins) add(" (+0.50%)", config.marginColor)
-            })
-        }
+        if (config.showSorrow) exampleLines.add(MultiColorText().apply {
+            add("Sorrows: 100", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+        })
 
-        if (config.showVolta) {
-            exampleLines.add(TextComponent {
-                add("Voltas: 200", config.dropColor)
-                if (config.showMargins) add(" (+0.50%)", config.marginColor)
-            })
-        }
+        if (config.showVolta) exampleLines.add(MultiColorText().apply {
+            add("Voltas: 200", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+        })
 
-        if (config.showPlasma) {
-            exampleLines.add(TextComponent {
-                add("Plasmas: 50", config.dropColor)
-                if (config.showMargins) add(" (+0.50%)", config.marginColor)
-            })
-        }
+        if (config.showPlasma) exampleLines.add(MultiColorText().apply {
+            add("Plasmas: 50", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+        })
 
-        if (config.showBoots) {
-            exampleLines.add(TextComponent {
-                add("Ghostly boots: 5", config.dropColor)
-                if (config.showMargins) add(" (+0.50%)", config.marginColor)
-            })
-        }
+        if (config.showBoots) exampleLines.add(MultiColorText().apply {
+            add("Ghostly boots: 5", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+        })
 
-        if (config.showCoins) {
-            exampleLines.add(TextComponent {
-                add("1m coins: 1", config.dropColor)
-                if (config.showMargins) add(" (+0.50%)", config.marginColor)
-            })
-        }
+        if (config.showCoins) exampleLines.add(MultiColorText().apply {
+            add("1m coins: 1", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+        })
 
-        if (config.showMf) {
-            exampleLines.add(TextComponent {
-                add("Average MF: 300.5", config.mfColor)
-            })
-        }
+        if (config.showMf) exampleLines.add(SingleColorText("Average MF: 300.5", config.mfColor.rgb))
 
-        if (config.showXp) {
-            exampleLines.add(TextComponent {
-                add("Average XP: 250.5", config.xpColor)
-            })
-        }
+        if (config.showXp) exampleLines.add(SingleColorText("Average XP: 250.5", config.xpColor.rgb))
 
-        if (config.showTotalXp) {
-            exampleLines.add(TextComponent {
-                add("Total XP: 1,100,000", config.xpColor)
-            })
-        }
+        if (config.showTotalXp) exampleLines.add(SingleColorText("Total XP: 1,100,000", config.xpColor.rgb))
     }
 
     @SubscribeEvent

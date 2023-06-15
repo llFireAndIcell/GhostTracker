@@ -20,6 +20,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "General"
     )
     var showEverywhere = false
+
     @Number(
         name = "Looting level",
         category = "General",
@@ -167,34 +168,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
 
     // SESSION TIMER
     @Button(
-        name = "Start/resume timer",
-        text = "Start",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var startButton = Runnable { GhostTimer.start() }
-    @KeyBind(
-        name = "Start/resume timer keybind",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var startTimerKb = OneKeyBind()
-
-    @Button(
-        name = "Pause timer",
-        text = "Pause",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var pauseButton = Runnable { GhostTimer.pause() }
-    @KeyBind(
-        name = "Pause timer keybind",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var pauseTimerKb = OneKeyBind()
-
-    @Button(
         name = "Reset timer",
         text = "Reset",
         category = "Session Timer",
@@ -207,6 +180,26 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Control Panel"
     )
     var resetTimerKb = OneKeyBind()
+    @Button(
+        name = "Start/resume timer",
+        text = "Start",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var startButton = Runnable { GhostTimer.start() }
+    @KeyBind(
+        name = "Start/pause timer keybind",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var pauseKb = OneKeyBind()
+    @Button(
+        name = "Pause timer",
+        text = "Pause",
+        category = "Session Timer",
+        subcategory = "Control Panel"
+    )
+    var pauseButton = Runnable { GhostTimer.pause() }
 
     @Switch(
         name = "Show kills per hour",
@@ -291,8 +284,10 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     init {
         initialize()
         registerKeyBind(resetStatsKb) { GhostTracker.resetStats() }
-        registerKeyBind(startTimerKb) { GhostTimer.start() }
-        registerKeyBind(pauseTimerKb) { GhostTimer.pause() }
         registerKeyBind(resetTimerKb) { GhostTimer.reset() }
+        registerKeyBind(pauseKb) {
+            if (GhostTimer.isTracking) GhostTimer.pause()
+            else GhostTimer.start()
+        }
     }
 }
