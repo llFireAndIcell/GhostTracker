@@ -76,19 +76,17 @@ class TimerHud : BasicHud(true) {
             val killRate =
                 if (time == 0.toLong()) "-"
                 else format.format(stats.kills.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("Kills per hour: $killRate", config.killColor)
-            })
+            lines.add(SingleColorText("Kills per hour: $killRate", config.killColor.rgb))
         }
 
         if (config.showSorrowsPerHour) {
             val sorrowRate =
                 if (time == 0L) "-"
                 else format.format(stats.sorrowCount.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("Sorrows per hour: $sorrowRate", config.dropColor)
+            lines.add(MultiColorText().apply {
+                add("Sorrows per hour: $sorrowRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
-                if (config.showTimerMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+                if (config.showTimerMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
 
@@ -96,10 +94,10 @@ class TimerHud : BasicHud(true) {
             val voltaRate =
                 if (time == 0L) "-"
                 else format.format(stats.voltaCount.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("Voltas per hour: $voltaRate", config.dropColor)
+            lines.add(MultiColorText().apply {
+                add("Voltas per hour: $voltaRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
-                if (config.showTimerMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+                if (config.showTimerMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
 
@@ -107,10 +105,10 @@ class TimerHud : BasicHud(true) {
             val plasmaRate =
                 if (time == 0L) "-"
                 else format.format(stats.plasmaCount.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("Plasmas per hour: $plasmaRate", config.dropColor)
+            lines.add(MultiColorText().apply {
+                add("Plasmas per hour: $plasmaRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
-                if (config.showTimerMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+                if (config.showTimerMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
 
@@ -118,10 +116,10 @@ class TimerHud : BasicHud(true) {
             val bootsRate =
                 if (time == 0L) "-"
                 else format.format(stats.bootsCount.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("Ghostly boots per hour: $bootsRate", config.dropColor)
+            lines.add(MultiColorText().apply {
+                add("Ghostly boots per hour: $bootsRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
-                if (config.showTimerMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+                if (config.showTimerMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
 
@@ -129,39 +127,28 @@ class TimerHud : BasicHud(true) {
             val coinsRate =
                 if (time == 0L) "-"
                 else format.format(stats.coinsCount.toFloat() / seconds * 3600)
-            lines.add(TextComponent {
-                add("1m coins per hour: $coinsRate", config.dropColor)
+            lines.add(MultiColorText().apply {
+                add("1m coins per hour: $coinsRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
-                if (config.showTimerMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor)
+                if (config.showTimerMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
 
-        if (config.showTimerMf) {
-            lines.add(TextComponent {
-                add("Average MF: ${stats.getAverageMf(format)}", config.mfColor)
-            })
-        }
+        if (config.showTimerMf)
+            lines.add(SingleColorText("Average MF: ${stats.getAverageMf(format)}", config.mfColor.rgb))
 
-        if (config.showTimerXp) {
-            lines.add(TextComponent {
-                add("Average XP: ${stats.getAverageXp(format)}", config.xpColor)
-            })
-        }
+        if (config.showTimerXp)
+            lines.add(SingleColorText("Average XP: ${stats.getAverageXp(format)}", config.xpColor.rgb))
 
         if (config.showXpPerHour) {
             val xpRate: String =
                 if (time <= 0.toLong()) "-"
                 else format.format(stats.totalXp / seconds * 3600)
-            lines.add(TextComponent {
-                add("XP per hour: $xpRate", config.xpColor)
-            })
+            lines.add(SingleColorText("XP per hour: $xpRate", config.xpColor.rgb))
         }
 
-        if (config.showTotalTimerXp) {
-            lines.add(TextComponent {
-                add("Total XP: ${format.format(stats.totalXp)}", config.xpColor)
-            })
-        }
+        if (config.showTotalTimerXp)
+            lines.add(SingleColorText("Total XP: ${format.format(stats.totalXp)}", config.xpColor.rgb))
 
         if (config.showTime) {
             val timeString = StringBuilder()
@@ -174,9 +161,9 @@ class TimerHud : BasicHud(true) {
             if (minutes > 0 || hours > 0) timeString.append("${minutes}m ")     // if it's 1h 0m it should still show minutes
             timeString.append("${seconds}s")
 
-            lines.add(TextComponent {
-                add("Time: $timeString", config.timeColor)  // making it the same color as kills idk
-                if (!GhostTimer.isTracking && time > 0) add(" (Paused)", GhostConfig.pauseColor)
+            lines.add(MultiColorText().apply {
+                add("Time: $timeString", config.timeColor.rgb)
+                if (!GhostTimer.isTracking && time > 0) add(" (Paused)", GhostConfig.pauseColor.rgb)
             })
         }
     }
@@ -186,54 +173,45 @@ class TimerHud : BasicHud(true) {
 
         val config = GhostConfig
 
-        if (config.showKillsPerHour) exampleLines.add(TextComponent {
-            add("Kills per hour: 6,000", config.killColor)
+        if (config.showKillsPerHour)
+            exampleLines.add(SingleColorText("Kills per hour: 6,000", config.killColor.rgb))
+
+        if (config.showSorrowsPerHour) exampleLines.add(MultiColorText().apply {
+            add("Sorrows per hour: 50", config.dropColor.rgb)
+            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor.rgb)
         })
 
-        if (config.showSorrowsPerHour) exampleLines.add(TextComponent {
-            add("Sorrows per hour: 50", config.dropColor)
-            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor)
+        if (config.showVoltasPerHour) exampleLines.add(MultiColorText().apply {
+            add("Voltas per hour: 50", config.dropColor.rgb)
+            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor.rgb)
         })
 
-        if (config.showVoltasPerHour) exampleLines.add(TextComponent {
-            add("Voltas per hour: 50", config.dropColor)
-            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor)
+        if (config.showPlasmasPerHour) exampleLines.add(MultiColorText().apply {
+            add("Plasmas per hour: 50", config.dropColor.rgb)
+            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor.rgb)
         })
 
-        if (config.showPlasmasPerHour) exampleLines.add(TextComponent {
-            add("Plasmas per hour: 50", config.dropColor)
-            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor)
+        if (config.showBootsPerHour) exampleLines.add(MultiColorText().apply {
+            add("Ghostly boots per hour: 50", config.dropColor.rgb)
+            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor.rgb)
         })
 
-        if (config.showBootsPerHour) exampleLines.add(TextComponent {
-            add("Ghostly boots per hour: 50", config.dropColor)
-            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor)
+        if (config.showCoinDropsPerHour) exampleLines.add(MultiColorText().apply {
+            add("1m coins per hour: 50", config.dropColor.rgb)
+            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor.rgb)
         })
 
-        if (config.showCoinDropsPerHour) exampleLines.add(TextComponent {
-            add("1m coins per hour: 50", config.dropColor)
-            if (config.showTimerMargins) add(" (+0.50%)", config.marginColor)
-        })
+        if (config.showTimerMf) exampleLines.add(SingleColorText("Average MF: 215.33", config.mfColor.rgb))
 
-        if (config.showTimerMf) exampleLines.add(TextComponent {
-            add("Average MF: 215.33", config.mfColor)
-        })
+        if (config.showTimerXp) exampleLines.add(SingleColorText("Average XP: 183.33", config.xpColor.rgb))
 
-        if (config.showTimerXp) exampleLines.add(TextComponent {
-            add("Average XP: 183.33", config.xpColor)
-        })
+        if (config.showXpPerHour) exampleLines.add(SingleColorText("XP per hour: 1,100,000", config.xpColor.rgb))
 
-        if (config.showXpPerHour) exampleLines.add(TextComponent {
-            add("XP per hour: 1,100,000", config.xpColor)
-        })
+        if (config.showTotalTimerXp) exampleLines.add(SingleColorText("Total XP: 1,100,000", config.xpColor.rgb))
 
-        if (config.showTotalTimerXp) exampleLines.add(TextComponent {
-            add("Total XP: 1,100,000", config.xpColor)
-        })
-
-        if (config.showTime) exampleLines.add(TextComponent {
-            add("Time: 1h 0m 0s", config.timeColor)
-            add(" (Paused)", config.pauseColor)
+        if (config.showTime) exampleLines.add(MultiColorText().apply {
+            add("Time: 1h 0m 0s", config.timeColor.rgb)
+            add(" (Paused)", config.pauseColor.rgb)
         })
     }
 
