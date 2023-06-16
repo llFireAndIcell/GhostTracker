@@ -35,7 +35,7 @@ object GhostTracker {
     const val MODID = "@ID@"
     const val NAME = "@NAME@"
     const val VERSION = "@VER@"
-    val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker ${ChatColor.DARK_GRAY}»${ChatColor.RESET}"
+    val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker${ChatColor.DARK_GRAY} »${ChatColor.RESET}"
 
     private val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
     var statsFile: File = File(modDir, "GhostStats.json")
