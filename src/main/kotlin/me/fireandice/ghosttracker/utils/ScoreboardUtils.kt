@@ -10,6 +10,12 @@ import net.minecraft.scoreboard.ScorePlayerTeam
 object ScoreboardUtils {
 
     var inDwarvenMines = false
+    private val locations: Array<String> = arrayOf(
+        "Dwarven Village", "Miner's Guild", "Palace Bridge", "Royal Palace", "Puzzler", "Grand Library",
+        "Barracks of Heroes", "Royal Mines", "Cliffside Veins", "Forge Basin", "The Forge", "Rampart's Quarry",
+        "Far Reserve", "Upper Mines", "Goblin Burrows", "Great Ice Wall", "Aristocrat Passage", "Hanging Court",
+        "Divan's Gateway", "Lava Springs", "The Mist", "Dwarven Mines", "Gates to the Mines", "The Lift"
+    )
 
     private fun getLines(): MutableList<String> {
         if (mc.thePlayer == null || mc.theWorld == null) return emptyList<String>().toMutableList()
@@ -33,15 +39,8 @@ object ScoreboardUtils {
         if (mc.isSingleplayer) return false
         if (mc.thePlayer.clientBrand?.contains("hypixel", true) == false) return false
         val objective = mc.thePlayer.worldScoreboard.getObjectiveInDisplaySlot(1) ?: return false
-        return objective.displayName.stripColorCodes().contains("skyblock", true)
+        return objective.displayName.stripControlCodes().contains("skyblock", true)
     }
-
-    private val locations: Array<String> = arrayOf(
-        "Dwarven Village", "Miner's Guild", "Palace Bridge", "Royal Palace", "Puzzler", "Grand Library",
-        "Barracks of Heroes", "Royal Mines", "Cliffside Veins", "Forge Basin", "The Forge", "Rampart's Quarry",
-        "Far Reserve", "Upper Mines", "Goblin Burrows", "Great Ice Wall", "Aristocrat Passage", "Hanging Court",
-        "Divan's Gateway", "Lava Springs", "The Mist", "Dwarven Mines", "Gates to the Mines", "The Lift"
-    )
 
     fun checkLocations() {
         if (!inSkyblock()) {
@@ -59,7 +58,7 @@ object ScoreboardUtils {
         var line = lines.getOrNull(4)
 
         if (line != null) {
-            line = line.stripColorCodes()
+            line = line.stripControlCodes()
             for (loc in locations) if (line.contains(loc, true)) inDwarvenMines = true
         }
     }

@@ -77,31 +77,31 @@ class GhostHud : BasicHud(true) {
 
         if (config.showSorrow) lines.add(MultiColorText().apply {
             add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor.rgb)
-            val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
+            val diff = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
             if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
         })
 
         if (config.showVolta) lines.add(MultiColorText().apply {
             add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor.rgb)
-            val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
+            val diff = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
             if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
         })
 
         if (config.showPlasma) lines.add(MultiColorText().apply {
             add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor.rgb)
-            val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
+            val diff = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
             if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
         })
 
         if (config.showBoots) lines.add(MultiColorText().apply {
             add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor.rgb)
-            val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
+            val diff = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
             if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
         })
 
         if (config.showCoins) lines.add(MultiColorText().apply {
             add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor.rgb)
-            val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
+            val diff = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
             if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
         })
 

@@ -1,24 +1,34 @@
 package me.fireandice.ghosttracker.tracker
 
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import me.fireandice.ghosttracker.GhostConfig
-import me.fireandice.ghosttracker.GhostTracker
 import java.text.DecimalFormat
 
 class GhostStats {
 
-    var sorrowCount: Int = 0
-    var voltaCount: Int = 0
-    var plasmaCount: Int = 0
-    var bootsCount: Int = 0
-    var coinsCount: Int = 0
-    var kills: Int = 0
-    var totalMf: Int = 0
-    var mfDropCount: Int = 0
-    var totalXp: Float = 0f
+    // for json parsing
+    private var stats: MutableMap<String, Number> = mutableMapOf(
+        "sorrowCount" to 0,
+        "voltaCount" to 0,
+        "plasmaCount" to 0,
+        "bootsCount" to 0,
+        "coinsCount" to 0,
+        "kills" to 0,
+        "totalMf" to 0,
+        "mfDropCount" to 0,
+        "totalXp" to 0f
+    )
+
+    var sorrowCount: Int by stats
+    var voltaCount: Int by stats
+    var plasmaCount: Int by stats
+    var bootsCount: Int by stats
+    var coinsCount: Int by stats
+    var kills: Int by stats
+    var totalMf: Int by stats
+    var mfDropCount: Int by stats
+    var totalXp: Float by stats
 
     private fun getAverageMf(): Float? {
         if (mfDropCount > 0) return totalMf.toFloat() / mfDropCount
@@ -30,14 +40,9 @@ class GhostStats {
         return format.format(mf)
     }
 
-    private fun getAverageXp(): Float? {
-        if (kills > 0) return totalXp / kills
-        return null
-    }
-
     fun getAverageXp(format: DecimalFormat): String {
-        val xp = getAverageXp() ?: return "-"
-        return format.format(xp)
+        if (kills == 0) return "-"
+        return format.format(totalXp / kills)
     }
 
     private fun getRelativeDifference(drop: GhostDrops): Float? {
@@ -45,27 +50,27 @@ class GhostStats {
         var chanceModifier = 1f
 
         val actual = when (drop) {
-            GhostDrops.SORROW -> {
+            GhostDrops.Sorrow -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 sorrowCount
             }
-            GhostDrops.VOLTA -> {
+            GhostDrops.Volta -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 voltaCount
             }
-            GhostDrops.PLASMA -> {
+            GhostDrops.Plasma -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 plasmaCount
             }
-            GhostDrops.BOOTS -> {
+            GhostDrops.Boots -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.luckLevel.toFloat() * 0.05f
                 bootsCount
             }
-            GhostDrops.COINS -> coinsCount
+            GhostDrops.Coins -> coinsCount
         }
         val theoretical = kills * drop.baseChance * chanceModifier
 
@@ -91,43 +96,15 @@ class GhostStats {
         totalXp = 0f
     }
 
-    fun load() {
-        try {
-            val reader = GhostTracker.statsFile.bufferedReader()
-            val jsonString = reader.readText()
-            reader.close()
-            val gson = Gson()
-            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+    fun toJson() = JsonObject().apply { for (entry in stats) add(entry.key, JsonPrimitive(entry.value)) }
 
-            sorrowCount = jsonObject["sorrowCount"]?.asInt ?: 0
-            voltaCount = jsonObject["voltaCount"]?.asInt ?: 0
-            plasmaCount = jsonObject["plasmaCount"]?.asInt ?: 0
-            bootsCount = jsonObject["bootsCount"]?.asInt ?: 0
-            coinsCount = jsonObject["coinsCount"]?.asInt ?: 0
-            kills = jsonObject["kills"]?.asInt ?: 0
-            totalMf = jsonObject["totalMf"]?.asInt ?: 0
-            mfDropCount = jsonObject["mfDropCount"]?.asInt ?: 0
-            totalXp = jsonObject["totalXp"]?.asFloat ?: 0f
-        } catch (_: Exception) {
+    fun fromJson(json: JsonObject) {
+        for (entry in stats) {
+            val jsonElement = json[entry.key] ?: continue
+            try {
+                stats[entry.key] = jsonElement.asFloat
+            } catch (_: Exception) {
+            }
         }
-    }
-
-    fun save() {
-        val gson = GsonBuilder().setPrettyPrinting().create()
-        val jsonObj = JsonObject()
-        jsonObj.add("sorrowCount", JsonPrimitive(sorrowCount))
-        jsonObj.add("voltaCount", JsonPrimitive(voltaCount))
-        jsonObj.add("plasmaCount", JsonPrimitive(plasmaCount))
-        jsonObj.add("bootsCount", JsonPrimitive(bootsCount))
-        jsonObj.add("coinsCount", JsonPrimitive(coinsCount))
-        jsonObj.add("kills", JsonPrimitive(kills))
-        jsonObj.add("totalMf", JsonPrimitive(totalMf))
-        jsonObj.add("mfDropCount", JsonPrimitive(mfDropCount))
-        jsonObj.add("totalXp", JsonPrimitive(totalXp))
-
-        val jsonString = gson.toJson(jsonObj)
-        val writer = GhostTracker.statsFile.bufferedWriter()
-        writer.write(jsonString)
-        writer.close()
     }
 }

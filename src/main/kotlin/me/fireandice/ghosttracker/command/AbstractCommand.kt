@@ -7,7 +7,7 @@ import net.minecraft.command.ICommandSender
  * A class to simplify the process of creating new commands. New commands can extend this class and must implement the
  * `processCommand()` method
  */
-abstract class CommandWrapper(
+abstract class AbstractCommand(
     private val name: String,
     private val aliases: List<String> = emptyList()
 ) : CommandBase() {

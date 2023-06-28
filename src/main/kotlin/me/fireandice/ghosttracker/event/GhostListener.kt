@@ -1,10 +1,11 @@
 package me.fireandice.ghosttracker.event
 
+import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostDrops
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
-import me.fireandice.ghosttracker.utils.stripColorCodes
+import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -22,7 +23,7 @@ object GhostListener {
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inDwarvenMines || !(event.type == 0.toByte() || event.type == 1.toByte())) return
+        if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100 || !(event.type == 0.toByte() || event.type == 1.toByte())) return
         val message = event.message.formattedText
 
         // Detecting if 1m coins dropped
@@ -39,10 +40,10 @@ object GhostListener {
         if (matcher.matches()) {
             val dropStr = matcher.group("drop")
             drop = when (dropStr) {
-                "Sorrow" -> GhostDrops.SORROW
-                "Volta" -> GhostDrops.VOLTA
-                "Plasma" -> GhostDrops.PLASMA
-                "Ghostly Boots" -> GhostDrops.BOOTS
+                "Sorrow" -> GhostDrops.Sorrow
+                "Volta" -> GhostDrops.Volta
+                "Plasma" -> GhostDrops.Plasma
+                "Ghostly Boots" -> GhostDrops.Boots
                 else -> return  // do not count magic find of non-ghost drops
             }
             val numberFormat = NumberFormat.getInstance(Locale.US)
@@ -57,8 +58,8 @@ object GhostListener {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onActionBar(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inDwarvenMines || event.type != 2.toByte()) return
-        val message = event.message.unformattedText.stripColorCodes()
+        if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100 || event.type != 2.toByte()) return
+        val message = event.message.unformattedText.stripControlCodes()
 
         // Detecting kills
         val matcher = COMBAT_XP_PATTERN.matcher(message)
@@ -90,10 +91,10 @@ object GhostListener {
 
         // coin drops are already handled before this method is called
         when (drop) {
-            GhostDrops.SORROW -> ghostStats.sorrowCount++
-            GhostDrops.VOLTA -> ghostStats.voltaCount++
-            GhostDrops.PLASMA -> ghostStats.plasmaCount++
-            GhostDrops.BOOTS -> ghostStats.bootsCount++
+            GhostDrops.Sorrow -> ghostStats.sorrowCount++
+            GhostDrops.Volta -> ghostStats.voltaCount++
+            GhostDrops.Plasma -> ghostStats.plasmaCount++
+            GhostDrops.Boots -> ghostStats.bootsCount++
             else -> {}
         }
         ghostStats.totalMf += magicFind
@@ -101,10 +102,10 @@ object GhostListener {
 
         if (GhostTimer.isTracking) {
             when (drop) {
-                GhostDrops.SORROW -> timerStats.sorrowCount++
-                GhostDrops.VOLTA -> timerStats.voltaCount++
-                GhostDrops.PLASMA -> timerStats.plasmaCount++
-                GhostDrops.BOOTS -> timerStats.bootsCount++
+                GhostDrops.Sorrow -> timerStats.sorrowCount++
+                GhostDrops.Volta -> timerStats.voltaCount++
+                GhostDrops.Plasma -> timerStats.plasmaCount++
+                GhostDrops.Boots -> timerStats.bootsCount++
                 else -> {}
             }
             timerStats.totalMf += magicFind
