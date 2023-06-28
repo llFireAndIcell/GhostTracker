@@ -75,14 +75,14 @@ class TimerHud : BasicHud(true) {
         if (config.showKillsPerHour) {
             val killRate =
                 if (time == 0.toLong()) "-"
-                else format.format(stats.kills.toFloat() / time * 3_600_000)
+                else format.format(stats.kills.toFloat() / seconds * 3600)
             lines.add(SingleColorText("Kills/hr: $killRate", config.killColor.rgb))
         }
 
         if (config.showSorrowsPerHour) {
             val sorrowRate =
                 if (time == 0L) "-"
-                else format.format(stats.sorrowCount.toFloat() / time * 3_600_000)
+                else format.format(stats.sorrowCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Sorrows/hr: $sorrowRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
@@ -93,7 +93,7 @@ class TimerHud : BasicHud(true) {
         if (config.showVoltasPerHour) {
             val voltaRate =
                 if (time == 0L) "-"
-                else format.format(stats.voltaCount.toFloat() / time * 3_600_000)
+                else format.format(stats.voltaCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Voltas/hr: $voltaRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
@@ -104,7 +104,7 @@ class TimerHud : BasicHud(true) {
         if (config.showPlasmasPerHour) {
             val plasmaRate =
                 if (time == 0L) "-"
-                else format.format(stats.plasmaCount.toFloat() / time * 3_600_000)
+                else format.format(stats.plasmaCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Plasmas/hr: $plasmaRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
@@ -115,7 +115,7 @@ class TimerHud : BasicHud(true) {
         if (config.showBootsPerHour) {
             val bootsRate =
                 if (time == 0L) "-"
-                else format.format(stats.bootsCount.toFloat() / time * 3_600_000)
+                else format.format(stats.bootsCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Ghostly boots/hr: $bootsRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
@@ -126,7 +126,7 @@ class TimerHud : BasicHud(true) {
         if (config.showCoinDropsPerHour) {
             val coinsRate =
                 if (time == 0L) "-"
-                else format.format(stats.coinsCount.toFloat() / time * 3_600_000)
+                else format.format(stats.coinsCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("1m coins/hr: $coinsRate", config.dropColor.rgb)
                 val diff = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
@@ -143,7 +143,7 @@ class TimerHud : BasicHud(true) {
         if (config.showXpPerHour) {
             val xpRate: String =
                 if (time <= 0.toLong()) "-"
-                else format.format(stats.totalXp / time * 3_600_000)
+                else format.format(stats.totalXp / seconds * 3600)
             lines.add(SingleColorText("XP/hr: $xpRate", config.xpColor.rgb))
         }
 
