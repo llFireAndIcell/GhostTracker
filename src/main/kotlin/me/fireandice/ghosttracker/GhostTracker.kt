@@ -1,16 +1,17 @@
 package me.fireandice.ghosttracker
 
-import cc.polyfrost.oneconfig.events.EventManager
-import cc.polyfrost.oneconfig.events.event.PreShutdownEvent
-import cc.polyfrost.oneconfig.libs.eventbus.Subscribe
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
+import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.event.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
+import me.fireandice.ghosttracker.utils.PREFIX
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
@@ -35,18 +36,21 @@ object GhostTracker {
     const val MODID = "@ID@"
     const val NAME = "@NAME@"
     const val VERSION = "@VER@"
-    val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker${ChatColor.DARK_GRAY} »${ChatColor.RESET}"
 
-    private val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
-    var statsFile: File = File(modDir, "GhostStats.json")
-
+    val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
+    private var statsFile: File = File(modDir, "GhostStats.json")
+    private var lastSave: Long = -1L
     val ghostStats = GhostStats()
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
         modDir.mkdirs()
-        if (statsFile.createNewFile()) ghostStats.save()
-        else ghostStats.load()
+
+        if (statsFile.createNewFile()) this.save()
+        else this.load()
+
+        if (GhostTimer.file.createNewFile()) GhostTimer.save()
+        else GhostTimer.load()
     }
 
     @EventHandler
@@ -58,17 +62,26 @@ object GhostTracker {
             GhostListener
         ).forEach { MinecraftForge.EVENT_BUS.register(it) }
 
-        // registering to the OneConfig event handler to use the PreShutDownEvent
-        EventManager.INSTANCE.register(this)
-
         ClientCommandHandler.instance.registerCommand(MainCommand)
+
+        Runtime.getRuntime().addShutdownHook(Thread {
+            this.save()
+            GhostTimer.save()
+        })
     }
 
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
         if (event.phase != TickEvent.Phase.START) return
-        if (mc.theWorld == null || mc.theWorld.scoreboard == null) return
 
+        // auto save every 5 minutes
+        if (lastSave == -1L || System.currentTimeMillis() - lastSave > 300_000) {
+            this.save()
+            GhostTimer.save()
+            lastSave = System.currentTimeMillis()
+        }
+
+        if (mc.theWorld == null || mc.theWorld.scoreboard == null) return
         ScoreboardUtils.checkLocations()
     }
 
@@ -78,11 +91,25 @@ object GhostTracker {
         GhostListener.prevValue = -1f
     }
 
-    @Subscribe
-    fun onClose(event: PreShutdownEvent) = ghostStats.save()
-
     fun resetStats(message: Boolean = true) {
         ghostStats.reset()
         if (message) UChat.chat("$PREFIX ${ChatColor.RED}Main tracker reset")
+    }
+
+    private fun save() {
+        val gson = GsonBuilder().setPrettyPrinting().create()
+        val jsonString = gson.toJson(ghostStats.toJson())
+        statsFile.bufferedWriter().use { it.write(jsonString) }
+    }
+
+    private fun load() {
+        try {
+            val jsonString = statsFile.bufferedReader().use { it.readText() }
+            val gson = Gson()
+            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+
+            ghostStats.fromJson(jsonObject)
+        } catch (_: Exception) {
+        }
     }
 }

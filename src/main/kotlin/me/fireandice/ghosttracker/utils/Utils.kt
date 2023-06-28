@@ -1,5 +1,8 @@
 package me.fireandice.ghosttracker.utils
 
-import net.minecraft.util.StringUtils
+import cc.polyfrost.oneconfig.libs.universal.ChatColor
 
-fun String.stripColorCodes(): String = StringUtils.stripControlCodes(this)
+val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker${ChatColor.DARK_GRAY} »${ChatColor.RESET}"
+
+fun String.stripColorCodes(): String = ChatColor.stripColorCodes(this) ?: ""
+fun String.stripControlCodes(): String = ChatColor.stripControlCodes(this) ?: ""

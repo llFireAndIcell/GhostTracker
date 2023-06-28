@@ -5,7 +5,7 @@ import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import net.minecraft.command.ICommandSender
 
-object MainCommand : CommandWrapper("ghost") {
+object MainCommand : AbstractCommand("ghost") {
 
     override fun processCommand(sender: ICommandSender?, args: Array<String>?) {
         if (args.isNullOrEmpty()) {

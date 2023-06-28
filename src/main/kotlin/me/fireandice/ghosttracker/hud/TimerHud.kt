@@ -69,7 +69,7 @@ class TimerHud : BasicHud(true) {
 
         val config = GhostConfig
         val stats = GhostTimer.stats
-        val time = GhostTimer.elapsedTime()
+        val time: Long = GhostTimer.elapsedTime
         var seconds: Int = (time / 1000f).toInt()
 
         if (config.showKillsPerHour) {
@@ -85,7 +85,7 @@ class TimerHud : BasicHud(true) {
                 else format.format(stats.sorrowCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Sorrows per hour: $sorrowRate", config.dropColor.rgb)
-                val diff = stats.getPercentDifference(GhostDrops.SORROW, marginFormat)
+                val diff = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
                 if (config.showTimerMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
@@ -96,7 +96,7 @@ class TimerHud : BasicHud(true) {
                 else format.format(stats.voltaCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Voltas per hour: $voltaRate", config.dropColor.rgb)
-                val diff = stats.getPercentDifference(GhostDrops.VOLTA, marginFormat)
+                val diff = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
                 if (config.showTimerMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
@@ -107,7 +107,7 @@ class TimerHud : BasicHud(true) {
                 else format.format(stats.plasmaCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Plasmas per hour: $plasmaRate", config.dropColor.rgb)
-                val diff = stats.getPercentDifference(GhostDrops.PLASMA, marginFormat)
+                val diff = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
                 if (config.showTimerMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
@@ -118,7 +118,7 @@ class TimerHud : BasicHud(true) {
                 else format.format(stats.bootsCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("Ghostly boots per hour: $bootsRate", config.dropColor.rgb)
-                val diff = stats.getPercentDifference(GhostDrops.BOOTS, marginFormat)
+                val diff = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
                 if (config.showTimerMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
@@ -129,7 +129,7 @@ class TimerHud : BasicHud(true) {
                 else format.format(stats.coinsCount.toFloat() / seconds * 3600)
             lines.add(MultiColorText().apply {
                 add("1m coins per hour: $coinsRate", config.dropColor.rgb)
-                val diff = stats.getPercentDifference(GhostDrops.COINS, marginFormat)
+                val diff = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
                 if (config.showTimerMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
             })
         }
