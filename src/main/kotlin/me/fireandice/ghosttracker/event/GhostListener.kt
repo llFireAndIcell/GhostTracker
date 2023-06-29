@@ -19,7 +19,8 @@ object GhostListener {
     private val RARE_DROP_PATTERN = Pattern.compile("§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r")
     private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
     private val COMBAT_XP_PATTERN = Pattern.compile("\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)")
-    var prevValue = -1f
+    private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
+    private var prevValue = -1f
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
@@ -46,7 +47,6 @@ object GhostListener {
                 "Ghostly Boots" -> GhostDrops.Boots
                 else -> return  // do not count magic find of non-ghost drops
             }
-            val numberFormat = NumberFormat.getInstance(Locale.US)
             val mf = numberFormat.parse(matcher.group("mf")).toInt()
 
             trackDrops(drop, mf)
@@ -58,28 +58,33 @@ object GhostListener {
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onActionBar(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100 || event.type != 2.toByte()) return
-        val message = event.message.unformattedText.stripControlCodes()
+        if (event.type != 2.toByte()) return
 
-        // Detecting kills
+        val message = event.message.unformattedText.stripControlCodes()
         val matcher = COMBAT_XP_PATTERN.matcher(message)
 
-        // Detecting skill xp gain message
         if (matcher.find()) {
-            val numberFormat = NumberFormat.getInstance(Locale.US)
-            val gained = numberFormat.parse(matcher.group("gained")).toFloat()
+            val xpGained = numberFormat.parse(matcher.group("gained")).toFloat()
 
             var progress: String = matcher.group("progress")
             if (progress.endsWith("/0")) progress = progress.substring(0, progress.length - 2)
 
             val newValue = numberFormat.parse(progress).toFloat()
-            // if there are no previously tracked kills, or there was a world swap
-            if (prevValue == -1f) trackKills(1, gained)
+
+            // avoids tracking non ghost kills but also saves the xp value so you dont randomly gain 10 thousand kills
+            if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100) {
+                prevValue = newValue
+                return
+            }
+
+            // if there are no previously tracked kills
+            if (prevValue == -1f) trackKills(1, xpGained)
             else {
                 val actualXpGained = newValue - prevValue
-                val killsGained = (actualXpGained / gained).roundToInt()
+                // if you gain a bestiary level and gain 1m xp it will count all of those as kills, hence the coerceAtMost
+                val killsGained = (actualXpGained / xpGained).roundToInt().coerceAtMost(15)
 
-                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, gained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
+                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
             }
             prevValue = newValue
         }
