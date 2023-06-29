@@ -38,7 +38,7 @@ object GhostTracker {
     const val VERSION = "@VER@"
 
     val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
-    private var statsFile: File = File(modDir, "GhostStats.json")
+    private var statsFile = File(modDir, "GhostStats.json")
     private var lastSave: Long = -1L
     val ghostStats = GhostStats()
 
@@ -86,10 +86,7 @@ object GhostTracker {
     }
 
     @SubscribeEvent
-    fun onWorldUnload(event: WorldEvent.Unload) {
-        GhostTimer.pause(false)
-        GhostListener.prevValue = -1f
-    }
+    fun onWorldUnload(event: WorldEvent.Unload) = GhostTimer.pause(false)
 
     fun resetStats(message: Boolean = true) {
         ghostStats.reset()
@@ -105,10 +102,7 @@ object GhostTracker {
     private fun load() {
         try {
             val jsonString = statsFile.bufferedReader().use { it.readText() }
-            val gson = Gson()
-            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
-
-            ghostStats.fromJson(jsonObject)
+            Gson().fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
         } catch (_: Exception) {
         }
     }

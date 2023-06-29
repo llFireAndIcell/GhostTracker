@@ -20,7 +20,7 @@ object GhostTimer {
     var stats = GhostStats()
     var isTracking = false          // if timer is currently running
 
-    var file: File = File(GhostTracker.modDir, "GhostTimer.json")
+    var file = File(GhostTracker.modDir, "GhostTimer.json")
 
     fun start(message: Boolean = true) {
         if (isTracking) {
