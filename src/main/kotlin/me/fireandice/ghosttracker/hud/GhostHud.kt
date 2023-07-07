@@ -5,6 +5,7 @@ import cc.polyfrost.oneconfig.libs.universal.UMatrixStack
 import me.fireandice.ghosttracker.GhostConfig
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostDrops
+import me.fireandice.ghosttracker.utils.FONT_HEIGHT
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
@@ -46,12 +47,12 @@ class GhostHud : BasicHud(true) {
 
         for (line in lines) {
             line.draw(x, textY, scale)
-            textY += 9 * scale
+            textY += (FONT_HEIGHT + 1) * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
 
         width = longestLine
-        height = (lines.size * 9 - 1) * scale
+        height = (lines.size * (FONT_HEIGHT + 1) - 1) * scale
     }
 
     private fun drawExample(x: Float, y: Float, scale: Float) {
@@ -59,11 +60,11 @@ class GhostHud : BasicHud(true) {
         var longestLine = 0f
         for (line in exampleLines) {
             line.draw(x, textY, scale)
-            textY += 9 * scale
+            textY += (FONT_HEIGHT + 1) * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
         exampleWidth = longestLine
-        exampleHeight = (exampleLines.size * 9 - 1) * scale
+        exampleHeight = (exampleLines.size * (FONT_HEIGHT + 1) - 1) * scale
     }
 
     private fun refreshLines() {

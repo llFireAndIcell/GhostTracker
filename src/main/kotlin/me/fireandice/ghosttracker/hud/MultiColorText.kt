@@ -28,5 +28,11 @@ class MultiColorText(
         components.add(ColoredText(text, color))
     }
 
+    fun set(index: Int, value: ColoredText) {
+        components[index] = value
+    }
+
+    fun set(index: Int, string: String, color: Int) = set(index, ColoredText(string, color))
+
     class ColoredText(val text: String, val color: Int)
 }
