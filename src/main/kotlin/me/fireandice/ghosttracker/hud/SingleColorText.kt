@@ -9,11 +9,10 @@ class SingleColorText(
     private val shadowType: TextRenderer.TextType = TextRenderer.TextType.SHADOW
 ) : TextComponent {
 
-    override var width: Float = 0f
+    override val width: Float
+        get() = UMinecraft.getFontRenderer().getStringWidth(text).toFloat()
     override var shouldDraw: Boolean = true
 
-    override fun draw(x: Float, y: Float, scale: Float) {
+    override fun draw(x: Float, y: Float, scale: Float) =
         TextRenderer.drawScaledString(text, x, y, color, shadowType, scale)
-        width = UMinecraft.getFontRenderer().getStringWidth(text) * scale
-    }
 }
