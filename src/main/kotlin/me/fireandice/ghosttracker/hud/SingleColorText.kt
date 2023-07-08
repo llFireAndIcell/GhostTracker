@@ -10,6 +10,7 @@ class SingleColorText(
 ) : TextComponent {
 
     override var width: Float = 0f
+    override var shouldDraw: Boolean = true
 
     override fun draw(x: Float, y: Float, scale: Float) {
         TextRenderer.drawScaledString(text, x, y, color, shadowType, scale)
