@@ -16,6 +16,17 @@ import java.text.DecimalFormat
 class GhostHud : BasicHud(true) {
 
     @Transient private var lines: ArrayList<TextComponent> = ArrayList(9)
+    @Transient private var indices: HashMap<String, Int> = hashMapOf(
+        "showKills" to 0,
+        "showSorrow" to 1,
+        "showVolta" to 2,
+        "showPlasma" to 3,
+        "showBoots" to 4,
+        "showCoins" to 5,
+        "showMf" to 6,
+        "showXp" to 7,
+        "showTotalXp" to 8
+    )
     @Transient private var width = 0f
     @Transient private var height = 0f
 
@@ -40,19 +51,21 @@ class GhostHud : BasicHud(true) {
             drawExample(x, y, scale)
             return
         }
-        if (lines.isEmpty()) return
 
         var longestLine = 0f
         var textY = y
+        var drawnLines = 0
 
         for (line in lines) {
+            if (!line.shouldDraw) continue
             line.draw(x, textY, scale)
-            textY += (FONT_HEIGHT + 1) * scale
+            drawnLines++
+            textY += FONT_HEIGHT * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
 
         width = longestLine
-        height = (lines.size * (FONT_HEIGHT + 1) - 1) * scale
+        height = (drawnLines * FONT_HEIGHT - 1) * scale
     }
 
     private fun drawExample(x: Float, y: Float, scale: Float) {
@@ -60,60 +73,58 @@ class GhostHud : BasicHud(true) {
         var longestLine = 0f
         for (line in exampleLines) {
             line.draw(x, textY, scale)
-            textY += (FONT_HEIGHT + 1) * scale
+            textY += FONT_HEIGHT * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
         exampleWidth = longestLine
-        exampleHeight = (exampleLines.size * (FONT_HEIGHT + 1) - 1) * scale
+        exampleHeight = (exampleLines.size * FONT_HEIGHT - 1) * scale
     }
 
     private fun refreshLines() {
-        lines.clear()
-
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
         if (config.showKills)
-            lines.add(SingleColorText("Kills: ${intFormat.format(stats.kills)}", config.killColor.rgb))
+            lines[0] = SingleColorText("Kills: ${intFormat.format(stats.kills)}", config.killColor.rgb)
 
-        if (config.showSorrow) lines.add(MultiColorText().apply {
+        if (config.showSorrow) lines[1] = MultiColorText().apply {
             add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor.rgb)
             val diff = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
             if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
-        })
+        }
 
-        if (config.showVolta) lines.add(MultiColorText().apply {
+        if (config.showVolta) lines[2] = MultiColorText().apply {
             add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor.rgb)
             val diff = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
             if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
-        })
+        }
 
-        if (config.showPlasma) lines.add(MultiColorText().apply {
+        if (config.showPlasma) lines[3] = MultiColorText().apply {
             add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor.rgb)
             val diff = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
             if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
-        })
+        }
 
-        if (config.showBoots) lines.add(MultiColorText().apply {
+        if (config.showBoots) lines[4] = MultiColorText().apply {
             add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor.rgb)
             val diff = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
             if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
-        })
+        }
 
-        if (config.showCoins) lines.add(MultiColorText().apply {
+        if (config.showCoins) lines[5] = MultiColorText().apply {
             add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor.rgb)
             val diff = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
             if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
-        })
+        }
 
         if (config.showMf)
-            lines.add(SingleColorText("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor.rgb))
+            lines[6] = SingleColorText("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor.rgb)
 
         if (config.showXp)
-            lines.add(SingleColorText("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor.rgb))
+            lines[7] = SingleColorText("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor.rgb)
 
         if (config.showTotalXp)
-            lines.add(SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb))
+            lines[8] = SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb)
     }
 
     private fun refreshExampleLines() {
@@ -156,6 +167,11 @@ class GhostHud : BasicHud(true) {
         if (config.showTotalXp) exampleLines.add(SingleColorText("Total XP: 1,100,000", config.xpColor.rgb))
     }
 
+    fun onConfigUpdate(optionName: String, newValue: Boolean) {
+        val index = indices[optionName] ?: return
+        lines[index].shouldDraw = newValue
+    }
+
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
         if (event.phase != TickEvent.Phase.START) return
@@ -164,5 +180,60 @@ class GhostHud : BasicHud(true) {
 
     init {
         MinecraftForge.EVENT_BUS.register(this)
+
+        val config = GhostConfig
+        val stats = GhostTracker.ghostStats
+
+        lines.add(
+            SingleColorText("Kills: ${intFormat.format(stats.kills)}", config.killColor.rgb)
+                .apply { if (!config.showKills) shouldDraw = false }
+        )
+        lines.add(
+            MultiColorText().apply {
+            add("Sorrows: ${intFormat.format(stats.sorrowCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
+            if (config.showMargins && stats.sorrowCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+            if (!config.showSorrow) shouldDraw = false
+        })
+        lines.add(
+            MultiColorText().apply {
+            add("Voltas: ${intFormat.format(stats.voltaCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
+            if (config.showMargins && stats.voltaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+            if (!config.showVolta) shouldDraw = false
+        })
+        lines.add(
+            MultiColorText().apply {
+            add("Plasmas: ${intFormat.format(stats.plasmaCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
+            if (config.showMargins && stats.plasmaCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+            if (!config.showPlasma) shouldDraw = false
+        })
+        lines.add(
+            MultiColorText().apply {
+            add("Ghostly boots: ${intFormat.format(stats.bootsCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
+            if (config.showMargins && stats.bootsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+            if (!config.showBoots) shouldDraw = false
+        })
+        lines.add(
+            MultiColorText().apply {
+            add("1m coins: ${intFormat.format(stats.coinsCount)}", config.dropColor.rgb)
+            val diff = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
+            if (config.showMargins && stats.coinsCount != 0 && diff != null) add(" ($diff)", config.marginColor.rgb)
+            if (!config.showCoins) shouldDraw = false
+        })
+        lines.add(
+            SingleColorText("Average MF: ${stats.getAverageMf(decimalFormat)}", config.mfColor.rgb)
+                .apply { if (!config.showMf) shouldDraw = false }
+        )
+        lines.add(
+            SingleColorText("Average XP: ${stats.getAverageXp(decimalFormat)}", config.xpColor.rgb)
+                .apply { if (!config.showXp) shouldDraw = false }
+        )
+        lines.add(
+            SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb)
+                .apply { if (!config.showTotalXp) shouldDraw = false }
+        )
     }
 }

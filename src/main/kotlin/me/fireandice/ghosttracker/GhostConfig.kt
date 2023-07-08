@@ -7,6 +7,7 @@ import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
+import cc.polyfrost.oneconfig.config.elements.BasicOption
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
@@ -281,6 +282,11 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var timerHud = TimerHud()
 
+    private fun addGhostListeners(vararg options: String) {
+        for (optionName in options)
+            addListener(optionName) { ghostHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
+    }
+
     init {
         initialize()
         registerKeyBind(resetStatsKb) { GhostTracker.resetStats() }
@@ -289,5 +295,17 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             if (GhostTimer.isTracking) GhostTimer.pause()
             else GhostTimer.start()
         }
+
+        addGhostListeners(
+            "showKills",
+            "showSorrow",
+            "showVolta",
+            "showPlasma",
+            "showBoots",
+            "showCoins",
+            "showMf",
+            "showXp",
+            "showTotalXp"
+        )
     }
 }

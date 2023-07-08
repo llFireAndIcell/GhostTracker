@@ -9,6 +9,7 @@ class MultiColorText(
 
     private var components: ArrayList<ColoredText> = ArrayList()
     override var width: Float = 0f
+    override var shouldDraw: Boolean = true
 
     override fun draw(x: Float, y: Float, scale: Float) {
         if (components.isEmpty()) return
