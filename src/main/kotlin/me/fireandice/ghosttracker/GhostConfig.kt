@@ -7,14 +7,13 @@ import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
-import cc.polyfrost.oneconfig.config.elements.BasicOption
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
 
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
-    // GENERAL SETTINGS
+    //<editor-fold desc="General settings">
     @Switch(
         name = "Show everywhere",
         description = "Show everywhere, instead of only in dwarven mines",
@@ -83,8 +82,9 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Colors"
     )
     var pauseColor = OneColor(85, 85, 85)       // dark gray
+    //</editor-fold>
 
-    // STAT TRACKER
+    //<editor-fold desc="Stat tracker settings">
     @Button(
         name = "Reset stats",
         text = "Reset",
@@ -166,8 +166,9 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "HUD Settings"
     )
     var ghostHud = GhostHud()
+    //</editor-fold>
 
-    // SESSION TIMER
+    //<editor-fold desc="Session timer settings">
     @Button(
         name = "Reset timer",
         text = "Reset",
@@ -281,6 +282,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "HUD Settings"
     )
     var timerHud = TimerHud()
+    //</editor-fold>
 
     init {
         initialize()
@@ -301,7 +303,9 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             "showMf",
             "showXp",
             "showTotalXp"
-        ).forEach { addListener(it) { ghostHud.onConfigUpdate(it, optionNames[it]?.get() as Boolean) } }
+        ).forEach { optionName ->
+            addListener(optionName) { ghostHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
+        }
 
         arrayOf(
             "showKillsPerHour",
@@ -315,6 +319,8 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             "showXpPerHour",
             "showTotalTimerXp",
             "showTime"
-        ).forEach { addListener(it) { timerHud.onConfigUpdate(it, optionNames[it]?.get() as Boolean) } }
+        ).forEach { optionName ->
+            addListener(optionName) { timerHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
+        }
     }
 }
