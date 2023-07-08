@@ -282,11 +282,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var timerHud = TimerHud()
 
-    private fun addGhostListeners(vararg options: String) {
-        for (optionName in options)
-            addListener(optionName) { ghostHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
-    }
-
     init {
         initialize()
         registerKeyBind(resetStatsKb) { GhostTracker.resetStats() }
@@ -296,7 +291,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             else GhostTimer.start()
         }
 
-        addGhostListeners(
+        arrayOf(
             "showKills",
             "showSorrow",
             "showVolta",
@@ -306,6 +301,20 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             "showMf",
             "showXp",
             "showTotalXp"
-        )
+        ).forEach { addListener(it) { ghostHud.onConfigUpdate(it, optionNames[it]?.get() as Boolean) } }
+
+        arrayOf(
+            "showKillsPerHour",
+            "showSorrowsPerHour",
+            "showVoltasPerHour",
+            "showPlasmasPerHour",
+            "showBootsPerHour",
+            "showCoinDropsPerHour",
+            "showTimerMf",
+            "showTimerXp",
+            "showXpPerHour",
+            "showTotalTimerXp",
+            "showTime"
+        ).forEach { addListener(it) { timerHud.onConfigUpdate(it, optionNames[it]?.get() as Boolean) } }
     }
 }

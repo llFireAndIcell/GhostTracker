@@ -6,5 +6,4 @@ import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 val PREFIX = "${ChatColor.AQUA}${ChatColor.BOLD}GhostTracker${ChatColor.DARK_GRAY} »${ChatColor.RESET}"
 val FONT_HEIGHT = UMinecraft.getFontRenderer().FONT_HEIGHT
 
-fun String.stripColorCodes(): String = ChatColor.stripColorCodes(this) ?: ""
 fun String.stripControlCodes(): String = ChatColor.stripControlCodes(this) ?: ""

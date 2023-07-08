@@ -8,20 +8,22 @@ class MultiColorText(
 ) : TextComponent {
 
     private var components: ArrayList<ColoredText> = ArrayList()
-    override var width: Float = 0f
+    override val width: Float
+        get() {
+            var sum = 0f
+            for (comp in components) sum += UMinecraft.getFontRenderer().getStringWidth(comp.text)
+            return sum
+        }
     override var shouldDraw: Boolean = true
 
     override fun draw(x: Float, y: Float, scale: Float) {
         if (components.isEmpty()) return
 
-        width = 0f
         var textX = x
 
         for (comp in components) {
             TextRenderer.drawScaledString(comp.text, textX, y, comp.color, shadowType, scale)
-            val compWidth = UMinecraft.getFontRenderer().getStringWidth(comp.text) * scale
-            textX += compWidth
-            width += compWidth
+            textX += UMinecraft.getFontRenderer().getStringWidth(comp.text) * scale
         }
     }
 

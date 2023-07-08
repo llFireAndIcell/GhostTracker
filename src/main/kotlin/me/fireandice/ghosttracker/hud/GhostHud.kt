@@ -39,18 +39,11 @@ class GhostHud : BasicHud(true) {
     @Transient private val marginFormat = DecimalFormat("0.00")
 
     override fun getWidth(scale: Float, example: Boolean): Float = if (example) exampleWidth else width
-
     override fun getHeight(scale: Float, example: Boolean): Float = if (example) exampleHeight else height
-
     override fun shouldShow(): Boolean = isEnabled && (GhostConfig.showEverywhere || ScoreboardUtils.inDwarvenMines)
 
     override fun draw(matrices: UMatrixStack?, x: Float, y: Float, scale: Float, example: Boolean) {
-        if (example) {
-            refreshExampleLines()
-            if (exampleLines.isEmpty()) return
-            drawExample(x, y, scale)
-            return
-        }
+        if (example) return drawExample(x, y, scale)
 
         var longestLine = 0f
         var textY = y
@@ -63,21 +56,24 @@ class GhostHud : BasicHud(true) {
             textY += FONT_HEIGHT * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
-
-        width = longestLine
+        width = longestLine * scale
         height = (drawnLines * FONT_HEIGHT - 1) * scale
     }
 
     private fun drawExample(x: Float, y: Float, scale: Float) {
         var textY = y
         var longestLine = 0f
+        var drawnLines = 0
+
         for (line in exampleLines) {
+            if (!line.shouldDraw) continue
             line.draw(x, textY, scale)
+            drawnLines++
             textY += FONT_HEIGHT * scale
             longestLine = longestLine.coerceAtLeast(line.width)
         }
-        exampleWidth = longestLine
-        exampleHeight = (exampleLines.size * FONT_HEIGHT - 1) * scale
+        exampleWidth = longestLine * scale
+        exampleHeight = (drawnLines * FONT_HEIGHT - 1) * scale
     }
 
     private fun refreshLines() {
@@ -127,55 +123,15 @@ class GhostHud : BasicHud(true) {
             lines[8] = SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb)
     }
 
-    private fun refreshExampleLines() {
-        exampleLines.clear()
-
-        val config = GhostConfig
-        GhostTracker.ghostStats
-
-        if (config.showKills) exampleLines.add(SingleColorText("Kills: 1,000", config.killColor.rgb))
-
-        if (config.showSorrow) exampleLines.add(MultiColorText().apply {
-            add("Sorrows: 100", config.dropColor.rgb)
-            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
-        })
-
-        if (config.showVolta) exampleLines.add(MultiColorText().apply {
-            add("Voltas: 200", config.dropColor.rgb)
-            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
-        })
-
-        if (config.showPlasma) exampleLines.add(MultiColorText().apply {
-            add("Plasmas: 50", config.dropColor.rgb)
-            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
-        })
-
-        if (config.showBoots) exampleLines.add(MultiColorText().apply {
-            add("Ghostly boots: 5", config.dropColor.rgb)
-            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
-        })
-
-        if (config.showCoins) exampleLines.add(MultiColorText().apply {
-            add("1m coins: 1", config.dropColor.rgb)
-            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
-        })
-
-        if (config.showMf) exampleLines.add(SingleColorText("Average MF: 300.5", config.mfColor.rgb))
-
-        if (config.showXp) exampleLines.add(SingleColorText("Average XP: 250.5", config.xpColor.rgb))
-
-        if (config.showTotalXp) exampleLines.add(SingleColorText("Total XP: 1,100,000", config.xpColor.rgb))
-    }
-
     fun onConfigUpdate(optionName: String, newValue: Boolean) {
         val index = indices[optionName] ?: return
         lines[index].shouldDraw = newValue
+        exampleLines[index].shouldDraw = newValue
     }
 
     @SubscribeEvent
     fun onTick(event: ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.START) return
-        refreshLines()
+        if (event.phase == TickEvent.Phase.START) refreshLines()
     }
 
     init {
@@ -184,6 +140,7 @@ class GhostHud : BasicHud(true) {
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
+        //<editor-fold desc="initializing lines">
         lines.add(
             SingleColorText("Kills: ${intFormat.format(stats.kills)}", config.killColor.rgb)
                 .apply { if (!config.showKills) shouldDraw = false }
@@ -235,5 +192,55 @@ class GhostHud : BasicHud(true) {
             SingleColorText("Total XP: ${decimalFormat.format(stats.totalXp)}", config.xpColor.rgb)
                 .apply { if (!config.showTotalXp) shouldDraw = false }
         )
+        //</editor-fold>
+
+        //<editor-fold desc="initializing example lines">
+        exampleLines.add(
+            SingleColorText("Kills: 1,000", config.killColor.rgb)
+                .apply { if (!config.showKills) shouldDraw = false }
+        )
+        exampleLines.add(
+            MultiColorText().apply {
+            add("Sorrows: 100", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+            if (!config.showSorrow) shouldDraw = false
+        })
+        exampleLines.add(
+            MultiColorText().apply {
+            add("Voltas: 200", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+            if (!config.showVolta) shouldDraw = false
+        })
+        exampleLines.add(
+            MultiColorText().apply {
+            add("Plasmas: 50", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+            if (!config.showPlasma) shouldDraw = false
+        })
+        exampleLines.add(
+            MultiColorText().apply {
+            add("Ghostly boots: 5", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+            if (!config.showBoots) shouldDraw = false
+        })
+        exampleLines.add(
+            MultiColorText().apply {
+            add("1m coins: 1", config.dropColor.rgb)
+            if (config.showMargins) add(" (+0.50%)", config.marginColor.rgb)
+            if (!config.showCoins) shouldDraw = false
+        })
+        exampleLines.add(
+            SingleColorText("Average MF: 300.5", config.mfColor.rgb)
+                .apply { if (!config.showMf) shouldDraw = false }
+        )
+        exampleLines.add(
+            SingleColorText("Average XP: 250.5", config.xpColor.rgb)
+                .apply { if (!config.showXp) shouldDraw = false }
+        )
+        exampleLines.add(
+            SingleColorText("Total XP: 1,100,000", config.xpColor.rgb)
+                .apply { if (!config.showTotalXp) shouldDraw = false }
+        )
+        //</editor-fold>
     }
 }
