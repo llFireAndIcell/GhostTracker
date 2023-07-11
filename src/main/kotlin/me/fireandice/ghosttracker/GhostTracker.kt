@@ -2,7 +2,6 @@ package me.fireandice.ghosttracker
 
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
-import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
@@ -11,6 +10,7 @@ import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.event.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
+import me.fireandice.ghosttracker.utils.MOD_DIR
 import me.fireandice.ghosttracker.utils.PREFIX
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import net.minecraftforge.client.ClientCommandHandler
@@ -37,14 +37,13 @@ object GhostTracker {
     const val NAME = "@NAME@"
     const val VERSION = "@VER@"
 
-    val modDir = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
-    private var statsFile = File(modDir, "GhostStats.json")
+    private var statsFile = File(MOD_DIR, "GhostStats.json")
     private var lastSave: Long = -1L
     val ghostStats = GhostStats()
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
-        modDir.mkdirs()
+        MOD_DIR.mkdirs()
 
         if (statsFile.createNewFile()) this.save()
         else this.load()

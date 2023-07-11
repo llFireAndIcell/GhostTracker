@@ -6,7 +6,7 @@ import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import me.fireandice.ghosttracker.GhostTracker
+import me.fireandice.ghosttracker.utils.MOD_DIR
 import me.fireandice.ghosttracker.utils.PREFIX
 import java.io.File
 
@@ -18,9 +18,11 @@ object GhostTimer {
         get() = totalTime + if (isTracking) System.currentTimeMillis() - startTime else 0
 
     var stats = GhostStats()
-    var isTracking = false          // if timer is currently running
+    var isTracking = false
+    val isPaused
+        get() = !isTracking && startTime != -1L
 
-    var file = File(GhostTracker.modDir, "GhostTimer.json")
+    var file = File(MOD_DIR, "GhostTimer.json")
 
     fun start(message: Boolean = true) {
         if (isTracking) {
