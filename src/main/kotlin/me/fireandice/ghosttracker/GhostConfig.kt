@@ -292,35 +292,5 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             if (GhostTimer.isTracking) GhostTimer.pause()
             else GhostTimer.start()
         }
-
-        arrayOf(
-            "showKills",
-            "showSorrow",
-            "showVolta",
-            "showPlasma",
-            "showBoots",
-            "showCoins",
-            "showMf",
-            "showXp",
-            "showTotalXp"
-        ).forEach { optionName ->
-            addListener(optionName) { ghostHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
-        }
-
-        arrayOf(
-            "showKillsPerHour",
-            "showSorrowsPerHour",
-            "showVoltasPerHour",
-            "showPlasmasPerHour",
-            "showBootsPerHour",
-            "showCoinDropsPerHour",
-            "showTimerMf",
-            "showTimerXp",
-            "showXpPerHour",
-            "showTotalTimerXp",
-            "showTime"
-        ).forEach { optionName ->
-            addListener(optionName) { timerHud.onConfigUpdate(optionName, optionNames[optionName]?.get() as Boolean) }
-        }
     }
 }

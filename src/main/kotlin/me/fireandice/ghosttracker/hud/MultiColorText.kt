@@ -1,41 +1,60 @@
 package me.fireandice.ghosttracker.hud
 
-import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 
 class MultiColorText(
     private val shadowType: TextRenderer.TextType = TextRenderer.TextType.SHADOW
 ) : TextComponent {
 
-    private var components: ArrayList<ColoredText> = ArrayList()
+    private var components: ArrayList<SingleColorText> = ArrayList()
+
+    /**
+     * This is unscaled, and is calculated every time the getter is called
+     */
     override val width: Float
         get() {
             var sum = 0f
-            for (comp in components) sum += UMinecraft.getFontRenderer().getStringWidth(comp.text)
+            for (comp in components) if (comp.shouldDraw) sum += comp.width
             return sum
         }
-    override var shouldDraw: Boolean = true
+
+    // multicolor text should only draw if the first component is visible
+    override var shouldDraw: Boolean
+        get() {
+            return try {
+                components[0].shouldDraw
+            } catch (e: IndexOutOfBoundsException) {
+                false
+            }
+        }
+        set(value) {
+            for (comp in components) comp.shouldDraw = value
+        }
 
     override fun draw(x: Float, y: Float, scale: Float) {
-        if (components.isEmpty()) return
-
         var textX = x
 
         for (comp in components) {
-            TextRenderer.drawScaledString(comp.text, textX, y, comp.color, shadowType, scale)
-            textX += UMinecraft.getFontRenderer().getStringWidth(comp.text) * scale
+            if (!comp.shouldDraw) continue
+            comp.draw(textX, y, scale)
+            textX += comp.width * scale
         }
     }
 
-    fun add(text: String, color: Int) {
-        components.add(ColoredText(text, color))
+    private fun add(text: String, color: Int) {
+        components.add(SingleColorText(text, color, shadowType, components[0].shouldDrawCheck))
     }
 
-    fun set(index: Int, value: ColoredText) {
-        components[index] = value
+    fun add(text: String, color: Int, shouldDrawCheck: () -> Boolean) {
+        components.add(SingleColorText(text, color, shadowType, shouldDrawCheck))
     }
 
-    fun set(index: Int, string: String, color: Int) = set(index, ColoredText(string, color))
-
-    class ColoredText(val text: String, val color: Int)
+    fun set(index: Int, text: String, color: Int) {
+        try {
+            if (!components[index].shouldDraw) return
+            components[index].set(text, color)
+        } catch (e: IndexOutOfBoundsException) {
+            add(text, color)
+        }
+    }
 }
