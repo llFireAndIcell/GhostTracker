@@ -1,9 +1,7 @@
-package me.fireandice.ghosttracker.event
+package me.fireandice.ghosttracker.tracker
 
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.GhostTracker
-import me.fireandice.ghosttracker.tracker.GhostDrops
-import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -36,25 +34,16 @@ object GhostListener {
 
         // Detecting one of the various normal rng drops
         val matcher = RARE_DROP_PATTERN.matcher(message)
-        val drop: GhostDrops
 
         if (matcher.matches()) {
-            val dropStr = matcher.group("drop")
-            drop = when (dropStr) {
-                "Sorrow" -> GhostDrops.Sorrow
-                "Volta" -> GhostDrops.Volta
-                "Plasma" -> GhostDrops.Plasma
-                "Ghostly Boots" -> GhostDrops.Boots
-                else -> return  // do not count magic find of non-ghost drops
-            }
+            val drop = GhostDrops.get(matcher.group("drop")) ?: return
             val mf = numberFormat.parse(matcher.group("mf")).toInt()
-
             trackDrops(drop, mf)
         }
     }
 
     /**
-     * Some of the logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
+     * Some logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
      */
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onActionBar(event: ClientChatReceivedEvent) {
@@ -71,7 +60,7 @@ object GhostListener {
 
             val newValue = numberFormat.parse(progress).toFloat()
 
-            // avoids tracking non ghost kills but also saves the xp value so you dont randomly gain 10 thousand kills
+            // avoids tracking non ghost kills but still saves the xp value
             if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100) {
                 prevValue = newValue
                 return
@@ -81,10 +70,11 @@ object GhostListener {
             if (prevValue == -1f) trackKills(1, xpGained)
             else {
                 val actualXpGained = newValue - prevValue
-                // if you gain a bestiary level and gain 1m xp it will count all of those as kills, hence the coerceAtMost
+                // if you gain a bestiary level and gain 1m xp it might count all of those as kills, hence the
+                // coerceAtMost (15 was an arbitrary choice)
                 val killsGained = (actualXpGained / xpGained).roundToInt().coerceAtMost(15)
 
-                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)  // gained * killsGained is more accurate and avoids rounding error
+                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)  // xpGained * killsGained is more accurate and avoids rounding error
             }
             prevValue = newValue
         }

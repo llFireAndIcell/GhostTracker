@@ -1,7 +1,7 @@
 package me.fireandice.ghosttracker.command
 
-import me.fireandice.ghosttracker.GhostConfig
 import me.fireandice.ghosttracker.GhostTracker
+import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import net.minecraft.command.ICommandSender
 

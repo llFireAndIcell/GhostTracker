@@ -2,7 +2,7 @@ package me.fireandice.ghosttracker.tracker
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import me.fireandice.ghosttracker.GhostConfig
+import me.fireandice.ghosttracker.config.GhostConfig
 import java.text.DecimalFormat
 
 class GhostStats {

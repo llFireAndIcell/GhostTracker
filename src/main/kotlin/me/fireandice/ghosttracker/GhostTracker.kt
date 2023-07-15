@@ -2,16 +2,16 @@ package me.fireandice.ghosttracker
 
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
+import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.command.MainCommand
-import me.fireandice.ghosttracker.event.GhostListener
+import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import me.fireandice.ghosttracker.utils.MOD_DIR
-import me.fireandice.ghosttracker.utils.PREFIX
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
@@ -24,6 +24,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent
 import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.io.File
+
+
+val MOD_DIR = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
+const val PREFIX = "§b§lGhostTracker§r§8 »§r"
 
 @Mod(
     modid = GhostTracker.MODID,
