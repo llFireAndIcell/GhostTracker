@@ -1,4 +1,4 @@
-package me.fireandice.ghosttracker
+package me.fireandice.ghosttracker.config
 
 import cc.polyfrost.oneconfig.config.Config
 import cc.polyfrost.oneconfig.config.annotations.*
@@ -7,6 +7,7 @@ import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
+import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
@@ -91,81 +92,81 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var genResetButton = Runnable { GhostTracker.resetStats() }
+    var tracker_resetButton = Runnable { GhostTracker.resetStats() }
     @KeyBind(
         name = "Stat reset keybind",
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var resetStatsKb = OneKeyBind()
+    var tracker_resetKb = OneKeyBind()
 
     @Switch(
         name = "Show kill count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showKills = true
+    var tracker_kills = true
     @Switch(
         name = "Show sorrow count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showSorrow = true
+    var tracker_sorrow = true
     @Switch(
         name = "Show volta count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showVolta = true
+    var tracker_volta = true
     @Switch(
         name = "Show plasma count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showPlasma = true
+    var tracker_plasma = true
     @Switch(
         name = "Show ghostly boots count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showBoots = true
+    var tracker_boots = true
     @Switch(
         name = "Show 1m coin drop count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showCoins = true
+    var tracker_coins = true
     @Switch(
         name = "Show percent difference",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showMargins = true
+    var tracker_margins = true
     @Switch(
         name = "Show average magic find",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showMf = true
+    var tracker_mf = true
     @Switch(
         name = "Show average combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showXp = true
+    var tracker_averageXp = true
     @Switch(
         name = "Show total combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
-    var showTotalXp = true
+    var tracker_totalXp = true
 
     @HUD(
         name = "Stats HUD",
         category = "Stat Tracker",
         subcategory = "HUD Settings"
     )
-    var ghostHud = GhostHud()
+    var tracker_hud = GhostHud()
     //</editor-fold>
 
     //<editor-fold desc="Session timer settings">
@@ -175,13 +176,13 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Timer",
         subcategory = "Control Panel"
     )
-    var resetButton = Runnable { GhostTimer.reset() }
+    var timer_resetButton = Runnable { GhostTimer.reset() }
     @KeyBind(
         name = "Reset timer keybind",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
-    var resetTimerKb = OneKeyBind()
+    var timer_resetKb = OneKeyBind()
     @Button(
         name = "Start/resume timer",
         text = "Start",
@@ -208,86 +209,86 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showKillsPerHour = true
+    var timer_kills = true
     @Switch(
         name = "Show sorrows per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showSorrowsPerHour = true
+    var timer_sorrow = true
     @Switch(
         name = "Show voltas per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showVoltasPerHour = true
+    var timer_volta = true
     @Switch(
         name = "Show plasmas per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showPlasmasPerHour = true
+    var timer_plasma = true
     @Switch(
         name = "Show ghostly boots per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showBootsPerHour = true
+    var timer_boots = true
     @Switch(
         name = "Show 1m coins per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showCoinDropsPerHour = true
+    var timer_coins = true
     @Switch(
         name = "Show percent difference",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showTimerMargins = true
+    var timer_margins = true
     @Switch(
         name = "Show average magic find",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showTimerMf = true
+    var timer_mf = true
     @Switch(
         name = "Show average combat XP",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showTimerXp = true
+    var timer_averageXp = true
     @Switch(
         name = "Show combat XP per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showXpPerHour = true
+    var timer_xpRate = true
     @Switch(
         name = "Show total combat XP",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showTotalTimerXp = true
+    var timer_totalXp = true
     @Switch(
         name = "Show session time",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var showTime = true
+    var timer_time = true
 
     @HUD(
         name = "Session timer HUD",
         category = "Session Timer",
         subcategory = "HUD Settings"
     )
-    var timerHud = TimerHud()
+    var timer_hud = TimerHud()
     //</editor-fold>
 
     init {
         initialize()
-        registerKeyBind(resetStatsKb) { GhostTracker.resetStats() }
-        registerKeyBind(resetTimerKb) { GhostTimer.reset() }
+        registerKeyBind(tracker_resetKb) { GhostTracker.resetStats() }
+        registerKeyBind(timer_resetKb) { GhostTimer.reset() }
         registerKeyBind(pauseKb) {
             if (GhostTimer.isTracking) GhostTimer.pause()
             else GhostTimer.start()
