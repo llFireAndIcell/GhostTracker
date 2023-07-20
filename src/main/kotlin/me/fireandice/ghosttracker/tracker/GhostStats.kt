@@ -96,13 +96,13 @@ class GhostStats {
         totalXp = 0f
     }
 
-    fun toJson() = JsonObject().apply { for (entry in stats) add(entry.key, JsonPrimitive(entry.value)) }
+    fun toJson() = JsonObject().apply { for (stat in stats) add(stat.key, JsonPrimitive(stat.value)) }
 
     fun fromJson(json: JsonObject) {
-        for (entry in stats) {
-            val jsonElement = json[entry.key] ?: continue
+        for (stat in stats) {
+            val jsonElement = json[stat.key] ?: continue
             try {
-                stats[entry.key] = jsonElement.asFloat
+                stats[stat.key] = jsonElement.asFloat
             } catch (_: Exception) {
             }
         }

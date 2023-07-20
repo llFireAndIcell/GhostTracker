@@ -17,11 +17,11 @@ object GhostTimer {
     val elapsedTime: Long           // "stores" the real elapsed time of the timed session
         get() = totalTime + if (isTracking) System.currentTimeMillis() - startTime else 0
 
-    var stats = GhostStats()
     var isTracking = false
     val isPaused
-        get() = !isTracking && startTime != -1L
+        get() = !isTracking && totalTime != 0L
 
+    var stats = GhostStats()
     var file = File(MOD_DIR, "GhostTimer.json")
 
     fun start(message: Boolean = true) {
@@ -54,8 +54,7 @@ object GhostTimer {
 
     fun save() {
         val gson = GsonBuilder().setPrettyPrinting().create()
-        val jsonObj = stats.toJson()
-        jsonObj.add("time", JsonPrimitive(elapsedTime))
+        val jsonObj = stats.toJson().apply { add("time", JsonPrimitive(elapsedTime)) }
 
         val jsonString = gson.toJson(jsonObj)
         file.bufferedWriter().use { it.write(jsonString) }
@@ -65,8 +64,7 @@ object GhostTimer {
         pause(false)
         try {
             val jsonString = file.bufferedReader().use { it.readText() }
-            val gson = Gson()
-            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
+            val jsonObject: JsonObject = Gson().fromJson(jsonString, JsonObject::class.java)
 
             stats.fromJson(jsonObject)
             totalTime = jsonObject["time"].asLong
