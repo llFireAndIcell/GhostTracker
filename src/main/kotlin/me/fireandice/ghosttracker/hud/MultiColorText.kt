@@ -20,12 +20,10 @@ class MultiColorText(
 
     // multicolor text should only draw if the first component is visible
     override var shouldDraw: Boolean
-        get() {
-            return try {
-                components[0].shouldDraw
-            } catch (e: IndexOutOfBoundsException) {
-                false
-            }
+        get() = try {
+            components[0].shouldDraw
+        } catch (e: IndexOutOfBoundsException) {
+            false
         }
         set(value) {
             for (comp in components) comp.shouldDraw = value
@@ -41,10 +39,6 @@ class MultiColorText(
         }
     }
 
-    private fun add(text: String, color: Int) {
-        components.add(SingleColorText(text, color, shadowType, components[0].shouldDrawCheck))
-    }
-
     fun add(text: String, color: Int, shouldDrawCheck: () -> Boolean) {
         components.add(SingleColorText(text, color, shadowType, shouldDrawCheck))
     }
@@ -54,7 +48,7 @@ class MultiColorText(
             if (!components[index].shouldDraw) return
             components[index].set(text, color)
         } catch (e: IndexOutOfBoundsException) {
-            add(text, color)
+            add(text, color, components[0].shouldDrawCheck)
         }
     }
 }
