@@ -2,12 +2,11 @@ package me.fireandice.ghosttracker.tracker
 
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import me.fireandice.ghosttracker.MOD_DIR
 import me.fireandice.ghosttracker.PREFIX
+import me.fireandice.ghosttracker.utils.gson
 import java.io.File
 
 object GhostTimer {
@@ -53,9 +52,7 @@ object GhostTimer {
     }
 
     fun save() {
-        val gson = GsonBuilder().setPrettyPrinting().create()
         val jsonObj = stats.toJson().apply { add("time", JsonPrimitive(elapsedTime)) }
-
         val jsonString = gson.toJson(jsonObj)
         file.bufferedWriter().use { it.write(jsonString) }
     }
@@ -64,7 +61,7 @@ object GhostTimer {
         pause(false)
         try {
             val jsonString = file.bufferedReader().use { it.readText() }
-            val jsonObject: JsonObject = Gson().fromJson(jsonString, JsonObject::class.java)
+            val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
 
             stats.fromJson(jsonObject)
             totalTime = jsonObject["time"].asLong

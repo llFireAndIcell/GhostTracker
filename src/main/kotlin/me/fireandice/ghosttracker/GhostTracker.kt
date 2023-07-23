@@ -4,8 +4,6 @@ import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.config.GhostConfig
@@ -13,6 +11,7 @@ import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
+import me.fireandice.ghosttracker.utils.gson
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.event.world.WorldEvent
@@ -97,7 +96,6 @@ object GhostTracker {
     }
 
     private fun save() {
-        val gson = GsonBuilder().setPrettyPrinting().create()
         val jsonString = gson.toJson(ghostStats.toJson())
         statsFile.bufferedWriter().use { it.write(jsonString) }
     }
@@ -105,7 +103,7 @@ object GhostTracker {
     private fun load() {
         try {
             val jsonString = statsFile.bufferedReader().use { it.readText() }
-            Gson().fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
+            gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
         } catch (_: Exception) {
         }
     }
