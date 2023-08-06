@@ -25,8 +25,7 @@ object ScoreboardUtils {
         val scores: List<Score> = ArrayList(scoreboard.getSortedScores(sidebarObjective))
         val lines: MutableList<String> = ArrayList()
 
-        for (i in scores.indices.reversed()) {
-            val score = scores[i]
+        for (score in scores.reversed()) {
             val scoreplayerteam1 = scoreboard.getPlayersTeam(score.playerName)
             val line = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score.playerName)
             lines.add(line)
@@ -35,9 +34,10 @@ object ScoreboardUtils {
     }
 
     private fun inSkyblock(): Boolean {
-        if (mc.theWorld == null || mc.thePlayer == null) return false
-        if (mc.isSingleplayer) return false
-        if (mc.thePlayer.clientBrand?.contains("hypixel", true) == false) return false
+        if (mc.theWorld == null
+            || mc.thePlayer == null
+            || mc.isSingleplayer
+            || mc.thePlayer.clientBrand?.contains("hypixel", true) == false) return false
         val objective = mc.thePlayer.worldScoreboard.getObjectiveInDisplaySlot(1) ?: return false
         return objective.displayName.stripControlCodes().contains("skyblock", true)
     }
@@ -59,7 +59,10 @@ object ScoreboardUtils {
 
         if (line != null) {
             line = line.stripControlCodes()
-            for (loc in locations) if (line.contains(loc, true)) inDwarvenMines = true
+            for (loc in locations) if (loc in line) {
+                inDwarvenMines = true
+                return
+            }
         }
     }
 }

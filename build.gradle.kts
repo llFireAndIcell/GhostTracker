@@ -1,3 +1,5 @@
+@file:Suppress("PropertyName")
+
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import cc.polyfrost.gradle.util.noServerRunConfigs
 
