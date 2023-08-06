@@ -1,4 +1,4 @@
-package me.fireandice.ghosttracker.hud
+package me.fireandice.ghosttracker.hud.elements
 
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 

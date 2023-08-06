@@ -3,6 +3,9 @@ package me.fireandice.ghosttracker.hud
 import cc.polyfrost.oneconfig.hud.BasicHud
 import cc.polyfrost.oneconfig.libs.universal.UMatrixStack
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.hud.elements.MultiColorText
+import me.fireandice.ghosttracker.hud.elements.SingleColorText
+import me.fireandice.ghosttracker.hud.elements.TextComponent
 import me.fireandice.ghosttracker.tracker.GhostDrops
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.FONT_HEIGHT
