@@ -77,8 +77,8 @@ class GhostStats {
         return (actual - theoretical) / theoretical
     }
 
-    fun getPercentDifference(drop: GhostDrops, format: DecimalFormat): String? {
-        val diff = getRelativeDifference(drop) ?: return null
+    fun getPercentDifference(drop: GhostDrops, format: DecimalFormat): String {
+        val diff = getRelativeDifference(drop) ?: return ""
         val percentString = format.format(diff * 100)
         if (diff >= 0) return "+$percentString%"
         return "$percentString%"    // it already puts the - sign there if it's negative

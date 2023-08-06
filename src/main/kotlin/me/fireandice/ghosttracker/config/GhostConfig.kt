@@ -7,6 +7,7 @@ import cc.polyfrost.oneconfig.config.core.OneColor
 import cc.polyfrost.oneconfig.config.core.OneKeyBind
 import cc.polyfrost.oneconfig.config.data.Mod
 import cc.polyfrost.oneconfig.config.data.ModType
+import cc.polyfrost.oneconfig.renderer.TextRenderer.TextType
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
@@ -21,6 +22,14 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "General"
     )
     var showEverywhere = false
+
+    @Deprecated(message = "Not actually deprecated, just shouldn't be used", replaceWith = ReplaceWith("GhostConfig.shadow()"))
+    @Dropdown(
+        name = "Shadow type",
+        options = ["None", "Shadow", "Full shadow"],
+        category = "General"
+    )
+    var shadow = 1
 
     @Number(
         name = "Looting level",
@@ -293,5 +302,11 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             if (GhostTimer.isTracking) GhostTimer.pause()
             else GhostTimer.start()
         }
+    }
+
+    fun shadow() = when (shadow) {
+        1 -> TextType.SHADOW
+        2 -> TextType.FULL
+        else -> TextType.NONE
     }
 }
