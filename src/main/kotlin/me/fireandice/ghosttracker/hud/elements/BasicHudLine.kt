@@ -3,9 +3,9 @@ package me.fireandice.ghosttracker.hud.elements
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
-import me.fireandice.ghosttracker.hud.Image
 import me.fireandice.ghosttracker.utils.FONT_HEIGHT
-import net.minecraft.client.gui.Gui
+import me.fireandice.ghosttracker.utils.drawTexturedRect
+import net.minecraft.util.ResourceLocation
 import kotlin.reflect.KProperty0
 
 /**
@@ -19,7 +19,7 @@ import kotlin.reflect.KProperty0
 class BasicHudLine(
     var prefix: String? = null,
     var text: ColoredText,
-    private val image: Image,
+    private val image: ResourceLocation,
     private var visible: KProperty0<Boolean>
 ) : HudLine {
 
@@ -36,20 +36,19 @@ class BasicHudLine(
     override fun draw(x: Float, y: Float, scale: Float): Boolean {
         if (!visible.get()) return false
 
-        val scale = 1f  // TODO remove this when I add scaling support
-
         var currentX = x
         if (GhostConfig.showIcons) {
-            mc.textureManager.bindTexture(image.location)
-            Gui.drawModalRectWithCustomSizedTexture(
-                currentX.toInt(),
-                y.toInt(),
+            val guiScale = mc.gameSettings.guiScale
+            mc.textureManager.bindTexture(image)
+            drawTexturedRect(
+                currentX.toDouble(),
+                y.toDouble(),
                 0f,
                 0f,
-                8 * scale.toInt(),
-                8 * scale.toInt(),
-                image.width.toFloat(),
-                image.height.toFloat()
+                8 * scale.toDouble(),
+                8 * scale.toDouble(),
+                16f / guiScale * scale,
+                16f / guiScale * scale
             )
             currentX += 10 * scale
         }

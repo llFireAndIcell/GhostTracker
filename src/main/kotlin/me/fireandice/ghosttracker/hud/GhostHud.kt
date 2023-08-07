@@ -39,61 +39,61 @@ class GhostHud : BasicHud(true) {
         lines += BasicHudLine(
             "Kills: ",
             intFormat.format(stats.kills) with config::killColor,
-            Image.Kills,
+            Images.Kills,
             config::tracker_kills
         )
         lines += SuffixHudLine(
             "Sorrows: ",
             intFormat.format(stats.sorrowCount) with config::dropColor,
             stats.getPercentDifference(GhostDrops.Sorrow, marginFormat) with config::marginColor,
-            Image.Sorrow,
+            Images.Sorrow,
             config::tracker_sorrow
         ) { config.showMargins && stats.sorrowCount != 0 }
         lines += SuffixHudLine(
             "Voltas: ",
             intFormat.format(stats.voltaCount) with config::dropColor,
             stats.getPercentDifference(GhostDrops.Volta, marginFormat) with config::marginColor,
-            Image.Volta,
+            Images.Volta,
             config::tracker_volta
         ) { config.showMargins && stats.voltaCount != 0 }
         lines += SuffixHudLine(
             "Plasmas: ",
             intFormat.format(stats.plasmaCount) with config::dropColor,
             stats.getPercentDifference(GhostDrops.Plasma, marginFormat) with config::marginColor,
-            Image.Plasma,
+            Images.Plasma,
             config::tracker_plasma
         ) { config.showMargins && stats.plasmaCount != 0 }
         lines += SuffixHudLine(
             "Ghostly Boots: ",
             intFormat.format(stats.bootsCount) with config::dropColor,
             stats.getPercentDifference(GhostDrops.Boots, marginFormat) with config::marginColor,
-            Image.Boots,
+            Images.Boots,
             config::tracker_boots
         ) { config.showMargins && stats.bootsCount != 0 }
         lines += SuffixHudLine(
             "1m Coins: ",
             intFormat.format(stats.coinsCount) with config::dropColor,
             stats.getPercentDifference(GhostDrops.Coins, marginFormat) with config::marginColor,
-            Image.Coins,
+            Images.Coins,
             config::tracker_coins
         ) { config.showMargins && stats.coinsCount != 0 }
         lines += BasicHudLine(
             "Average MF: ",
             stats.getAverageMf(decimalFormat) with config::mfColor,
-            Image.MagicFind,
+            Images.MagicFind,
             config::tracker_mf
         )
         val averageXp = stats.getAverageXp(decimalFormat)
         lines += BasicHudLine(
             "Average XP: ",
             (if (config.showPrefixes) averageXp else "$averageXp/kill") with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::tracker_averageXp
         )
         lines += BasicHudLine(
             "Total XP: ",
             decimalFormat.format(stats.totalXp) with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::tracker_totalXp
         )
         //</editor-fold>
@@ -102,60 +102,60 @@ class GhostHud : BasicHud(true) {
         exampleLines += BasicHudLine(
             "Kills: ",
             "1,000" with config::killColor,
-            Image.Kills,
+            Images.Kills,
             config::tracker_kills
         )
         exampleLines += SuffixHudLine(
             "Sorrows: ",
             "100" with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Sorrow,
+            Images.Sorrow,
             config::tracker_sorrow
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Voltas: ",
             "200" with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Volta,
+            Images.Volta,
             config::tracker_volta
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Plasmas: ",
             "50" with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Plasma,
+            Images.Plasma,
             config::tracker_plasma
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Ghostly Boots: ",
             "5" with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Boots,
+            Images.Boots,
             config::tracker_boots
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "1m Coins: ",
             "1" with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Coins,
+            Images.Coins,
             config::tracker_coins
         ) { config.showMargins }
         exampleLines += BasicHudLine(
             "Average MF: ",
             "300.5" with config::mfColor,
-            Image.MagicFind,
+            Images.MagicFind,
             config::tracker_mf
         )
         exampleLines += BasicHudLine(
             "Average XP: ",
             "250.5" with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::tracker_averageXp
         )
         exampleLines += BasicHudLine(
             "Total XP: ",
             "1,100,000" with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::tracker_averageXp
         )
         //</editor-fold>
@@ -173,8 +173,6 @@ class GhostHud : BasicHud(true) {
         var drawnLines = 0
         var textY = y
         var longestLine = 0f
-
-        val scale = 1f  // TODO remove this when I add scaling support
 
         for (line in linesToDraw) {
             if (!line.draw(x, textY, scale)) continue
@@ -231,8 +229,10 @@ class GhostHud : BasicHud(true) {
         if (config.tracker_mf)
             (lines[6] as BasicHudLine).text.text = stats.getAverageMf(decimalFormat)
 
-        if (config.tracker_averageXp)
-            (lines[7] as BasicHudLine).text.text = stats.getAverageXp(decimalFormat)
+        if (config.tracker_averageXp) {
+            val averageXp = stats.getAverageXp(decimalFormat)
+            (lines[7] as BasicHudLine).text.text = if (config.showPrefixes) averageXp else "$averageXp/kill"
+        }
 
         if (config.tracker_totalXp)
             (lines[8] as BasicHudLine).text.text = decimalFormat.format(stats.totalXp)

@@ -44,7 +44,7 @@ class TimerHud : BasicHud(true) {
         lines += BasicHudLine(
             "Kills/hr: ",
             (if (config.showPrefixes) killRate else "$killRate/hr") with config::killColor,
-            Image.Kills,
+            Images.Kills,
             config::timer_kills
         )
 
@@ -55,7 +55,7 @@ class TimerHud : BasicHud(true) {
             "Sorrows/hr: ",
             (if (config.showPrefixes) sorrowRate else "$sorrowRate/hr") with config::dropColor,
             " (${stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)})" with config::marginColor,
-            Image.Sorrow,
+            Images.Sorrow,
             config::timer_sorrow,
         ) { config.showMargins && stats.sorrowCount != 0 }
 
@@ -66,7 +66,7 @@ class TimerHud : BasicHud(true) {
             "Voltas/hr: ",
             (if (config.showPrefixes) voltaRate else "$voltaRate/hr") with config::dropColor,
             " (${stats.getPercentDifference(GhostDrops.Volta, marginFormat)})" with config::marginColor,
-            Image.Volta,
+            Images.Volta,
             config::timer_volta,
         ) { config.showMargins && stats.voltaCount != 0 }
 
@@ -77,7 +77,7 @@ class TimerHud : BasicHud(true) {
             "Plasmas/hr: ",
             (if (config.showPrefixes) plasmaRate else "$plasmaRate/hr") with config::dropColor,
             " (${stats.getPercentDifference(GhostDrops.Plasma, marginFormat)})" with config::marginColor,
-            Image.Plasma,
+            Images.Plasma,
             config::timer_plasma,
         ) { config.showMargins && stats.plasmaCount != 0 }
 
@@ -88,7 +88,7 @@ class TimerHud : BasicHud(true) {
             "Ghostly Boots/hr: ",
             (if (config.showPrefixes) bootsRate else "$bootsRate/hr") with config::dropColor,
             " (${stats.getPercentDifference(GhostDrops.Boots, marginFormat)})" with config::marginColor,
-            Image.Boots,
+            Images.Boots,
             config::timer_boots,
         ) { config.showMargins && stats.bootsCount != 0 }
 
@@ -99,14 +99,14 @@ class TimerHud : BasicHud(true) {
             "1m Coins/hr: ",
             (if (config.showPrefixes) coinsRate else "$coinsRate/hr") with config::dropColor,
             " (${stats.getPercentDifference(GhostDrops.Coins, marginFormat)})" with config::marginColor,
-            Image.Coins,
+            Images.Coins,
             config::timer_coins,
         ) { config.showMargins && stats.coinsCount != 0 }
 
         lines += BasicHudLine(
             "Average MF: ",
             stats.getAverageMf(format) with config::mfColor,
-            Image.MagicFind,
+            Images.MagicFind,
             config::timer_mf
         )
 
@@ -114,7 +114,7 @@ class TimerHud : BasicHud(true) {
         lines += BasicHudLine(
             "Average XP: ",
             (if (config.showPrefixes) averageXp else "$averageXp/kill") with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_averageXp
         )
 
@@ -124,14 +124,14 @@ class TimerHud : BasicHud(true) {
         lines += BasicHudLine(
             "XP/hr: ",
             (if (config.showPrefixes) xpRate else "$xpRate/hr") with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_xpRate
         )
 
         lines += BasicHudLine(
             "Total XP: ",
             format.format(stats.totalXp) with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_totalXp
         )
 
@@ -150,7 +150,7 @@ class TimerHud : BasicHud(true) {
             "Time: ",
             timeString with config::timeColor,
             " (Paused)" with config::marginColor,
-            Image.Time,
+            Images.Time,
             config::timer_time,
         ) { GhostTimer.isPaused }
         //</editor-fold>
@@ -159,73 +159,73 @@ class TimerHud : BasicHud(true) {
         exampleLines += BasicHudLine(
             "Kills/hr: ",
             (if (config.showPrefixes) "6,000" else "6,000/hr") with config::killColor,
-            Image.Kills,
+            Images.Kills,
             config::timer_kills
         )
         exampleLines += SuffixHudLine(
             "Sorrows/hr: ",
             (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Sorrow,
+            Images.Sorrow,
             config::timer_sorrow
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Voltas/hr: ",
             (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Volta,
+            Images.Volta,
             config::timer_volta
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Plasmas/hr: ",
             (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Plasma,
+            Images.Plasma,
             config::timer_plasma
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Ghostly Boots/hr: ",
             (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Boots,
+            Images.Boots,
             config::timer_boots
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "1m Coins/hr: ",
             (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
             " (+0.50%)" with config::marginColor,
-            Image.Coins,
+            Images.Coins,
             config::timer_coins
         ) { config.showMargins }
         exampleLines += BasicHudLine(
             "Average MF: ",
             "215.33" with config::mfColor,
-            Image.MagicFind,
+            Images.MagicFind,
             config::timer_mf
         )
         exampleLines += BasicHudLine(
             "Average XP: ",
             (if (config.showPrefixes) "183.33" else "183.33/kill") with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_averageXp
         )
         exampleLines += BasicHudLine(
             "XP/hr: ",
             (if (config.showPrefixes) "1,100,000" else "1,100,000/hr") with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_xpRate
         )
         exampleLines += BasicHudLine(
             "Total XP: ",
             "1,100,000" with config::xpColor,
-            Image.CombatXp,
+            Images.CombatXp,
             config::timer_totalXp
         )
         exampleLines += SuffixHudLine(
             "Time: ",
             "1h 0m 0s" with config::timeColor,
             " (Paused)" with config::pauseColor,
-            Image.Time,
+            Images.Time,
             config::timer_time
         ) { true }
         //</editor-fold>
@@ -245,8 +245,6 @@ class TimerHud : BasicHud(true) {
         var drawnLines = 0
         var textY = y
         var longestLine = 0f
-
-        val scale = 1f  // TODO remove this when I add scaling support
 
         for (line in linesToDraw) {
             if (!line.draw(x, textY, scale)) continue
