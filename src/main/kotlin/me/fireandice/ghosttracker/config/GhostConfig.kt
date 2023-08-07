@@ -22,14 +22,31 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "General"
     )
     var showEverywhere = false
-
-    @Deprecated(message = "Not actually deprecated, just shouldn't be used", replaceWith = ReplaceWith("GhostConfig.shadow()"))
+    @Deprecated("Not actually deprecated, just shouldn't be used", ReplaceWith("GhostConfig.shadow()"))
     @Dropdown(
         name = "Shadow type",
         options = ["None", "Shadow", "Full shadow"],
         category = "General"
     )
     var shadow = 1
+    @Switch(
+        name = "Show icons",
+        description = "Show a small icon to the left of every hud line",
+        category = "General"
+    )
+    var showIcons = true
+    @Switch(
+        name = "Show prefixes",
+        description = "Show text before every hud line (and after the icon) that describes it",
+        category = "General"
+    )
+    var showPrefixes = true
+    @Switch(
+        name = "Show margins",
+        description = "Show the percent difference between drops you've received and the mathematical average",
+        category = "General"
+    )
+    var showMargins = true
 
     @Number(
         name = "Looting level",
@@ -146,12 +163,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var tracker_coins = true
     @Switch(
-        name = "Show percent difference",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_margins = true
-    @Switch(
         name = "Show average magic find",
         category = "Stat Tracker",
         subcategory = "Display Information"
@@ -249,12 +260,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Display Information"
     )
     var timer_coins = true
-    @Switch(
-        name = "Show percent difference",
-        category = "Session Timer",
-        subcategory = "Display Information"
-    )
-    var timer_margins = true
     @Switch(
         name = "Show average magic find",
         category = "Session Timer",

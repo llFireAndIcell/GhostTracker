@@ -2,7 +2,6 @@ package me.fireandice.ghosttracker.hud.elements
 
 interface HudLine {
 
-    val id: String
     val width: Float
     val height: Float
 
