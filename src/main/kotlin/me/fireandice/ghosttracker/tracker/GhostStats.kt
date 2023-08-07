@@ -72,6 +72,8 @@ class GhostStats {
             }
             GhostDrops.Coins -> coinsCount
         }
+        if (actual == 0) return null    // this would display "-100.00%" which I don't really want
+
         val theoretical = kills * drop.baseChance * chanceModifier
 
         return (actual - theoretical) / theoretical
@@ -80,8 +82,8 @@ class GhostStats {
     fun getPercentDifference(drop: GhostDrops, format: DecimalFormat): String {
         val diff = getRelativeDifference(drop) ?: return ""
         val percentString = format.format(diff * 100)
-        if (diff >= 0) return "+$percentString%"
-        return "$percentString%"    // it already puts the - sign there if it's negative
+        if (diff >= 0) return " (+$percentString%)"
+        return " ($percentString%)"    // it already puts the - sign there if it's negative
     }
 
     fun reset() {
