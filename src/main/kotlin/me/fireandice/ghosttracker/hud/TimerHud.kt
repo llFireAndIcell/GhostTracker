@@ -336,7 +336,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_xpRate) {
             val xpRate =
                 if (millis == 0L) "-"
-                else (format.format(stats.totalXp / seconds))
+                else (format.format(stats.totalXp / seconds * 3600))
             (lines[8] as BasicHudLine).text.text = if (config.showPrefixes) xpRate else "$xpRate/hr"
         }
 
