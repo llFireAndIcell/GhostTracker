@@ -166,6 +166,7 @@ class GhostHud : BasicHud(true) {
     override fun shouldShow(): Boolean = isEnabled && (GhostConfig.showEverywhere || ScoreboardUtils.inDwarvenMines)
 
     override fun draw(matrices: UMatrixStack?, x: Float, y: Float, scale: Float, example: Boolean) {
+        if (example) return drawLines(exampleLines, x, y, scale)
         drawLines(lines, x, y, scale)
     }
 
