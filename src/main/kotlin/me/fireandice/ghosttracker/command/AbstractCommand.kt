@@ -4,8 +4,8 @@ import net.minecraft.command.CommandBase
 import net.minecraft.command.ICommandSender
 
 /**
- * A class to simplify the process of creating new commands. New commands can extend this class and must implement the
- * `processCommand()` method
+ * A class to simplify the process of creating new commands. Commands should implement this class. The functionality of
+ * the command is in [processCommand]
  */
 abstract class AbstractCommand(
     private val name: String,

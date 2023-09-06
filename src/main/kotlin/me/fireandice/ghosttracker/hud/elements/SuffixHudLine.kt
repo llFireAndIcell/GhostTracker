@@ -23,25 +23,23 @@ class SuffixHudLine(
     var text: ColoredText,
     var margin: ColoredText,
     private val image: ResourceLocation,
-    private val visible: KProperty0<Boolean>,
-    private val suffixVisible: () -> Boolean
+    val visible: KProperty0<Boolean>,
+    val suffixVisible: () -> Boolean
 ) : HudLine {
 
-    override val width: Float
-        get() {
-            var w = mc.fontRendererObj.getStringWidth(text.text).toFloat()
-            if (GhostConfig.showIcons) w += 10
-            if (GhostConfig.showPrefixes) w += mc.fontRendererObj.getStringWidth(prefix)
-            if (suffixVisible()) w += mc.fontRendererObj.getStringWidth(margin.text)
-            return w
-        }
-    override val height: Float
-        get() = FONT_HEIGHT.toFloat()
+    override var width: Float = 0f
+    override var height: Float = 0f
 
     override fun draw(x: Float, y: Float, scale: Float): Boolean {
-        if (!visible.get()) return false
+        if (!visible.get()) {
+            width = 0f
+            height = 0f
+            return false
+        }
+        height = 9f
 
         var currentX = x
+        var currentWidth = 0f
         if (GhostConfig.showIcons) {
             val guiScale = mc.gameSettings.guiScale
             mc.textureManager.bindTexture(image)
@@ -56,18 +54,26 @@ class SuffixHudLine(
                 16f / guiScale * scale
             )
             currentX += 10 * scale
+            currentWidth += 10
         }
 
         if (GhostConfig.showPrefixes) {
             TextRenderer.drawScaledString(prefix, currentX, y, text.color, GhostConfig.shadow(), scale)
-            currentX += mc.fontRendererObj.getStringWidth(prefix) * scale
+            val prefixWidth = mc.fontRendererObj.getStringWidth(prefix)
+            currentX += prefixWidth * scale
+            currentWidth += prefixWidth
         }
 
         TextRenderer.drawScaledString(text.text, currentX, y, text.color, GhostConfig.shadow(), scale)
+        val textWidth = mc.fontRendererObj.getStringWidth(text.text)
+        currentWidth += textWidth
 
         if (!suffixVisible()) return true
-        currentX += mc.fontRendererObj.getStringWidth(text.text) * scale
+        currentX += textWidth * scale
         TextRenderer.drawScaledString(margin.text, currentX, y, margin.color, GhostConfig.shadow(), scale)
+        currentWidth += mc.fontRendererObj.getStringWidth(margin.text)
+
+        width = currentWidth
         return true
     }
 }

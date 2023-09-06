@@ -195,35 +195,35 @@ class GhostHud : BasicHud(true) {
         if (config.tracker_sorrow) {
             val line = lines[1] as SuffixHudLine
             line.text.text = intFormat.format(stats.sorrowCount)
-            if (config.showMargins && stats.sorrowCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
         }
 
         if (config.tracker_volta) {
             val line = lines[2] as SuffixHudLine
             line.text.text = intFormat.format(stats.voltaCount)
-            if (config.showMargins && stats.voltaCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
         }
 
         if (config.tracker_plasma) {
             val line = lines[3] as SuffixHudLine
             line.text.text = intFormat.format(stats.plasmaCount)
-            if (config.showMargins && stats.plasmaCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
         }
 
         if (config.tracker_boots) {
             val line = lines[4] as SuffixHudLine
             line.text.text = intFormat.format(stats.bootsCount)
-            if (config.showMargins && stats.bootsCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
         }
 
         if (config.tracker_coins) {
             val line = lines[5] as SuffixHudLine
             line.text.text = intFormat.format(stats.coinsCount)
-            if (config.showMargins && stats.coinsCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
         }
 
