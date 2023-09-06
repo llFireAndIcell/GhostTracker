@@ -3,7 +3,6 @@ package me.fireandice.ghosttracker.hud.elements
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
-import me.fireandice.ghosttracker.utils.FONT_HEIGHT
 import me.fireandice.ghosttracker.utils.drawTexturedRect
 import net.minecraft.util.ResourceLocation
 import kotlin.reflect.KProperty0
