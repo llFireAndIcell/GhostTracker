@@ -1,6 +1,5 @@
 package me.fireandice.ghosttracker.hud.elements
 
-import cc.polyfrost.oneconfig.libs.universal.UResolution
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
@@ -25,14 +24,7 @@ class BasicHudLine(
 ) : HudLine {
 
     override var width: Float = 0f
-        get() {
-            var w = mc.fontRendererObj.getStringWidth(text.text).toFloat()
-            if (GhostConfig.showIcons) w += 10
-            if (GhostConfig.showPrefixes && prefix != null) w += mc.fontRendererObj.getStringWidth(prefix)
-            return w
-        }
     override var height: Float = 0f
-        get() = FONT_HEIGHT.toFloat()
 
     override fun draw(x: Float, y: Float, scale: Float): Boolean {
         if (!visible.get()) {
