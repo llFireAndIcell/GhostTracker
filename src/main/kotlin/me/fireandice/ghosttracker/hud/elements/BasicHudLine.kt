@@ -1,5 +1,6 @@
 package me.fireandice.ghosttracker.hud.elements
 
+import cc.polyfrost.oneconfig.libs.universal.UResolution
 import cc.polyfrost.oneconfig.renderer.TextRenderer
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
@@ -23,20 +24,26 @@ class BasicHudLine(
     private var visible: KProperty0<Boolean>
 ) : HudLine {
 
-    override val width: Float
+    override var width: Float = 0f
         get() {
             var w = mc.fontRendererObj.getStringWidth(text.text).toFloat()
             if (GhostConfig.showIcons) w += 10
             if (GhostConfig.showPrefixes && prefix != null) w += mc.fontRendererObj.getStringWidth(prefix)
             return w
         }
-    override val height: Float
+    override var height: Float = 0f
         get() = FONT_HEIGHT.toFloat()
 
     override fun draw(x: Float, y: Float, scale: Float): Boolean {
-        if (!visible.get()) return false
+        if (!visible.get()) {
+            width = 0f
+            height = 0f
+            return false
+        }
+        height = 9f
 
         var currentX = x
+        var currentWidth = 0f
         if (GhostConfig.showIcons) {
             val guiScale = mc.gameSettings.guiScale
             mc.textureManager.bindTexture(image)
@@ -51,14 +58,19 @@ class BasicHudLine(
                 16f / guiScale * scale
             )
             currentX += 10 * scale
+            currentWidth += 10
         }
 
         if (GhostConfig.showPrefixes) {
             TextRenderer.drawScaledString(prefix, currentX, y, text.color, GhostConfig.shadow(), scale)
-            currentX += mc.fontRendererObj.getStringWidth(prefix) * scale
+            val prefixWidth = mc.fontRendererObj.getStringWidth(prefix)
+            currentX += prefixWidth * scale
+            currentWidth += prefixWidth
         }
 
         TextRenderer.drawScaledString(text.text, currentX, y, text.color, GhostConfig.shadow(), scale)
+        currentWidth += mc.fontRendererObj.getStringWidth(text.text)
+        width = currentWidth
         return true
     }
 }

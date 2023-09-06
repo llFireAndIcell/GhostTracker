@@ -277,7 +277,7 @@ class TimerHud : BasicHud(true) {
 
             val line = lines[1] as SuffixHudLine
             line.text.text = if (config.showPrefixes) sorrowRate else "$sorrowRate/hr"
-            if (config.showMargins && stats.sorrowCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
         }
 
@@ -288,7 +288,7 @@ class TimerHud : BasicHud(true) {
 
             val line = lines[2] as SuffixHudLine
             line.text.text = if (config.showPrefixes) voltaRate else "$voltaRate/hr"
-            if (config.showMargins && stats.voltaCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
         }
 
@@ -299,7 +299,7 @@ class TimerHud : BasicHud(true) {
 
             val line = lines[3] as SuffixHudLine
             line.text.text = if (config.showPrefixes) plasmaRate else "$plasmaRate/hr"
-            if (config.showMargins && stats.plasmaCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
         }
 
@@ -310,7 +310,7 @@ class TimerHud : BasicHud(true) {
 
             val line = lines[4] as SuffixHudLine
             line.text.text = if (config.showPrefixes) bootsRate else "$bootsRate/hr"
-            if (config.showMargins && stats.bootsCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
         }
 
@@ -321,7 +321,7 @@ class TimerHud : BasicHud(true) {
             
             val line = lines[5] as SuffixHudLine
             line.text.text = if (config.showPrefixes) coinsRate else "$coinsRate/hr"
-            if (config.showMargins && stats.coinsCount != 0)
+            if (line.suffixVisible())
                 line.margin.text = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
         }
 
