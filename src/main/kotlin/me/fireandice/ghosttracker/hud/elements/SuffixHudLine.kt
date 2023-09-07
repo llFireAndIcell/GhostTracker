@@ -4,7 +4,6 @@ import cc.polyfrost.oneconfig.renderer.TextRenderer
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.utils.drawTexturedRect
-import net.minecraft.client.gui.ScaledResolution
 import net.minecraft.util.ResourceLocation
 import kotlin.reflect.KProperty0
 
@@ -40,11 +39,8 @@ class SuffixHudLine(
 
         var currentX = x
         var currentWidth = 0f
+
         if (GhostConfig.showIcons) {
-
-            val sr = ScaledResolution(mc)
-            val guiScale = mc.gameSettings.guiScale
-
             mc.textureManager.bindTexture(image)
             drawTexturedRect(
                 x = currentX.toDouble(),
@@ -53,8 +49,8 @@ class SuffixHudLine(
                 v = 0f,
                 width = 8 * scale.toDouble(),
                 height = 8 * scale.toDouble(),
-                textureWidth = 8f / sr.scaleFactor * guiScale * scale,
-                textureHeight = 8f / sr.scaleFactor * guiScale  * scale
+                textureWidth = 8f * scale,
+                textureHeight = 8f * scale
             )
             currentX += 10 * scale
             currentWidth += 10
