@@ -2,7 +2,6 @@
 ### Preview
 ![preview](./ghost%20tracker%20preview.png)
 
-*Ignore the low kills/hr it was just a lazy test so I could get the screenshot*
 ### Features
 - HUD that tracks total (non-timed) stats like drops and kills
 - HUD that tracks stats of a timed session like kills/hr and combat xp/hr
