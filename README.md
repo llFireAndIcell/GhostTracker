@@ -1,3 +1,5 @@
+### Note
+With one of the recent updates, crimson swipe double counts kills. It doubles the combat xp and (presumably) rolls for item drops. The tracker will show an inaccurate number of kills compared to bestiary that you gain, but all the other calculations are correct. I may try an implement a fix to show your "real" kills but I don't have much time these days.
 # GhostTracker
 ### Preview
 ![preview](./ghost%20tracker%20preview.png)
