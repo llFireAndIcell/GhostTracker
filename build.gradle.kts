@@ -145,7 +145,7 @@ tasks {
     }
 
     remapJar {
-        input.set(shadowJar.get().archiveFile)
+        inputFile.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
     }
 
