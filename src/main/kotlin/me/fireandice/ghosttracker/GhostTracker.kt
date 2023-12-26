@@ -3,26 +3,18 @@ package me.fireandice.ghosttracker
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
-import cc.polyfrost.oneconfig.utils.dsl.mc
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.config.GhostConfig
-import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import me.fireandice.ghosttracker.tracker.PurseListener
-import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.gson
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.event.world.WorldEvent
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.io.File
 
 
@@ -62,8 +54,7 @@ object GhostTracker {
 
         arrayOf(
             this,
-            GhostListener,
-            PurseListener
+            EventListener
         ).forEach { MinecraftForge.EVENT_BUS.register(it) }
 
         ClientCommandHandler.instance.registerCommand(MainCommand)
@@ -74,24 +65,16 @@ object GhostTracker {
         })
     }
 
-    @SubscribeEvent
-    fun onTick(event: ClientTickEvent) {
-        if (event.phase != TickEvent.Phase.START) return
-
-        // auto save every 5 minutes
+    /**
+     * Auto-saves every 5 minutes
+     */
+    fun autoSave() {
         if (lastSave == -1L || System.currentTimeMillis() - lastSave > 300_000) {
-            this.save()
+            save()
             if (GhostTimer.isTracking) GhostTimer.save()
             lastSave = System.currentTimeMillis()
         }
-
-        if (mc.theWorld == null || mc.theWorld.scoreboard == null) return
-        ScoreboardUtils.checkLocations()
-        PurseListener.onTick()
     }
-
-    @SubscribeEvent
-    fun onWorldUnload(event: WorldEvent.Unload) = GhostTimer.pause(false)
 
     fun resetStats(message: Boolean = true) {
         ghostStats.reset()

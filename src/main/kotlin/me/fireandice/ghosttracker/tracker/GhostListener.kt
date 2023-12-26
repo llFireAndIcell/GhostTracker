@@ -6,8 +6,6 @@ import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
-import net.minecraftforge.fml.common.eventhandler.EventPriority
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
@@ -20,7 +18,6 @@ object GhostListener {
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
     private var previousKills = -1f
 
-    @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
         if (!ScoreboardUtils.inDwarvenMines ||
             mc.thePlayer.posY > 100 ||
@@ -49,7 +46,6 @@ object GhostListener {
     /**
      * Some logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
      */
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
     fun onActionBar(event: ClientChatReceivedEvent) {
         if (event.type != 2.toByte()) return
 
