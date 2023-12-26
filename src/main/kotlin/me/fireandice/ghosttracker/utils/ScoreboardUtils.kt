@@ -17,6 +17,17 @@ object ScoreboardUtils {
         "Divan's Gateway", "Lava Springs", "The Mist", "Dwarven Mines", "Gates to the Mines", "The Lift"
     )
 
+    /**
+     * Match examples:
+     * - Purse: 14,123,524,123,624,274 (+500)
+     * - Piggy: 1,224,142 (+728)
+     * - Purse: 123,132,124 (+1,020)
+     * - Piggy: 123,132,124
+     * - Piggy: 4
+     * - Purse: 4 (+50)
+     */
+    private val PURSE_REGEX: Regex = "(Purse|Piggy): (\\d{1,3},(\\d{3},)*)?(\\d{1,3})( \\(\\+.+\\))?".toRegex()
+
     private fun getLines(): MutableList<String> {
         if (mc.thePlayer == null || mc.theWorld == null) return emptyList<String>().toMutableList()
 
@@ -37,7 +48,8 @@ object ScoreboardUtils {
         if (mc.theWorld == null
             || mc.thePlayer == null
             || mc.isSingleplayer
-            || mc.thePlayer.clientBrand?.contains("hypixel", true) == false) return false
+            || mc.thePlayer.clientBrand?.contains("hypixel", true) == false
+        ) return false
         val objective = mc.thePlayer.worldScoreboard.getObjectiveInDisplaySlot(1) ?: return false
         return objective.displayName.stripControlCodes().contains("skyblock", true)
     }
@@ -64,5 +76,32 @@ object ScoreboardUtils {
                 return
             }
         }
+    }
+
+    /**
+     * Returns a string of coins in purse. Does not include the "purse" or "piggy" prefix. Includes the scavenger coin
+     * gain.
+     */
+    fun getPurse(): String? {
+        if (!inSkyblock()) {
+            inDwarvenMines = false
+            return null
+        }
+
+        val lines = getLines()
+
+        if (lines.size < 7) {
+            inDwarvenMines = false
+            return null
+        }
+
+        var line = lines.getOrNull(6)
+
+        if (line != null) {
+            line = line.stripControlCodes()
+            if (line.matches(PURSE_REGEX)) return line.substring(7)
+        }
+
+        return null
     }
 }

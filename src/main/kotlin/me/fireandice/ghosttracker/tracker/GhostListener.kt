@@ -2,6 +2,7 @@ package me.fireandice.ghosttracker.tracker
 
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.GhostTracker
+import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
@@ -9,20 +10,23 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
 import java.text.NumberFormat
 import java.util.*
-import java.util.regex.Pattern
 import kotlin.math.roundToInt
 
 object GhostListener {
 
-    private val RARE_DROP_PATTERN = Pattern.compile("§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r")
+    private val RARE_DROP_PATTERN = "§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r".toPattern()
     private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
-    private val COMBAT_XP_PATTERN = Pattern.compile("\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)")
+    private val COMBAT_XP_PATTERN = "\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)".toPattern()
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
-    private var prevValue = -1f
+    private var previousKills = -1f
 
     @SubscribeEvent
     fun onChat(event: ClientChatReceivedEvent) {
-        if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100 || !(event.type == 0.toByte() || event.type == 1.toByte())) return
+        if (!ScoreboardUtils.inDwarvenMines ||
+            mc.thePlayer.posY > 100 ||
+            !(event.type == 0.toByte() ||
+            event.type == 1.toByte())) return
+
         val message = event.message.formattedText
 
         // Detecting if 1m coins dropped
@@ -62,21 +66,22 @@ object GhostListener {
 
             // avoids tracking non ghost kills but still saves the xp value
             if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100) {
-                prevValue = newValue
+                previousKills = newValue
                 return
             }
 
             // if there are no previously tracked kills
-            if (prevValue == -1f) trackKills(1, xpGained)
+            if (previousKills == -1f) trackKills(1, xpGained)
             else {
-                val actualXpGained = newValue - prevValue
+                val actualXpGained = newValue - previousKills
                 // if you gain a bestiary level and gain 1m xp it might count all of those as kills, hence the
                 // coerceAtMost (15 was an arbitrary choice)
                 val killsGained = (actualXpGained / xpGained).roundToInt().coerceAtMost(15)
 
-                if (prevValue != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)  // xpGained * killsGained is more accurate and avoids rounding error
+                // xpGained * killsGained is more accurate and avoids rounding error
+                if (previousKills != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)
             }
-            prevValue = newValue
+            previousKills = newValue
         }
     }
 
@@ -86,10 +91,10 @@ object GhostListener {
 
         // coin drops are already handled before this method is called
         when (drop) {
-            GhostDrops.Sorrow -> ghostStats.sorrowCount++
-            GhostDrops.Volta -> ghostStats.voltaCount++
-            GhostDrops.Plasma -> ghostStats.plasmaCount++
-            GhostDrops.Boots -> ghostStats.bootsCount++
+            Sorrow -> ghostStats.sorrowCount++
+            Volta -> ghostStats.voltaCount++
+            Plasma -> ghostStats.plasmaCount++
+            Boots -> ghostStats.bootsCount++
             else -> {}
         }
         ghostStats.totalMf += magicFind
@@ -97,10 +102,10 @@ object GhostListener {
 
         if (GhostTimer.isTracking) {
             when (drop) {
-                GhostDrops.Sorrow -> timerStats.sorrowCount++
-                GhostDrops.Volta -> timerStats.voltaCount++
-                GhostDrops.Plasma -> timerStats.plasmaCount++
-                GhostDrops.Boots -> timerStats.bootsCount++
+                Sorrow -> timerStats.sorrowCount++
+                Volta -> timerStats.voltaCount++
+                Plasma -> timerStats.plasmaCount++
+                Boots -> timerStats.bootsCount++
                 else -> {}
             }
             timerStats.totalMf += magicFind

@@ -10,6 +10,7 @@ import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
+import me.fireandice.ghosttracker.tracker.PurseListener
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.gson
 import net.minecraftforge.client.ClientCommandHandler
@@ -61,7 +62,8 @@ object GhostTracker {
 
         arrayOf(
             this,
-            GhostListener
+            GhostListener,
+            PurseListener
         ).forEach { MinecraftForge.EVENT_BUS.register(it) }
 
         ClientCommandHandler.instance.registerCommand(MainCommand)
@@ -79,12 +81,13 @@ object GhostTracker {
         // auto save every 5 minutes
         if (lastSave == -1L || System.currentTimeMillis() - lastSave > 300_000) {
             this.save()
-            GhostTimer.save()
+            if (GhostTimer.isTracking) GhostTimer.save()
             lastSave = System.currentTimeMillis()
         }
 
         if (mc.theWorld == null || mc.theWorld.scoreboard == null) return
         ScoreboardUtils.checkLocations()
+        PurseListener.onTick()
     }
 
     @SubscribeEvent

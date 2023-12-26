@@ -3,6 +3,7 @@ package me.fireandice.ghosttracker.tracker
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import java.text.DecimalFormat
 
 class GhostStats {
@@ -17,7 +18,8 @@ class GhostStats {
         "kills" to 0,
         "totalMf" to 0,
         "mfDropCount" to 0,
-        "totalXp" to 0f
+        "totalXp" to 0f,
+        "scavenger" to 0
     )
 
     var sorrowCount: Int by stats
@@ -29,6 +31,7 @@ class GhostStats {
     var totalMf: Int by stats
     var mfDropCount: Int by stats
     var totalXp: Float by stats
+    var scavenger: Int by stats
 
     private fun getAverageMf(): Float? {
         if (mfDropCount > 0) return totalMf.toFloat() / mfDropCount
@@ -50,27 +53,27 @@ class GhostStats {
         var chanceModifier = 1f
 
         val actual = when (drop) {
-            GhostDrops.Sorrow -> {
+            Sorrow -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 sorrowCount
             }
-            GhostDrops.Volta -> {
+            Volta -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 voltaCount
             }
-            GhostDrops.Plasma -> {
+            Plasma -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.lootingLevel.toFloat() * 0.15f
                 plasmaCount
             }
-            GhostDrops.Boots -> {
+            Boots -> {
                 chanceModifier += (getAverageMf() ?: 0f) / 100
                 chanceModifier += GhostConfig.luckLevel.toFloat() * 0.05f
                 bootsCount
             }
-            GhostDrops.Coins -> coinsCount
+            Coins -> coinsCount
         }
         if (actual == 0) return null    // this would display "-100.00%" which I don't really want
 
