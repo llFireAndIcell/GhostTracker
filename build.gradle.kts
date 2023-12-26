@@ -1,16 +1,16 @@
 @file:Suppress("PropertyName")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import cc.polyfrost.gradle.util.noServerRunConfigs
+import org.polyfrost.gradle.util.noServerRunConfigs
 
 plugins {
     kotlin("jvm")
-    id("cc.polyfrost.multi-version")
-    id("cc.polyfrost.defaults.repo")
-    id("cc.polyfrost.defaults.java")
-    id("cc.polyfrost.defaults.loom")
+    id("org.polyfrost.multi-version")
+    id("org.polyfrost.defaults.repo")
+    id("org.polyfrost.defaults.java")
+    id("org.polyfrost.defaults.loom")
     id("com.github.johnrengelman.shadow")
-    id("net.kyori.blossom") version "1.3.0"
+    id("net.kyori.blossom") version "1.3.1"
     id("signing")
     java
 }
@@ -18,6 +18,7 @@ plugins {
 val mod_name: String by project
 val mod_version: String by project
 val mod_id: String by project
+val mod_archives_name: String by project
 
 preprocess {
     vars.put("MODERN", if (project.platform.mcMinor >= 16) 1 else 0)
@@ -30,17 +31,19 @@ blossom {
 }
 
 version = mod_version
-group = "cc.polyfrost"
+group = "me.fireandice"
 base {
-    archivesName.set(mod_name)
+    archivesName.set(mod_archives_name)
 }
 
 loom {
     noServerRunConfigs()
     if (project.platform.isLegacyForge) {
-        launchConfigs.named("client") {
-            arg("--tweakClass", "cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker")
-//            property("mixin.debug.export", "true")
+        runConfigs {
+            "client" {
+                programArgs("--tweakClass", "cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker")
+//                property("mixin.debug.export", "true")
+            }
         }
     }
 //    if (project.platform.isForge) {
@@ -62,13 +65,17 @@ sourceSets {
 }
 
 repositories {
-    maven("https://repo.polyfrost.cc/releases")
+    maven("https://repo.polyfrost.org/releases")
     maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
 }
 
 dependencies {
-    modCompileOnly("cc.polyfrost:oneconfig-$platform:0.2.0-alpha+")
-    val devAuthModule = "forge-legacy"
+    modCompileOnly("cc.polyfrost:oneconfig-$platform:0.2.1-alpha+")
+
+    val devAuthModule =
+        if (platform.isFabric) "fabric"
+        else if (platform.isLegacyForge) "forge-legacy"
+        else "forge-latest"
     val devAuthVersion = "1.1.2"
     modRuntimeOnly("me.djtheredstoner:DevAuth-${devAuthModule}:${devAuthVersion}")
 
@@ -78,46 +85,46 @@ dependencies {
     }
 }
 
-tasks.processResources {
-    inputs.property("id", mod_id)
-    inputs.property("name", mod_name)
-    val java = if (project.platform.mcMinor >= 18) {
-        17
-    } else {
-        if (project.platform.mcMinor == 17) 16 else 8
-    }
-    val compatLevel = "JAVA_${java}"
-    inputs.property("java", java)
-    inputs.property("java_level", compatLevel)
-    inputs.property("version", mod_version)
-    inputs.property("mcVersionStr", project.platform.mcVersionStr)
-    filesMatching(listOf("mcmod.info", /*"mixins.${mod_id}.json",*/ "mods.toml")) {
-        expand(
-            mapOf(
-                "id" to mod_id,
-                "name" to mod_name,
-                "java" to java,
-                "java_level" to compatLevel,
-                "version" to mod_version,
-                "mcVersionStr" to project.platform.mcVersionStr
-            )
-        )
-    }
-    filesMatching("fabric.mod.json") {
-        expand(
-            mapOf(
-                "id" to mod_id,
-                "name" to mod_name,
-                "java" to java,
-                "java_level" to compatLevel,
-                "version" to mod_version,
-                "mcVersionStr" to project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
-            )
-        )
-    }
-}
-
 tasks {
+    processResources {
+        inputs.property("id", mod_id)
+        inputs.property("name", mod_name)
+        val java = if (project.platform.mcMinor >= 18) {
+            17
+        } else {
+            if (project.platform.mcMinor == 17) 16 else 8
+        }
+        val compatLevel = "JAVA_${java}"
+        inputs.property("java", java)
+        inputs.property("java_level", compatLevel)
+        inputs.property("version", mod_version)
+        inputs.property("mcVersionStr", project.platform.mcVersionStr)
+        filesMatching(listOf("mcmod.info", /*"mixins.${mod_id}.json",*/ "mods.toml")) {
+            expand(
+                mapOf(
+                    "id" to mod_id,
+                    "name" to mod_name,
+                    "java" to java,
+                    "java_level" to compatLevel,
+                    "version" to mod_version,
+                    "mcVersionStr" to project.platform.mcVersionStr
+                )
+            )
+        }
+        filesMatching("fabric.mod.json") {
+            expand(
+                mapOf(
+                    "id" to mod_id,
+                    "name" to mod_name,
+                    "java" to java,
+                    "java_level" to compatLevel,
+                    "version" to mod_version,
+                    "mcVersionStr" to project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
+                )
+            )
+        }
+    }
+
     withType(Jar::class.java) {
         if (project.platform.isFabric) {
             exclude("mcmod.info", "mods.toml")
@@ -130,15 +137,18 @@ tasks {
             }
         }
     }
+
     named<ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
         configurations = listOf(shade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
+
     remapJar {
         input.set(shadowJar.get().archiveFile)
         archiveClassifier.set("")
     }
+
     jar {
         manifest {
             attributes(
