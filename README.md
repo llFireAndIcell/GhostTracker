@@ -1,10 +1,3 @@
-### Note
-Currently there is a bug where crimson swipe causes kills to be double counted.
-It seems to double combat xp and rolls for loot. The amount of kills shown by the mod
-includes these "virtual" kills, despite the fact that they don't count toward bestiary.
-Combat xp, drops, and all the calculations are still meaningfully accurate but kills
-will not be. If I have the time, I may try to implement a fix.
-
 # GhostTracker
 ### Preview
 ![preview](./ghost%20tracker%20preview.png)
