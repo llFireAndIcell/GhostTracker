@@ -34,7 +34,6 @@ object GhostTracker {
     const val VERSION = "@VER@"
 
     private var statsFile = File(MOD_DIR, "GhostStats.json")
-    private var lastSave: Long = -1L
     val ghostStats = GhostStats()
 
     @EventHandler
@@ -65,23 +64,12 @@ object GhostTracker {
         })
     }
 
-    /**
-     * Auto-saves every 5 minutes
-     */
-    fun autoSave() {
-        if (lastSave == -1L || System.currentTimeMillis() - lastSave > 300_000) {
-            save()
-            if (GhostTimer.isTracking) GhostTimer.save()
-            lastSave = System.currentTimeMillis()
-        }
-    }
-
     fun resetStats(message: Boolean = true) {
         ghostStats.reset()
         if (message) UChat.chat("$PREFIX ${ChatColor.RED}Main tracker reset")
     }
 
-    private fun save() {
+    fun save() {
         val jsonString = gson.toJson(ghostStats.toJson())
         statsFile.bufferedWriter().use { it.write(jsonString) }
     }
