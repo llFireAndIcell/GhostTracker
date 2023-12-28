@@ -1,5 +1,6 @@
 package me.fireandice.ghosttracker
 
+import me.fireandice.ghosttracker.api.PriceData
 import me.fireandice.ghosttracker.tracker.GhostListener
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.tracker.PurseListener
@@ -16,9 +17,18 @@ object EventListener {
     fun onTickStart(event: ClientTickEvent) {
         if (event.phase != TickEvent.Phase.START) return
 
-        GhostTracker.autoSave()
         ScoreboardUtils.checkLocations()
         PurseListener.onTick()
+        everyFiveMinutes()
+    }
+
+    private var lastFiveMinuteUpdate = -1L
+    private fun everyFiveMinutes() {
+        if (lastFiveMinuteUpdate != -1L && System.currentTimeMillis() - lastFiveMinuteUpdate <= 300_000) return
+
+        GhostTracker.save()
+        PriceData.fetchPrices()
+        lastFiveMinuteUpdate = System.currentTimeMillis()
     }
 
     @SubscribeEvent

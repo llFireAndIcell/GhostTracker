@@ -33,7 +33,7 @@ blossom {
 version = mod_version
 group = "me.fireandice"
 base {
-    archivesName.set(mod_archives_name)
+    archivesName.set("$mod_archives_name-$platform")
 }
 
 loom {
@@ -66,7 +66,6 @@ sourceSets {
 
 repositories {
     maven("https://repo.polyfrost.org/releases")
-    maven("https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1")
 }
 
 dependencies {
