@@ -2,6 +2,7 @@ package me.fireandice.ghosttracker.tracker
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import me.fireandice.ghosttracker.api.PriceData
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import java.text.DecimalFormat
@@ -32,6 +33,16 @@ class GhostStats {
     var mfDropCount: Int by stats
     var totalXp: Float by stats
     var scavenger: Int by stats
+
+    val totalValue: Int
+        get() {
+            return (sorrowCount * PriceData.sorrowPrice +
+                    voltaCount + PriceData.voltaPrice +
+                    plasmaCount * PriceData.plasmaPrice +
+                    bootsCount * PriceData.bootsPrice +
+                    coinsCount * 1_000_000 +
+                    scavenger).toInt()
+        }
 
     private fun getAverageMf(): Float? {
         if (mfDropCount > 0) return totalMf.toFloat() / mfDropCount
@@ -99,6 +110,7 @@ class GhostStats {
         totalMf = 0
         mfDropCount = 0
         totalXp = 0f
+        scavenger = 0
     }
 
     fun toJson() = JsonObject().apply { for (stat in stats) add(stat.key, JsonPrimitive(stat.value)) }

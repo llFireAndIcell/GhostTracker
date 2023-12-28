@@ -12,15 +12,12 @@ import me.fireandice.ghosttracker.tracker.GhostDrops
 import me.fireandice.ghosttracker.utils.FONT_HEIGHT
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.text.DecimalFormat
 
 class GhostHud : BasicHud(true) {
 
-    @Transient private var lines: ArrayList<HudLine> = ArrayList(9)
-    @Transient private var exampleLines: ArrayList<HudLine> = ArrayList(9)
+    @Transient private var lines: ArrayList<HudLine> = ArrayList(10)
+    @Transient private var exampleLines: ArrayList<HudLine> = ArrayList(10)
 
     @Transient private var width = 0f
     @Transient private var height = 0f
@@ -96,6 +93,12 @@ class GhostHud : BasicHud(true) {
             Images.CombatXp,
             config::tracker_totalXp
         )
+        lines += BasicHudLine(
+            "Total Coins: ",
+            intFormat.format(stats.totalValue) with config::coinColor,
+            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            config::tracker_totalMoney
+        )
         //</editor-fold>
 
         //<editor-fold desc="initializing example lines">
@@ -156,7 +159,13 @@ class GhostHud : BasicHud(true) {
             "Total XP: ",
             "1,100,000" with config::xpColor,
             Images.CombatXp,
-            config::tracker_averageXp
+            config::tracker_totalXp
+        )
+        exampleLines += BasicHudLine(
+            "Total Coins: ",
+            "30,000,000" with config::coinColor,
+            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            config::tracker_totalMoney
         )
         //</editor-fold>
     }
@@ -185,7 +194,7 @@ class GhostHud : BasicHud(true) {
         width = longestLine * scale
     }
 
-    private fun refreshLines() {
+    fun refreshLines() {
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
@@ -237,10 +246,9 @@ class GhostHud : BasicHud(true) {
 
         if (config.tracker_totalXp)
             (lines[8] as BasicHudLine).text.text = decimalFormat.format(stats.totalXp)
-    }
 
-    @SubscribeEvent
-    fun onTick(event: ClientTickEvent) {
-        if (event.phase == TickEvent.Phase.START) refreshLines()
+        if (config.tracker_totalMoney) {
+            (lines[9] as BasicHudLine).text.text = intFormat.format(stats.totalValue)
+        }
     }
 }
