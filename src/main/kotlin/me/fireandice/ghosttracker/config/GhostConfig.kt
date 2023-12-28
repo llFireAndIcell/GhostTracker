@@ -13,6 +13,7 @@ import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
 
+@Suppress("unused")
 object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
 
     //<editor-fold desc="General settings">
@@ -22,7 +23,10 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         category = "General"
     )
     var showEverywhere = false
-    @Deprecated("Not actually deprecated, just shouldn't be used", ReplaceWith("GhostConfig.shadow()"))
+    @Deprecated("Not actually deprecated, just shouldn't be used",
+        ReplaceWith("GhostConfig.shadow()"),
+        DeprecationLevel.WARNING
+    )
     @Dropdown(
         name = "Shadow type",
         options = ["None", "Shadow", "Full shadow"],
@@ -104,6 +108,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var timeColor = OneColor(85, 255, 255)      // aqua
     @Color(
+        name = "Money color",
+        category = "General",
+        subcategory = "Colors"
+    )
+    var coinColor = OneColor(255, 170, 0)       // gold
+    @Color(
         name = "Pause indicator color",
         category = "General",
         subcategory = "Colors"
@@ -180,6 +190,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Display Information"
     )
     var tracker_totalXp = true
+    @Switch(
+        name = "Show total money",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var tracker_totalMoney = true
 
     @HUD(
         name = "Stats HUD",
@@ -279,11 +295,11 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var timer_xpRate = true
     @Switch(
-        name = "Show total combat XP",
+        name = "Show money per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
-    var timer_totalXp = true
+    var timer_moneyRate = true
     @Switch(
         name = "Show session time",
         category = "Session Timer",
@@ -309,6 +325,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         }
     }
 
+    @Suppress("DEPRECATION")
     fun shadow() = when (shadow) {
         1 -> TextType.SHADOW
         2 -> TextType.FULL

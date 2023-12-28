@@ -13,9 +13,6 @@ import me.fireandice.ghosttracker.utils.FONT_HEIGHT
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.stringBuilder
 import net.minecraftforge.common.MinecraftForge
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent
-import net.minecraftforge.fml.common.gameevent.TickEvent.ClientTickEvent
 import java.text.DecimalFormat
 
 class TimerHud : BasicHud(true) {
@@ -26,7 +23,7 @@ class TimerHud : BasicHud(true) {
     @Transient private var width = 0f
     @Transient private var height = 0f
 
-    @Transient private val format = DecimalFormat("#,##0.##")
+    @Transient private val decimalFormat = DecimalFormat("#,##0.##")
     @Transient private val marginFormat = DecimalFormat("0.00")
 
     init {
@@ -40,7 +37,7 @@ class TimerHud : BasicHud(true) {
         //<editor-fold desc="initializing lines">
         val killRate =
             if (millis == 0.toLong()) "-"
-            else format.format(stats.kills.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.kills.toFloat() / seconds * 3600)
         lines += BasicHudLine(
             "Kills/hr: ",
             (if (config.showPrefixes) killRate else "$killRate/hr") with config::killColor,
@@ -50,7 +47,7 @@ class TimerHud : BasicHud(true) {
 
         val sorrowRate =
             if (millis == 0L) "-"
-            else format.format(stats.sorrowCount.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.sorrowCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Sorrows/hr: ",
             (if (config.showPrefixes) sorrowRate else "$sorrowRate/hr") with config::dropColor,
@@ -61,7 +58,7 @@ class TimerHud : BasicHud(true) {
 
         val voltaRate =
             if (millis == 0L) "-"
-            else format.format(stats.voltaCount.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.voltaCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Voltas/hr: ",
             (if (config.showPrefixes) voltaRate else "$voltaRate/hr") with config::dropColor,
@@ -72,7 +69,7 @@ class TimerHud : BasicHud(true) {
 
         val plasmaRate =
             if (millis == 0L) "-"
-            else format.format(stats.plasmaCount.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.plasmaCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Plasmas/hr: ",
             (if (config.showPrefixes) plasmaRate else "$plasmaRate/hr") with config::dropColor,
@@ -83,7 +80,7 @@ class TimerHud : BasicHud(true) {
 
         val bootsRate =
             if (millis == 0L) "-"
-            else format.format(stats.bootsCount.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.bootsCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Ghostly Boots/hr: ",
             (if (config.showPrefixes) bootsRate else "$bootsRate/hr") with config::dropColor,
@@ -94,7 +91,7 @@ class TimerHud : BasicHud(true) {
 
         val coinsRate =
             if (millis == 0L) "-"
-            else format.format(stats.coinsCount.toFloat() / seconds * 3600)
+            else decimalFormat.format(stats.coinsCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "1m Coins/hr: ",
             (if (config.showPrefixes) coinsRate else "$coinsRate/hr") with config::dropColor,
@@ -105,12 +102,12 @@ class TimerHud : BasicHud(true) {
 
         lines += BasicHudLine(
             "Average MF: ",
-            stats.getAverageMf(format) with config::mfColor,
+            stats.getAverageMf(decimalFormat) with config::mfColor,
             Images.MagicFind,
             config::timer_mf
         )
 
-        val averageXp = stats.getAverageXp(format)
+        val averageXp = stats.getAverageXp(decimalFormat)
         lines += BasicHudLine(
             "Average XP: ",
             (if (config.showPrefixes) averageXp else "$averageXp/kill") with config::xpColor,
@@ -120,7 +117,7 @@ class TimerHud : BasicHud(true) {
 
         val xpRate: String =
             if (millis == 0L) "-"
-            else format.format(stats.totalXp / seconds * 3600)
+            else decimalFormat.format(stats.totalXp / seconds * 3600)
         lines += BasicHudLine(
             "XP/hr: ",
             (if (config.showPrefixes) xpRate else "$xpRate/hr") with config::xpColor,
@@ -128,11 +125,14 @@ class TimerHud : BasicHud(true) {
             config::timer_xpRate
         )
 
+        val moneyRate: String =
+            if (millis == 0L) "-"
+            else decimalFormat.format((stats.totalValue) / seconds * 3600)
         lines += BasicHudLine(
-            "Total XP: ",
-            format.format(stats.totalXp) with config::xpColor,
-            Images.CombatXp,
-            config::timer_totalXp
+            "Coins/hr",
+            (if (config.showPrefixes) moneyRate else "$moneyRate/hr") with config::xpColor,
+            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            config::timer_moneyRate
         )
 
         val hours: Int = (seconds / 3600f).toInt()
@@ -216,10 +216,10 @@ class TimerHud : BasicHud(true) {
             config::timer_xpRate
         )
         exampleLines += BasicHudLine(
-            "Total XP: ",
-            "1,100,000" with config::xpColor,
-            Images.CombatXp,
-            config::timer_totalXp
+            "Coins/hr",
+            (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") with config::xpColor,
+            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            config::timer_moneyRate
         )
         exampleLines += SuffixHudLine(
             "Time: ",
@@ -256,7 +256,7 @@ class TimerHud : BasicHud(true) {
         width = longestLine * scale
     }
 
-    private fun refreshLines() {
+    fun refreshLines() {
         val config = GhostConfig
         val stats = GhostTimer.stats
         val millis: Long = GhostTimer.elapsedTime
@@ -265,7 +265,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_kills) {
             val killRate =
                 if (millis == 0L) "-"
-                else format.format(stats.kills.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.kills.toFloat() / seconds * 3600)
 
             (lines[0] as BasicHudLine).text.text = if (config.showPrefixes) killRate else "$killRate/hr"
         }
@@ -273,7 +273,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_sorrow) {
             val sorrowRate =
                 if (millis == 0L) "-"
-                else format.format(stats.sorrowCount.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.sorrowCount.toFloat() / seconds * 3600)
 
             val line = lines[1] as SuffixHudLine
             line.text.text = if (config.showPrefixes) sorrowRate else "$sorrowRate/hr"
@@ -284,7 +284,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_volta) {
             val voltaRate =
                 if (millis == 0L) "-"
-                else format.format(stats.voltaCount.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.voltaCount.toFloat() / seconds * 3600)
 
             val line = lines[2] as SuffixHudLine
             line.text.text = if (config.showPrefixes) voltaRate else "$voltaRate/hr"
@@ -295,7 +295,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_plasma) {
             val plasmaRate =
                 if (millis == 0L) "-"
-                else format.format(stats.plasmaCount.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.plasmaCount.toFloat() / seconds * 3600)
 
             val line = lines[3] as SuffixHudLine
             line.text.text = if (config.showPrefixes) plasmaRate else "$plasmaRate/hr"
@@ -306,7 +306,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_boots) {
             val bootsRate =
                 if (millis == 0L) "-"
-                else format.format(stats.bootsCount.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.bootsCount.toFloat() / seconds * 3600)
 
             val line = lines[4] as SuffixHudLine
             line.text.text = if (config.showPrefixes) bootsRate else "$bootsRate/hr"
@@ -317,7 +317,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_coins) {
             val coinsRate =
                 if (millis == 0L) "-"
-                else format.format(stats.coinsCount.toFloat() / seconds * 3600)
+                else decimalFormat.format(stats.coinsCount.toFloat() / seconds * 3600)
             
             val line = lines[5] as SuffixHudLine
             line.text.text = if (config.showPrefixes) coinsRate else "$coinsRate/hr"
@@ -326,22 +326,26 @@ class TimerHud : BasicHud(true) {
         }
 
         if (config.timer_mf)
-            (lines[6] as BasicHudLine).text.text = stats.getAverageMf(format)
+            (lines[6] as BasicHudLine).text.text = stats.getAverageMf(decimalFormat)
 
         if (config.timer_averageXp) {
-            val averageXp = stats.getAverageXp(format)
+            val averageXp = stats.getAverageXp(decimalFormat)
             (lines[7] as BasicHudLine).text.text = if (config.showPrefixes) averageXp else "$averageXp/kill"
         }
 
         if (config.timer_xpRate) {
             val xpRate =
                 if (millis == 0L) "-"
-                else (format.format(stats.totalXp / seconds * 3600))
+                else decimalFormat.format(stats.totalXp / seconds * 3600)
             (lines[8] as BasicHudLine).text.text = if (config.showPrefixes) xpRate else "$xpRate/hr"
         }
 
-        if (config.timer_totalXp)
-            (lines[9] as BasicHudLine).text.text = format.format(stats.totalXp)
+        if (config.timer_moneyRate) {
+            val moneyRate =
+                if (millis == 0L) "-"
+                else decimalFormat.format(stats.totalValue / seconds * 3600)
+            (lines[8] as BasicHudLine).text.text = if (config.showPrefixes) moneyRate else "$moneyRate/hr"
+        }
 
         if (config.timer_time) {
             val hours: Int = (seconds / 3600f).toInt()
@@ -357,10 +361,5 @@ class TimerHud : BasicHud(true) {
 
             (lines[10] as SuffixHudLine).text.text = timeString
         }
-    }
-
-    @SubscribeEvent
-    fun onTick(event: ClientTickEvent) {
-        if (event.phase == TickEvent.Phase.START) refreshLines()
     }
 }
