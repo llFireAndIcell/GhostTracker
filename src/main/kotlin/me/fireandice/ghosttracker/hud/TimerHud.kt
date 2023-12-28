@@ -131,7 +131,7 @@ class TimerHud : BasicHud(true) {
         lines += BasicHudLine(
             "Coins/hr",
             (if (config.showPrefixes) moneyRate else "$moneyRate/hr") with config::xpColor,
-            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            Images.Money,
             config::timer_moneyRate
         )
 
@@ -218,7 +218,7 @@ class TimerHud : BasicHud(true) {
         exampleLines += BasicHudLine(
             "Coins/hr",
             (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") with config::xpColor,
-            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            Images.Money,
             config::timer_moneyRate
         )
         exampleLines += SuffixHudLine(

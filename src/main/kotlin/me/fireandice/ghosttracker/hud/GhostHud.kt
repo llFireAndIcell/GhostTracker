@@ -96,7 +96,7 @@ class GhostHud : BasicHud(true) {
         lines += BasicHudLine(
             "Total Coins: ",
             intFormat.format(stats.totalValue) with config::coinColor,
-            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            Images.Money,
             config::tracker_totalMoney
         )
         //</editor-fold>
@@ -164,7 +164,7 @@ class GhostHud : BasicHud(true) {
         exampleLines += BasicHudLine(
             "Total Coins: ",
             "30,000,000" with config::coinColor,
-            Images.Coins, // TODO get better coin image (like a furfsky icon or smth)
+            Images.Money,
             config::tracker_totalMoney
         )
         //</editor-fold>
