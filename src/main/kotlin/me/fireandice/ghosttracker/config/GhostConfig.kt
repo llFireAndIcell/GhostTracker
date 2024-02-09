@@ -71,6 +71,25 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var luckLevel = 7
 
+    @Dropdown(
+        name = "Price timespan",
+        category = "General",
+        subcategory = "Price Fetching",
+        description = "The timespan of price data to use and average out",
+        options = ["Hour", "Day", "Week"]
+    )
+    var priceTimespan: Int = 2
+    @Number(
+        name = "Fetch frequency",
+        category = "General",
+        subcategory = "Price Fetching",
+        description = "The frequency that api data is refreshed",
+        min = 5f,
+        max = 120f,
+        step = 1
+    )
+    var priceFrequency: Int = 20
+
     @Color(
         name = "Kill color",
         category = "General",
@@ -330,5 +349,11 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         1 -> TextType.SHADOW
         2 -> TextType.FULL
         else -> TextType.NONE
+    }
+
+    fun priceTimespanString(): String = when (priceTimespan) {
+        0 -> "hour"
+        1 -> "day"
+        else -> "week"
     }
 }
