@@ -58,6 +58,10 @@ val shade: Configuration by configurations.creating {
     configurations.implementation.get().extendsFrom(this)
 }
 
+val modShade: Configuration by configurations.creating {
+    configurations.implementation.get().extendsFrom(this)
+}
+
 sourceSets {
     main {
         output.setResourcesDir(java.classesDirectory)
@@ -69,13 +73,13 @@ repositories {
 }
 
 dependencies {
-    modCompileOnly("cc.polyfrost:oneconfig-$platform:0.2.1-alpha+")
+    modCompileOnly("cc.polyfrost:oneconfig-1.8.9-forge:0.2.2-alpha+")
 
     val devAuthModule =
         if (platform.isFabric) "fabric"
         else if (platform.isLegacyForge) "forge-legacy"
         else "forge-latest"
-    val devAuthVersion = "1.1.2"
+    val devAuthVersion = "1.2.0"
     modRuntimeOnly("me.djtheredstoner:DevAuth-${devAuthModule}:${devAuthVersion}")
 
     if (platform.isLegacyForge) {
@@ -139,7 +143,7 @@ tasks {
 
     named<ShadowJar>("shadowJar") {
         archiveClassifier.set("dev")
-        configurations = listOf(shade)
+        configurations = listOf(shade, modShade)
         duplicatesStrategy = DuplicatesStrategy.EXCLUDE
     }
 

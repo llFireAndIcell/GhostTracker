@@ -9,7 +9,16 @@ import net.minecraft.scoreboard.ScorePlayerTeam
  */
 object ScoreboardUtils {
 
+    /**
+     * Only updates after [ScoreboardUtils.checkLocations] is called
+     */
+    var inSkyblock = false
+
+    /**
+     * Only updates after [ScoreboardUtils.checkLocations] is called
+     */
     var inDwarvenMines = false
+
     private val locations: Array<String> = arrayOf(
         "Dwarven Village", "Miner's Guild", "Palace Bridge", "Royal Palace", "Puzzler", "Grand Library",
         "Barracks of Heroes", "Royal Mines", "Cliffside Veins", "Forge Basin", "The Forge", "Rampart's Quarry",
@@ -56,9 +65,12 @@ object ScoreboardUtils {
 
     fun checkLocations() {
         if (!inSkyblock()) {
+            inSkyblock = false
             inDwarvenMines = false
             return
         }
+
+        inSkyblock = true
 
         val lines = getLines()
 
@@ -83,17 +95,9 @@ object ScoreboardUtils {
      * gain.
      */
     fun getPurse(): String? {
-        if (!inSkyblock()) {
-            inDwarvenMines = false
-            return null
-        }
+        if (!inSkyblock) return null
 
         val lines = getLines()
-
-        if (lines.size < 7) {
-            inDwarvenMines = false
-            return null
-        }
 
         var line = lines.getOrNull(6)
 
