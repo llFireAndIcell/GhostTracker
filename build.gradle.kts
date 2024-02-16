@@ -1,6 +1,7 @@
 @file:Suppress("PropertyName")
 
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.polyfrost.gradle.util.noServerRunConfigs
 
 plugins {
@@ -86,6 +87,8 @@ dependencies {
 //        compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
         shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta+")
     }
+
+    testImplementation("org.junit.jupiter:junit-jupiter:5.10.0")
 }
 
 tasks {
@@ -167,5 +170,20 @@ tasks {
         dependsOn(shadowJar)
         archiveClassifier.set("")
         enabled = false
+    }
+
+    test {
+        useJUnitPlatform()
+        testLogging {
+            events("passed", "skipped", "failed")
+        }
+    }
+
+    withType<JavaCompile>().configureEach {
+        options.release.set(8)
+    }
+
+    withType<KotlinCompile>().configureEach {
+        kotlinOptions.jvmTarget = "1.8"
     }
 }
