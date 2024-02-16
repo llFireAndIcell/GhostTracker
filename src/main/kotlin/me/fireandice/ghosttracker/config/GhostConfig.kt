@@ -80,7 +80,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var priceTimespan: Int = 2
     @Number(
-        name = "Fetch frequency",
+        name = "Fetch frequency (minutes)",
         category = "General",
         subcategory = "Price Fetching",
         description = "The frequency that api data is refreshed",

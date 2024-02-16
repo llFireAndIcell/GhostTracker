@@ -2,6 +2,7 @@ package me.fireandice.ghosttracker.tracker
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.api.PriceData
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostDrops.*
@@ -120,7 +121,9 @@ class GhostStats {
             val jsonElement = json[stat.key] ?: continue
             try {
                 stats[stat.key] = jsonElement.asFloat
-            } catch (_: Exception) {
+            } catch (e: ClassCastException) {
+                GhostTracker.logger.error("${stat.key} couldn't be cast to float")
+            } catch (_: Exception){
             }
         }
     }

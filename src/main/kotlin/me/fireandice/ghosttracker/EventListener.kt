@@ -23,6 +23,10 @@ object EventListener {
         everyFiveMinutes()
         GhostConfig.tracker_hud.refreshLines()
         GhostConfig.timer_hud.refreshLines()
+
+        if (ScoreboardUtils.inSkyblock) {
+            PriceData.fetchPrices()
+        }
     }
 
     private var lastFiveMinuteUpdate = -1L
@@ -30,7 +34,6 @@ object EventListener {
         if (lastFiveMinuteUpdate != -1L && System.currentTimeMillis() - lastFiveMinuteUpdate <= 300_000) return
 
         GhostTracker.save()
-        PriceData.fetchPrices()
         lastFiveMinuteUpdate = System.currentTimeMillis()
     }
 
@@ -41,5 +44,6 @@ object EventListener {
     fun onChat(event: ClientChatReceivedEvent) {
         GhostListener.onChat(event)
         GhostListener.onActionBar(event)
+        PurseListener.detectLostCombo(event.message.unformattedText)
     }
 }

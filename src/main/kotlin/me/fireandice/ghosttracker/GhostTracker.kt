@@ -15,6 +15,8 @@ import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventHandler
 import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
+import org.apache.logging.log4j.LogManager
+import org.apache.logging.log4j.Logger
 import java.io.File
 
 
@@ -35,9 +37,11 @@ object GhostTracker {
 
     private var statsFile = File(MOD_DIR, "GhostStats.json")
     val ghostStats = GhostStats()
+    lateinit var logger: Logger
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
+        logger = LogManager.getLogger("GhostTracker")
         MOD_DIR.mkdirs()
 
         if (statsFile.createNewFile()) this.save()
@@ -72,6 +76,7 @@ object GhostTracker {
     fun save() {
         val jsonString = gson.toJson(ghostStats.toJson())
         statsFile.bufferedWriter().use { it.write(jsonString) }
+        logger.debug("Tracker stats saved")
     }
 
     private fun load() {
@@ -80,5 +85,6 @@ object GhostTracker {
             gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
         } catch (_: Exception) {
         }
+        logger.debug("Tracker stats loaded")
     }
 }

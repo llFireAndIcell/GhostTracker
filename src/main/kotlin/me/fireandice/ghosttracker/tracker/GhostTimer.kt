@@ -4,10 +4,13 @@ import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UChat
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
+import com.google.gson.JsonSyntaxException
+import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.MOD_DIR
 import me.fireandice.ghosttracker.PREFIX
 import me.fireandice.ghosttracker.utils.gson
 import java.io.File
+import java.lang.ClassCastException
 
 object GhostTimer {
 
@@ -55,6 +58,7 @@ object GhostTimer {
         val jsonObj = stats.toJson().apply { add("time", JsonPrimitive(elapsedTime)) }
         val jsonString = gson.toJson(jsonObj)
         file.bufferedWriter().use { it.write(jsonString) }
+        GhostTracker.logger.debug("Timer stats saved")
     }
 
     fun load() {
@@ -65,7 +69,13 @@ object GhostTimer {
 
             stats.fromJson(jsonObject)
             totalTime = jsonObject["time"].asLong
+        } catch (e: JsonSyntaxException) {
+            GhostTracker.logger.error("Couldn't parse timer stats file")
+        } catch (e: ClassCastException) {
+            GhostTracker.logger.error("Time couldn't be cast to long")
         } catch (_: Exception) {
         }
+
+        GhostTracker.logger.debug("Timer stats loaded")
     }
 }

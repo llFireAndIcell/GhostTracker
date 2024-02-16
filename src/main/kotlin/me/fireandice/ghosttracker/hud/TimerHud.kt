@@ -130,7 +130,7 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format((stats.totalValue) / seconds * 3600)
         lines += BasicHudLine(
             "Coins/hr",
-            (if (config.showPrefixes) moneyRate else "$moneyRate/hr") with config::xpColor,
+            (if (config.showPrefixes) moneyRate else "$moneyRate/hr") with config::coinColor,
             Images.Money,
             config::timer_moneyRate
         )
@@ -217,7 +217,7 @@ class TimerHud : BasicHud(true) {
         )
         exampleLines += BasicHudLine(
             "Coins/hr",
-            (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") with config::xpColor,
+            (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") with config::coinColor,
             Images.Money,
             config::timer_moneyRate
         )
