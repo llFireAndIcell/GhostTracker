@@ -52,7 +52,7 @@ object PurseListener {
         previousPurse = purse
         previousKills = kills
 
-        GhostTracker.logger.debug("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
+        GhostTracker.logger.info("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
     }
 
     fun detectLostCombo(message: String) {
