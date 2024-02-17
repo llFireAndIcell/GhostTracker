@@ -38,25 +38,25 @@ object PriceData {
 
         lastFetch = time
 
-        val sorrowData = getApiData(SORROW_ITEM_ID)
-        val voltaData = getApiData(VOLTA_ITEM_ID)
-        val plasmaData = getApiData(PLASMA_ITEM_ID)
+        val sorrowJson = getApiData(SORROW_ITEM_ID)
+        val voltaJson = getApiData(VOLTA_ITEM_ID)
+        val plasmaJson = getApiData(PLASMA_ITEM_ID)
 
-        if (sorrowData != null) {
-            sorrowPrice = getAverage(sorrowData).coerceAtLeast(SORROW_NPC)
-            GhostTracker.logger.debug("Fetched sorrow price: $sorrowPrice")
+        if (sorrowJson != null) {
+            sorrowPrice = getAverage(sorrowJson).coerceAtLeast(SORROW_NPC)
+            GhostTracker.logger.info("Fetched sorrow price: $sorrowPrice")
         }
         else GhostTracker.logger.error("Failed to fetch sorrow price")
 
-        if (voltaData != null) {
-            voltaPrice = getAverage(voltaData).coerceAtLeast(VOLTA_NPC)
-            GhostTracker.logger.debug("Fetched volta price: $voltaPrice")
+        if (voltaJson != null) {
+            voltaPrice = getAverage(voltaJson).coerceAtLeast(VOLTA_NPC)
+            GhostTracker.logger.info("Fetched volta price: $voltaPrice")
         }
         else GhostTracker.logger.error("Failed to fetch volta price")
 
-        if (plasmaData != null) {
-            plasmaPrice = getAverage(plasmaData).coerceAtLeast(PLASMA_NPC)
-            GhostTracker.logger.debug("Fetched plasma price: $plasmaPrice")
+        if (plasmaJson != null) {
+            plasmaPrice = getAverage(plasmaJson).coerceAtLeast(PLASMA_NPC)
+            GhostTracker.logger.info("Fetched plasma price: $plasmaPrice")
         }
         else GhostTracker.logger.error("Failed to fetch plasma price")
     }

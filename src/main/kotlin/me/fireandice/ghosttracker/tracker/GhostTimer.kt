@@ -58,7 +58,7 @@ object GhostTimer {
         val jsonObj = stats.toJson().apply { add("time", JsonPrimitive(elapsedTime)) }
         val jsonString = gson.toJson(jsonObj)
         file.bufferedWriter().use { it.write(jsonString) }
-        GhostTracker.logger.debug("Timer stats saved")
+        GhostTracker.logger.info("Timer stats saved")
     }
 
     fun load() {
@@ -76,6 +76,6 @@ object GhostTimer {
         } catch (_: Exception) {
         }
 
-        GhostTracker.logger.debug("Timer stats loaded")
+        GhostTracker.logger.info("Timer stats loaded")
     }
 }

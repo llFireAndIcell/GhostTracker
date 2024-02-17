@@ -8,6 +8,7 @@ import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
+import me.fireandice.ghosttracker.utils.GhostTrackerMessageFactory
 import me.fireandice.ghosttracker.utils.gson
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
@@ -37,11 +38,10 @@ object GhostTracker {
 
     private var statsFile = File(MOD_DIR, "GhostStats.json")
     val ghostStats = GhostStats()
-    lateinit var logger: Logger
+    val logger: Logger = LogManager.getLogger(GhostTrackerMessageFactory())
 
     @EventHandler
     fun onPreInit(event: FMLPreInitializationEvent) {
-        logger = LogManager.getLogger("GhostTracker")
         MOD_DIR.mkdirs()
 
         if (statsFile.createNewFile()) this.save()
@@ -76,7 +76,7 @@ object GhostTracker {
     fun save() {
         val jsonString = gson.toJson(ghostStats.toJson())
         statsFile.bufferedWriter().use { it.write(jsonString) }
-        logger.debug("Tracker stats saved")
+        logger.info("Tracker stats saved")
     }
 
     private fun load() {
@@ -85,6 +85,6 @@ object GhostTracker {
             gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
         } catch (_: Exception) {
         }
-        logger.debug("Tracker stats loaded")
+        logger.info("Tracker stats loaded")
     }
 }
