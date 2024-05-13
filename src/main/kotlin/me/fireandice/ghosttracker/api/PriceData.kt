@@ -16,15 +16,16 @@ object PriceData {
     private const val PRICE_KEY = "buy"
 
     private const val SORROW_ITEM_ID = "SORROW"
-    private const val SORROW_NPC = 13f
     private const val VOLTA_ITEM_ID = "VOLTA"
-    private const val VOLTA_NPC = 1_111f
     private const val PLASMA_ITEM_ID = "PLASMA"
+
+    private const val SORROW_NPC = 13f
+    private const val VOLTA_NPC = 1_111f
     private const val PLASMA_NPC = 20_000f
 
-    var sorrowPrice: Float = 0f
-    var voltaPrice: Float = 0f
-    var plasmaPrice: Float = 0f
+    var sorrowPrice: Float = SORROW_NPC
+    var voltaPrice: Float = VOLTA_NPC
+    var plasmaPrice: Float = PLASMA_NPC
     val bootsPrice = 77_777f
 
     private var lastFetch: Long = -1L
