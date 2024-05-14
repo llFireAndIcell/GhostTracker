@@ -13,6 +13,9 @@ object PurseListener {
     private var previousKills = -1
     private var previousScavenger = -1
 
+    /**
+     * Called in `EventListener.onTickStart()`
+     */
     fun onTick() {
         val purseString = ScoreboardUtils.getPurse() ?: return
 
@@ -43,6 +46,9 @@ object PurseListener {
         GhostTracker.logger.info("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
     }
 
+    /**
+     * Called in `EventListener.onChat()`
+     */
     fun detectLostCombo(message: String) {
         if (message.matches(COMBO_LOST_PATTERN)) previousScavenger = -1
     }
