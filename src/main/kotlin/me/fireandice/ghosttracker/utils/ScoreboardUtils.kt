@@ -42,6 +42,9 @@ object ScoreboardUtils {
         return lines
     }
 
+    /**
+     * Called in `EventListener.onTickStart()`
+     */
     private fun inSkyblock(): Boolean {
         if (mc.theWorld == null
             || mc.thePlayer == null
@@ -52,6 +55,9 @@ object ScoreboardUtils {
         return objective.displayName.stripControlCodes().contains("skyblock", true)
     }
 
+    /**
+     * Called in `EventListener.onTickStart()`
+     */
     fun checkLocations() {
         if (!inSkyblock()) {
             inSkyblock = false

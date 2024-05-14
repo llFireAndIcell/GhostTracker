@@ -16,8 +16,11 @@ object GhostListener {
     private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
     private val COMBAT_XP_PATTERN = "\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)".toPattern()
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
-    private var previousKills = -1f
+    private var previousXp = -1f
 
+    /**
+     * Called in `EventListener.onChat()`
+     */
     fun onChat(event: ClientChatReceivedEvent) {
         if (!ScoreboardUtils.inDwarvenMines ||
             mc.thePlayer.posY > 100 ||
@@ -44,7 +47,8 @@ object GhostListener {
     }
 
     /**
-     * Some logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3
+     * Some logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3.
+     * Called in `EventListener.onChat()`
      */
     fun onActionBar(event: ClientChatReceivedEvent) {
         if (event.type != 2.toByte()) return
@@ -58,26 +62,26 @@ object GhostListener {
             var progress: String = matcher.group("progress")
             if (progress.endsWith("/0")) progress = progress.substring(0, progress.length - 2)
 
-            val newValue = numberFormat.parse(progress).toFloat()
+            val newXp = numberFormat.parse(progress).toFloat()
 
             // avoids tracking non ghost kills but still saves the xp value
             if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100) {
-                previousKills = newValue
+                previousXp = newXp
                 return
             }
 
             // if there are no previously tracked kills
-            if (previousKills == -1f) trackKills(1, xpGained)
+            if (previousXp == -1f) trackKills(1, xpGained)
             else {
-                val actualXpGained = newValue - previousKills
+                val actualXpGained = newXp - previousXp
                 // if you gain a bestiary level and gain 1m xp it might count all of those as kills, hence the
                 // coerceAtMost (15 was an arbitrary choice)
                 val killsGained = (actualXpGained / xpGained).roundToInt().coerceAtMost(15)
 
                 // xpGained * killsGained is more accurate and avoids rounding error
-                if (previousKills != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)
+                if (previousXp != 0f && killsGained >= 0) trackKills(killsGained, xpGained * killsGained)
             }
-            previousKills = newValue
+            previousXp = newXp
         }
     }
 

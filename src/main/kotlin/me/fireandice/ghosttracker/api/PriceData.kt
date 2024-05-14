@@ -31,7 +31,7 @@ object PriceData {
     private var lastFetch: Long = -1L
 
     /**
-     * Updates price data
+     * Updates price data. Called in `EventListener.onTickStart()`
      */
     fun fetchPrices() {
         val time = System.currentTimeMillis()

@@ -256,6 +256,9 @@ class TimerHud : BasicHud(true) {
         width = longestLine * scale
     }
 
+    /**
+     * Called in `EventListener.onTickStart()`
+     */
     fun refreshLines() {
         val config = GhostConfig
         val stats = GhostTimer.stats
