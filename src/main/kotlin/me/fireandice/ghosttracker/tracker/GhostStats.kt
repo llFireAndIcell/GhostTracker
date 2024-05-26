@@ -36,14 +36,12 @@ class GhostStats {
     var scavenger: Int by stats
 
     val totalValue: Int
-        get() {
-            return (sorrowCount * PriceData.sorrowPrice +
-                    voltaCount + PriceData.voltaPrice +
-                    plasmaCount * PriceData.plasmaPrice +
-                    bootsCount * PriceData.bootsPrice +
-                    coinsCount * 1_000_000 +
-                    scavenger).toInt()
-        }
+        get() = (sorrowCount * PriceData.sorrowPrice +
+                voltaCount * PriceData.voltaPrice +
+                plasmaCount * PriceData.plasmaPrice +
+                bootsCount * PriceData.bootsPrice +
+                coinsCount * 1_000_000 +
+                scavenger).toInt()
 
     private fun getAverageMf(): Float? {
         if (mfDropCount > 0) return totalMf.toFloat() / mfDropCount
