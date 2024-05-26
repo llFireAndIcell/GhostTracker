@@ -210,6 +210,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     )
     var tracker_totalXp = true
     @Switch(
+        name = "Show scavenger coins",
+        category = "Stat Tracker",
+        subcategory = "Display Information"
+    )
+    var tracker_scavenger = true
+    @Switch(
         name = "Show total money",
         category = "Stat Tracker",
         subcategory = "Display Information"
@@ -313,6 +319,12 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         subcategory = "Display Information"
     )
     var timer_xpRate = true
+    @Switch(
+        name = "Show scavenger coins",
+        category = "Session Timer",
+        subcategory = "Display Information"
+    )
+    var timer_scavenger = true
     @Switch(
         name = "Show money per hour",
         category = "Session Timer",
