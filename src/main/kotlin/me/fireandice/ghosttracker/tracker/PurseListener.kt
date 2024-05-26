@@ -52,9 +52,5 @@ object PurseListener {
         if (GhostTimer.isTracking) GhostTimer.stats.scavenger += purseGained
 
         previousPurse = purse
-
-        if (purseGained > 0) {
-            GhostTracker.logger.info("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
-        }
     }
 }
