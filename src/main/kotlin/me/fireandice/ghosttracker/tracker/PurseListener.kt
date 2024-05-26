@@ -2,16 +2,13 @@ package me.fireandice.ghosttracker.tracker
 
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
-import java.util.Scanner
+import me.fireandice.ghosttracker.utils.inGhostArea
 
 object PurseListener {
 
-    // closing paren can get cut off with enough digits. I think a 10b purse would break this but uhhh just use bank
-    private val PURSE_PATTERN = "(?<purse>\\d+)(?: \\(\\+(?<scavenger>\\d+)\\)?)?".toPattern()
-    private val COMBO_LOST_PATTERN = "Your Kill Combo has expired! You reached a [\\d,]+ Kill Combo!".toRegex()
-    private var previousPurse = -1
-    private var previousKills = -1
-    private var previousScavenger = -1
+//    private val PURSE_PATTERN = "(?<purse>\\d+)(?: \\(\\+(?<scavenger>\\d+)\\)?)?".toPattern()
+//    private val COMBO_LOST_PATTERN = "Your Kill Combo has expired! You reached a [\\d,]+ Kill Combo!".toRegex()
+    private var previousPurse: Int? = null
 
     /**
      * Called in `EventListener.onTickStart()`
@@ -19,37 +16,45 @@ object PurseListener {
     fun onTick() {
         val purseString = ScoreboardUtils.getPurse() ?: return
 
-        val scanner = Scanner(purseString)
+        val split = purseString.split(" ")
 
-        val kills = GhostTracker.ghostStats.kills
-        val purse: Int = scanner.nextInt()
-        val scavenger: Int = if (scanner.hasNextInt()) scanner.nextInt()
-        else -1
-
-        // if first tick after joining sb
-        if (previousPurse == -1 || previousKills == -1) {
-            previousPurse = purse
-            previousKills = kills
+        val purse: Int
+        try {
+            purse = split[0].toInt()
+        } catch (e: NumberFormatException) {
+            GhostTracker.logger.error("Couldn't parse purse string as int")
             return
         }
 
-        val purseGained = purse - previousPurse
-        val killsGained = kills - previousKills
-        if (purseGained * 1.1 > killsGained * scavenger) return // increase is too large; likely from another source
+        val scavenger: Int
+        try {
+            if (split.size > 1) scavenger = split[1].toInt()
+            else return
+        } catch (e: NumberFormatException) {
+            GhostTracker.logger.error("Couldn't parse scavenger string as int")
+            return
+        }
+
+        if (previousPurse == null) { // first tick after joining sb
+            previousPurse = purse
+            return
+        }
+        if (!inGhostArea) { // avoids tracking non ghost kills but still saves the purse value
+            previousPurse = purse
+            return
+        }
+        if (scavenger == 1) return // coin talisman
+
+        val purseGained = purse - previousPurse!!
+        if (purseGained > 15 * scavenger) return // more than 15 kills worth; probably from another source
 
         GhostTracker.ghostStats.scavenger += purseGained
         if (GhostTimer.isTracking) GhostTimer.stats.scavenger += purseGained
 
         previousPurse = purse
-        previousKills = kills
 
-        GhostTracker.logger.info("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
-    }
-
-    /**
-     * Called in `EventListener.onChat()`
-     */
-    fun detectLostCombo(message: String) {
-        if (message.matches(COMBO_LOST_PATTERN)) previousScavenger = -1
+        if (purseGained > 0) {
+            GhostTracker.logger.info("Purse increased by $purseGained ($scavenger scavenger)") // TODO debug
+        }
     }
 }
