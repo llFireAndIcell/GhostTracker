@@ -4,6 +4,7 @@ import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
+import me.fireandice.ghosttracker.utils.inGhostArea
 import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
 import java.text.NumberFormat
@@ -65,7 +66,7 @@ object GhostListener {
             val newXp = numberFormat.parse(progress).toFloat()
 
             // avoids tracking non ghost kills but still saves the xp value
-            if (!ScoreboardUtils.inDwarvenMines || mc.thePlayer.posY > 100) {
+            if (!inGhostArea) {
                 previousXp = newXp
                 return
             }

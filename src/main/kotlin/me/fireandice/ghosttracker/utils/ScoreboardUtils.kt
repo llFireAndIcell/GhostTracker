@@ -34,7 +34,7 @@ object ScoreboardUtils {
         val scores: List<Score> = ArrayList(scoreboard.getSortedScores(sidebarObjective))
         val lines: MutableList<String> = ArrayList()
 
-        for (score in scores.reversed()) {
+        for (score in scores.reverseIterator()) {
             val scoreplayerteam1 = scoreboard.getPlayersTeam(score.playerName)
             val line = ScorePlayerTeam.formatPlayerName(scoreplayerteam1, score.playerName)
             lines.add(line)
@@ -86,28 +86,17 @@ object ScoreboardUtils {
     }
 
     /**
-     * Returns a string of coins in purse. Does not include the "purse" or "piggy" prefix. Includes the scavenger coin
-     * gain.
+     * Returns a string of coins in purse. Includes the scavenger coin gain if present. Removes any characters that
+     * aren't numbers or spaces.
      */
     fun getPurse(): String? {
         if (!inSkyblock) return null
 
         val lines = getLines()
-
-        var line = lines.getOrNull(6)
-
-        if (line != null) {
-            line = line.stripControlCodes()
-            line = line.filter {
-                it.isLetterOrDigit() ||
-                        it == '(' ||
-                        it == ')' ||
-                        it == ' ' ||
-                        it == ':' ||
-                        it == '+'
-            }
-
-            return line.substring(7)
+        for (line in lines) if (line.contains("Purse|Piggy".toRegex())) {
+            return line.stripControlCodes().filter {
+                it.isDigit() || it == ' '
+            }.trim()
         }
 
         return null

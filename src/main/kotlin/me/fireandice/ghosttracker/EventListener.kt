@@ -44,6 +44,5 @@ object EventListener {
     fun onChat(event: ClientChatReceivedEvent) {
         GhostListener.onChat(event)
         GhostListener.onActionBar(event)
-        PurseListener.detectLostCombo(event.message.unformattedText)
     }
 }

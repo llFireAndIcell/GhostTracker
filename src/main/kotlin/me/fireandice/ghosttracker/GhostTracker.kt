@@ -8,7 +8,7 @@ import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import me.fireandice.ghosttracker.utils.GhostTrackerMessageFactory
+import me.fireandice.ghosttracker.logging.GhostTrackerMessageFactory
 import me.fireandice.ghosttracker.utils.gson
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge

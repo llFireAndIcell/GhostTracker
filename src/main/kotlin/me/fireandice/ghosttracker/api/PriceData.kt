@@ -26,7 +26,8 @@ object PriceData {
     var sorrowPrice: Float = SORROW_NPC
     var voltaPrice: Float = VOLTA_NPC
     var plasmaPrice: Float = PLASMA_NPC
-    val bootsPrice = 77_777f
+    @Suppress("ConstPropertyName") // I want the name to be consistent with the others
+    const val bootsPrice = 77_777f
 
     private var lastFetch: Long = -1L
 

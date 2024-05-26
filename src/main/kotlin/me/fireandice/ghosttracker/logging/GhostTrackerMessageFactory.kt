@@ -1,4 +1,4 @@
-package me.fireandice.ghosttracker.utils
+package me.fireandice.ghosttracker.logging
 
 import me.fireandice.ghosttracker.GhostTracker
 import org.apache.logging.log4j.message.AbstractMessageFactory

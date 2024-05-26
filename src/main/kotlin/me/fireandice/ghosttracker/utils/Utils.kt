@@ -2,6 +2,7 @@ package me.fireandice.ghosttracker.utils
 
 import cc.polyfrost.oneconfig.libs.universal.ChatColor
 import cc.polyfrost.oneconfig.libs.universal.UMinecraft
+import cc.polyfrost.oneconfig.utils.dsl.mc
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
 import net.minecraft.client.gui.Gui
@@ -9,8 +10,8 @@ import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
 
 val FONT_HEIGHT by lazy { UMinecraft.getFontRenderer().FONT_HEIGHT }
-
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
+val inGhostArea get() = ScoreboardUtils.inDwarvenMines && mc.thePlayer.posY <= 100
 
 fun String.stripControlCodes(): String = ChatColor.stripControlCodes(this) ?: ""
 
@@ -53,5 +54,18 @@ fun drawTexturedRect(x: Double, y: Double, u: Float, v: Float, width: Double, he
                 .endVertex()
         }
         draw()
+    }
+}
+
+/**
+ * Mainly for use in for-loops, to iterate backwards without mutating the list
+ */
+fun <T> Iterable<T>.reverseIterator(): Iterator<T> {
+    val list = this.toList()
+
+    return object : Iterator<T> {
+        var current: Int = list.size
+        override fun hasNext() = current > 0
+        override fun next() = list[--current]
     }
 }
