@@ -14,4 +14,4 @@ class ColoredText(
 /**
  * Creates a [ColoredText] with the receiving [String] and the specified color property from your [Config]
  */
-infix fun String.with(color: KProperty0<OneColor>) = ColoredText(this, color)
+infix fun String.withColor(color: KProperty0<OneColor>) = ColoredText(this, color)

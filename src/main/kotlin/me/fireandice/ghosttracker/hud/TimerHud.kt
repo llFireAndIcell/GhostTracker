@@ -6,7 +6,7 @@ import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.hud.elements.BasicHudLine
 import me.fireandice.ghosttracker.hud.elements.HudLine
 import me.fireandice.ghosttracker.hud.elements.SuffixHudLine
-import me.fireandice.ghosttracker.hud.elements.with
+import me.fireandice.ghosttracker.hud.elements.withColor
 import me.fireandice.ghosttracker.tracker.GhostDrops
 import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.FONT_HEIGHT
@@ -17,8 +17,8 @@ import java.text.DecimalFormat
 
 class TimerHud : BasicHud(true) {
 
-    @Transient private val lines: ArrayList<HudLine> = ArrayList(11)
-    @Transient private val exampleLines: ArrayList<HudLine> = ArrayList(11)
+    @Transient private val lines: ArrayList<HudLine> = ArrayList(12)
+    @Transient private val exampleLines: ArrayList<HudLine> = ArrayList(12)
 
     @Transient private var width = 0f
     @Transient private var height = 0f
@@ -32,7 +32,7 @@ class TimerHud : BasicHud(true) {
         val config = GhostConfig
         val stats = GhostTimer.stats
         val millis: Long = GhostTimer.elapsedTime
-        var seconds: Int = (millis / 1000f).toInt()
+        var seconds: Int = (millis / 1000).toInt()
 
         //<editor-fold desc="initializing lines">
         val killRate =
@@ -40,7 +40,7 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.kills.toFloat() / seconds * 3600)
         lines += BasicHudLine(
             "Kills/hr: ",
-            (if (config.showPrefixes) killRate else "$killRate/hr") with config::killColor,
+            (if (config.showPrefixes) killRate else "$killRate/hr") withColor config::killColor,
             Images.Kills,
             config::timer_kills
         )
@@ -50,8 +50,8 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.sorrowCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Sorrows/hr: ",
-            (if (config.showPrefixes) sorrowRate else "$sorrowRate/hr") with config::dropColor,
-            " (${stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)})" with config::marginColor,
+            (if (config.showPrefixes) sorrowRate else "$sorrowRate/hr") withColor config::dropColor,
+            " (${stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)})" withColor config::marginColor,
             Images.Sorrow,
             config::timer_sorrow,
         ) { config.showMargins && stats.sorrowCount != 0 }
@@ -61,8 +61,8 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.voltaCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Voltas/hr: ",
-            (if (config.showPrefixes) voltaRate else "$voltaRate/hr") with config::dropColor,
-            " (${stats.getPercentDifference(GhostDrops.Volta, marginFormat)})" with config::marginColor,
+            (if (config.showPrefixes) voltaRate else "$voltaRate/hr") withColor config::dropColor,
+            " (${stats.getPercentDifference(GhostDrops.Volta, marginFormat)})" withColor config::marginColor,
             Images.Volta,
             config::timer_volta,
         ) { config.showMargins && stats.voltaCount != 0 }
@@ -72,8 +72,8 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.plasmaCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Plasmas/hr: ",
-            (if (config.showPrefixes) plasmaRate else "$plasmaRate/hr") with config::dropColor,
-            " (${stats.getPercentDifference(GhostDrops.Plasma, marginFormat)})" with config::marginColor,
+            (if (config.showPrefixes) plasmaRate else "$plasmaRate/hr") withColor config::dropColor,
+            " (${stats.getPercentDifference(GhostDrops.Plasma, marginFormat)})" withColor config::marginColor,
             Images.Plasma,
             config::timer_plasma,
         ) { config.showMargins && stats.plasmaCount != 0 }
@@ -83,8 +83,8 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.bootsCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "Ghostly Boots/hr: ",
-            (if (config.showPrefixes) bootsRate else "$bootsRate/hr") with config::dropColor,
-            " (${stats.getPercentDifference(GhostDrops.Boots, marginFormat)})" with config::marginColor,
+            (if (config.showPrefixes) bootsRate else "$bootsRate/hr") withColor config::dropColor,
+            " (${stats.getPercentDifference(GhostDrops.Boots, marginFormat)})" withColor config::marginColor,
             Images.Boots,
             config::timer_boots,
         ) { config.showMargins && stats.bootsCount != 0 }
@@ -94,15 +94,15 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.coinsCount.toFloat() / seconds * 3600)
         lines += SuffixHudLine(
             "1m Coins/hr: ",
-            (if (config.showPrefixes) coinsRate else "$coinsRate/hr") with config::dropColor,
-            " (${stats.getPercentDifference(GhostDrops.Coins, marginFormat)})" with config::marginColor,
+            (if (config.showPrefixes) coinsRate else "$coinsRate/hr") withColor config::dropColor,
+            " (${stats.getPercentDifference(GhostDrops.Coins, marginFormat)})" withColor config::marginColor,
             Images.Coins,
             config::timer_coins,
         ) { config.showMargins && stats.coinsCount != 0 }
 
         lines += BasicHudLine(
             "Average MF: ",
-            stats.getAverageMf(decimalFormat) with config::mfColor,
+            stats.getAverageMf(decimalFormat) withColor config::mfColor,
             Images.MagicFind,
             config::timer_mf
         )
@@ -110,7 +110,7 @@ class TimerHud : BasicHud(true) {
         val averageXp = stats.getAverageXp(decimalFormat)
         lines += BasicHudLine(
             "Average XP: ",
-            (if (config.showPrefixes) averageXp else "$averageXp/kill") with config::xpColor,
+            (if (config.showPrefixes) averageXp else "$averageXp/kill") withColor config::xpColor,
             Images.CombatXp,
             config::timer_averageXp
         )
@@ -120,9 +120,19 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format(stats.totalXp / seconds * 3600)
         lines += BasicHudLine(
             "XP/hr: ",
-            (if (config.showPrefixes) xpRate else "$xpRate/hr") with config::xpColor,
+            (if (config.showPrefixes) xpRate else "$xpRate/hr") withColor config::xpColor,
             Images.CombatXp,
             config::timer_xpRate
+        )
+
+        val scavRate: String =
+            if (seconds == 0) "-"
+            else decimalFormat.format(stats.scavenger / seconds * 3600)
+        lines += BasicHudLine(
+            "Scavenger/hr: ",
+            (if (config.showPrefixes) scavRate else "$scavRate/hr") withColor config::coinColor,
+            Images.Coins,
+            config::timer_scavenger,
         )
 
         val moneyRate: String =
@@ -130,7 +140,7 @@ class TimerHud : BasicHud(true) {
             else decimalFormat.format((stats.totalValue) / seconds * 3600)
         lines += BasicHudLine(
             "Coins/hr: ",
-            (if (config.showPrefixes) moneyRate else "$moneyRate/hr") with config::coinColor,
+            (if (config.showPrefixes) moneyRate else "$moneyRate/hr") withColor config::coinColor,
             Images.Money,
             config::timer_moneyRate
         )
@@ -148,8 +158,8 @@ class TimerHud : BasicHud(true) {
 
         lines += SuffixHudLine(
             "Time: ",
-            timeString with config::timeColor,
-            " (Paused)" with config::marginColor,
+            timeString withColor config::timeColor,
+            " (Paused)" withColor config::marginColor,
             Images.Time,
             config::timer_time,
         ) { GhostTimer.isPaused }
@@ -158,73 +168,79 @@ class TimerHud : BasicHud(true) {
         //<editor-fold desc="initializing example lines">
         exampleLines += BasicHudLine(
             "Kills/hr: ",
-            (if (config.showPrefixes) "6,000" else "6,000/hr") with config::killColor,
+            (if (config.showPrefixes) "6,000" else "6,000/hr") withColor config::killColor,
             Images.Kills,
             config::timer_kills
         )
         exampleLines += SuffixHudLine(
             "Sorrows/hr: ",
-            (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
-            " (+0.50%)" with config::marginColor,
+            (if (config.showPrefixes) "50" else "50/hr") withColor config::dropColor,
+            " (+0.50%)" withColor config::marginColor,
             Images.Sorrow,
             config::timer_sorrow
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Voltas/hr: ",
-            (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
-            " (+0.50%)" with config::marginColor,
+            (if (config.showPrefixes) "50" else "50/hr") withColor config::dropColor,
+            " (+0.50%)" withColor config::marginColor,
             Images.Volta,
             config::timer_volta
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Plasmas/hr: ",
-            (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
-            " (+0.50%)" with config::marginColor,
+            (if (config.showPrefixes) "50" else "50/hr") withColor config::dropColor,
+            " (+0.50%)" withColor config::marginColor,
             Images.Plasma,
             config::timer_plasma
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "Ghostly Boots/hr: ",
-            (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
-            " (+0.50%)" with config::marginColor,
+            (if (config.showPrefixes) "50" else "50/hr") withColor config::dropColor,
+            " (+0.50%)" withColor config::marginColor,
             Images.Boots,
             config::timer_boots
         ) { config.showMargins }
         exampleLines += SuffixHudLine(
             "1m Coins/hr: ",
-            (if (config.showPrefixes) "50" else "50/hr") with config::dropColor,
-            " (+0.50%)" with config::marginColor,
+            (if (config.showPrefixes) "50" else "50/hr") withColor config::dropColor,
+            " (+0.50%)" withColor config::marginColor,
             Images.Coins,
             config::timer_coins
         ) { config.showMargins }
         exampleLines += BasicHudLine(
             "Average MF: ",
-            "215.33" with config::mfColor,
+            "215.33" withColor config::mfColor,
             Images.MagicFind,
             config::timer_mf
         )
         exampleLines += BasicHudLine(
             "Average XP: ",
-            (if (config.showPrefixes) "183.33" else "183.33/kill") with config::xpColor,
+            (if (config.showPrefixes) "183.33" else "183.33/kill") withColor config::xpColor,
             Images.CombatXp,
             config::timer_averageXp
         )
         exampleLines += BasicHudLine(
             "XP/hr: ",
-            (if (config.showPrefixes) "1,100,000" else "1,100,000/hr") with config::xpColor,
+            (if (config.showPrefixes) "1,100,000" else "1,100,000/hr") withColor config::xpColor,
             Images.CombatXp,
             config::timer_xpRate
         )
         exampleLines += BasicHudLine(
+            "Scavenger/hr: ",
+            (if (config.showPrefixes) "1,000,000" else "1,000,000/hr") withColor config::coinColor,
+            Images.Coins,
+            config::timer_scavenger,
+        )
+        exampleLines += BasicHudLine(
             "Coins/hr: ",
-            (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") with config::coinColor,
+            (if (config.showPrefixes) "30,000,000" else "30,000,000/hr") withColor config::coinColor,
             Images.Money,
             config::timer_moneyRate
         )
         exampleLines += SuffixHudLine(
             "Time: ",
-            "1h 0m 0s" with config::timeColor,
-            " (Paused)" with config::pauseColor,
+            "1h 0m 0s" withColor config::timeColor,
+            " (Paused)" withColor config::pauseColor,
             Images.Time,
             config::timer_time
         ) { true }
@@ -270,7 +286,7 @@ class TimerHud : BasicHud(true) {
                 if (seconds == 0) "-"
                 else decimalFormat.format(stats.kills.toFloat() / seconds * 3600)
 
-            (lines[0] as BasicHudLine).text.text = if (config.showPrefixes) killRate else "$killRate/hr"
+            (lines[0] as BasicHudLine).main.text = if (config.showPrefixes) killRate else "$killRate/hr"
         }
 
         if (config.timer_sorrow) {
@@ -279,9 +295,9 @@ class TimerHud : BasicHud(true) {
                 else decimalFormat.format(stats.sorrowCount.toFloat() / seconds * 3600)
 
             val line = lines[1] as SuffixHudLine
-            line.text.text = if (config.showPrefixes) sorrowRate else "$sorrowRate/hr"
+            line.main.text = if (config.showPrefixes) sorrowRate else "$sorrowRate/hr"
             if (line.suffixVisible())
-                line.margin.text = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
+                line.suffix.text = stats.getPercentDifference(GhostDrops.Sorrow, marginFormat)
         }
 
         if (config.timer_volta) {
@@ -290,9 +306,9 @@ class TimerHud : BasicHud(true) {
                 else decimalFormat.format(stats.voltaCount.toFloat() / seconds * 3600)
 
             val line = lines[2] as SuffixHudLine
-            line.text.text = if (config.showPrefixes) voltaRate else "$voltaRate/hr"
+            line.main.text = if (config.showPrefixes) voltaRate else "$voltaRate/hr"
             if (line.suffixVisible())
-                line.margin.text = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
+                line.suffix.text = stats.getPercentDifference(GhostDrops.Volta, marginFormat)
         }
 
         if (config.timer_plasma) {
@@ -301,9 +317,9 @@ class TimerHud : BasicHud(true) {
                 else decimalFormat.format(stats.plasmaCount.toFloat() / seconds * 3600)
 
             val line = lines[3] as SuffixHudLine
-            line.text.text = if (config.showPrefixes) plasmaRate else "$plasmaRate/hr"
+            line.main.text = if (config.showPrefixes) plasmaRate else "$plasmaRate/hr"
             if (line.suffixVisible())
-                line.margin.text = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
+                line.suffix.text = stats.getPercentDifference(GhostDrops.Plasma, marginFormat)
         }
 
         if (config.timer_boots) {
@@ -312,9 +328,9 @@ class TimerHud : BasicHud(true) {
                 else decimalFormat.format(stats.bootsCount.toFloat() / seconds * 3600)
 
             val line = lines[4] as SuffixHudLine
-            line.text.text = if (config.showPrefixes) bootsRate else "$bootsRate/hr"
+            line.main.text = if (config.showPrefixes) bootsRate else "$bootsRate/hr"
             if (line.suffixVisible())
-                line.margin.text = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
+                line.suffix.text = stats.getPercentDifference(GhostDrops.Boots, marginFormat)
         }
 
         if (config.timer_coins) {
@@ -323,31 +339,38 @@ class TimerHud : BasicHud(true) {
                 else decimalFormat.format(stats.coinsCount.toFloat() / seconds * 3600)
             
             val line = lines[5] as SuffixHudLine
-            line.text.text = if (config.showPrefixes) coinsRate else "$coinsRate/hr"
+            line.main.text = if (config.showPrefixes) coinsRate else "$coinsRate/hr"
             if (line.suffixVisible())
-                line.margin.text = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
+                line.suffix.text = stats.getPercentDifference(GhostDrops.Coins, marginFormat)
         }
 
         if (config.timer_mf)
-            (lines[6] as BasicHudLine).text.text = stats.getAverageMf(decimalFormat)
+            (lines[6] as BasicHudLine).main.text = stats.getAverageMf(decimalFormat)
 
         if (config.timer_averageXp) {
             val averageXp = stats.getAverageXp(decimalFormat)
-            (lines[7] as BasicHudLine).text.text = if (config.showPrefixes) averageXp else "$averageXp/kill"
+            (lines[7] as BasicHudLine).main.text = if (config.showPrefixes) averageXp else "$averageXp/kill"
         }
 
         if (config.timer_xpRate) {
             val xpRate =
                 if (seconds == 0) "-"
                 else decimalFormat.format(stats.totalXp / seconds * 3600)
-            (lines[8] as BasicHudLine).text.text = if (config.showPrefixes) xpRate else "$xpRate/hr"
+            (lines[8] as BasicHudLine).main.text = if (config.showPrefixes) xpRate else "$xpRate/hr"
+        }
+
+        if (config.timer_scavenger) {
+            val scavRate =
+                if (seconds == 0) "-"
+                else decimalFormat.format(stats.totalXp / seconds * 3600)
+            (lines[9] as BasicHudLine).main.text = if (config.showPrefixes) scavRate else "$scavRate/hr"
         }
 
         if (config.timer_moneyRate) {
             val moneyRate =
                 if (seconds == 0) "-"
                 else decimalFormat.format(stats.totalValue / seconds * 3600)
-            (lines[8] as BasicHudLine).text.text = if (config.showPrefixes) moneyRate else "$moneyRate/hr"
+            (lines[10] as BasicHudLine).main.text = if (config.showPrefixes) moneyRate else "$moneyRate/hr"
         }
 
         if (config.timer_time) {
@@ -362,7 +385,7 @@ class TimerHud : BasicHud(true) {
                 append("${seconds}s")
             }
 
-            (lines[10] as SuffixHudLine).text.text = timeString
+            (lines[11] as SuffixHudLine).main.text = timeString
         }
     }
 }
