@@ -10,14 +10,14 @@ import kotlin.reflect.KProperty0
 /**
  * A general hud line that only uses one color. This is used for kills, magic find, and all xp displays. Note: the
  * prefix should have a space at the end
- * @param prefix The prefix text. This is not a [ColoredText] because it will always be the same color as [text]
- * @param text The main text that displays the relevant tracker stat
+ * @param prefix The prefix text. This is not a [ColoredText] because it will always be the same color as [main]
+ * @param main The main text that displays the relevant tracker stat
  * @param image The icon that may display before the hud line
  * @param visible The backing property of the config option that decides if the line is shown
  */
 class BasicHudLine(
     var prefix: String? = null,
-    var text: ColoredText,
+    var main: ColoredText,
     private val image: ResourceLocation,
     private var visible: KProperty0<Boolean>
 ) : HudLine {
@@ -53,14 +53,14 @@ class BasicHudLine(
         }
 
         if (GhostConfig.showPrefixes) {
-            TextRenderer.drawScaledString(prefix, currentX, y, text.color, GhostConfig.shadow(), scale)
+            TextRenderer.drawScaledString(prefix, currentX, y, main.color, GhostConfig.shadow(), scale)
             val prefixWidth = mc.fontRendererObj.getStringWidth(prefix)
             currentX += prefixWidth * scale
             currentWidth += prefixWidth
         }
 
-        TextRenderer.drawScaledString(text.text, currentX, y, text.color, GhostConfig.shadow(), scale)
-        currentWidth += mc.fontRendererObj.getStringWidth(text.text)
+        TextRenderer.drawScaledString(main.text, currentX, y, main.color, GhostConfig.shadow(), scale)
+        currentWidth += mc.fontRendererObj.getStringWidth(main.text)
         width = currentWidth
         return true
     }
