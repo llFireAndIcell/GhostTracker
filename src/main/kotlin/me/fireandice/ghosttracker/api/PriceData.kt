@@ -68,7 +68,7 @@ object PriceData {
      */
     private fun getApiData(itemId: String): JsonArray? {
         var response: JsonArray? = null
-        val url = "$BASE_URL/$itemId/history/${GhostConfig.priceTimespanString()}"
+        val url = "$BASE_URL/$itemId/history/${GhostConfig.priceTimespan}"
         try {
             response = NetworkUtils.getJsonElement(
                 url,
