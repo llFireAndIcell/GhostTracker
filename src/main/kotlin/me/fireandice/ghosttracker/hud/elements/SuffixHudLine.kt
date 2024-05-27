@@ -57,19 +57,19 @@ class SuffixHudLine(
         }
 
         if (GhostConfig.showPrefixes) {
-            TextRenderer.drawScaledString(prefix, currentX, y, main.color, GhostConfig.shadow(), scale)
+            TextRenderer.drawScaledString(prefix, currentX, y, main.color, GhostConfig.shadow, scale)
             val prefixWidth = mc.fontRendererObj.getStringWidth(prefix)
             currentX += prefixWidth * scale
             currentWidth += prefixWidth
         }
 
-        TextRenderer.drawScaledString(main.text, currentX, y, main.color, GhostConfig.shadow(), scale)
+        TextRenderer.drawScaledString(main.text, currentX, y, main.color, GhostConfig.shadow, scale)
         val textWidth = mc.fontRendererObj.getStringWidth(main.text)
         currentWidth += textWidth
 
         if (suffixVisible()) {
             currentX += textWidth * scale
-            TextRenderer.drawScaledString(suffix.text, currentX, y, suffix.color, GhostConfig.shadow(), scale)
+            TextRenderer.drawScaledString(suffix.text, currentX, y, suffix.color, GhostConfig.shadow, scale)
             currentWidth += mc.fontRendererObj.getStringWidth(suffix.text)
         }
 
