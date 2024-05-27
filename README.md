@@ -16,3 +16,4 @@
 - [Official Skyblock Wiki](https://wiki.hypixel.net/) for most of the other textures
 - [DulkirMod](https://github.com/inglettronald/DulkirMod) for ScoreboardUtils
 - [GhostCounterV3](https://www.chattriggers.com/modules/v/GhostCounterV3) for some of the kill tracking logic
+- [Coflnet API](https://sky.coflnet.com/api) for the price data
