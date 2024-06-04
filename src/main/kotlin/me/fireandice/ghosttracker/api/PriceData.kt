@@ -78,6 +78,8 @@ object PriceData {
             ).asJsonArray
         } catch (e: IllegalStateException) {
             GhostTracker.logger.error("Failed to get json array from $url")
+        } catch (e: Exception) {
+            GhostTracker.logger.error("Unexpected error when fetching api data")
         }
 
         return response
@@ -92,6 +94,9 @@ object PriceData {
                 total += (jsonElement as JsonObject)[PRICE_KEY].asFloat
             } catch (e: ClassCastException) {
                 GhostTracker.logger.error("Couldn't parse price data as a float")
+                continue
+            } catch (e: Exception) {
+                GhostTracker.logger.error("Unexpected error when parsing price data")
                 continue
             }
             count++
