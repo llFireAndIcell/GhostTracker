@@ -47,6 +47,7 @@ object PurseListener {
 
         val purseGained = purse - previousPurse!!
         if (purseGained > 15 * scavenger) return // more than 15 kills worth; probably from another source
+        if (purseGained < 0) return
 
         GhostTracker.ghostStats.scavenger += purseGained
         if (GhostTimer.isTracking) GhostTimer.stats.scavenger += purseGained
