@@ -62,7 +62,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     // originally `showPrefixes` was tied to the config option, but I updated the description of the config option and
     // inverted the value to logically match the new description. Instead of changing it everywhere in the code, I just
     // tied `abbreviate` to the config option and invert it
-    var showPrefixes = !abbreviate
+    val showPrefixes get() = !abbreviate
 
     @Switch(
         name = "Show margins",

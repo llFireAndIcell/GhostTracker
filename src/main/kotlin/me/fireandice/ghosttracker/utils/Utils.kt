@@ -64,7 +64,7 @@ fun <T> Iterable<T>.reverseIterator(): Iterator<T> {
     val list = this.toList()
 
     return object : Iterator<T> {
-        var current: Int = list.size
+        private var current: Int = list.size
         override fun hasNext() = current > 0
         override fun next() = list[--current]
     }
