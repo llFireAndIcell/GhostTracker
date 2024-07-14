@@ -362,7 +362,7 @@ class TimerHud : BasicHud(true) {
         if (config.timer_scavenger) {
             val scavRate =
                 if (seconds == 0) "-"
-                else decimalFormat.format(stats.totalXp / seconds * 3600)
+                else decimalFormat.format(stats.scavenger / seconds * 3600)
             (lines[9] as BasicHudLine).main.text = if (config.showPrefixes) scavRate else "$scavRate/hr"
         }
 
