@@ -44,11 +44,10 @@ object PurseListener {
             previousPurse = purse
             return
         }
-        if (scavenger == 1) return // coin talisman
 
         val purseGained = purse - previousPurse!!
-        if (purseGained > 15 * scavenger) return // more than 15 kills worth; probably from another source
-        if (purseGained < 0) return
+        // more than 15 kills worth or less than 6 coins (talisman of coins or a coins loss or smth
+        if (purseGained !in 6..(15 * scavenger)) return
 
         GhostTracker.ghostStats.scavenger += purseGained
         if (GhostTimer.isTracking) GhostTimer.stats.scavenger += purseGained

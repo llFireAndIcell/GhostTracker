@@ -11,7 +11,7 @@ import java.text.DecimalFormat
 class GhostStats {
 
     // for json parsing
-    private var stats: MutableMap<String, Number> = mutableMapOf(
+    private val stats: MutableMap<String, Number> = mutableMapOf(
         "sorrowCount" to 0,
         "voltaCount" to 0,
         "plasmaCount" to 0,
@@ -121,7 +121,8 @@ class GhostStats {
                 stats[stat.key] = jsonElement.asFloat
             } catch (e: ClassCastException) {
                 logError("${stat.key} couldn't be cast to float")
-            } catch (_: Exception) {
+            } catch (e: Exception) {
+                e.message?.let { logError(it) }
             }
         }
     }
