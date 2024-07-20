@@ -2,10 +2,10 @@ package me.fireandice.ghosttracker.tracker
 
 import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
-import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.api.PriceData
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostDrops.*
+import me.fireandice.ghosttracker.utils.logError
 import java.text.DecimalFormat
 
 class GhostStats {
@@ -120,8 +120,8 @@ class GhostStats {
             try {
                 stats[stat.key] = jsonElement.asFloat
             } catch (e: ClassCastException) {
-                GhostTracker.logger.error("${stat.key} couldn't be cast to float")
-            } catch (_: Exception){
+                logError("${stat.key} couldn't be cast to float")
+            } catch (_: Exception) {
             }
         }
     }

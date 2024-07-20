@@ -3,6 +3,7 @@ package me.fireandice.ghosttracker.tracker
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.inGhostArea
+import me.fireandice.ghosttracker.utils.logError
 
 object PurseListener {
 
@@ -22,7 +23,7 @@ object PurseListener {
         try {
             purse = split[0].toInt()
         } catch (e: NumberFormatException) {
-            GhostTracker.logger.error("Couldn't parse purse string as int")
+            logError("Couldn't parse purse string as int")
             return
         }
 
@@ -31,7 +32,7 @@ object PurseListener {
             if (split.size > 1) scavenger = split[1].toInt()
             else return
         } catch (e: NumberFormatException) {
-            GhostTracker.logger.error("Couldn't parse scavenger string as int")
+            logError("Couldn't parse scavenger string as int")
             return
         }
 

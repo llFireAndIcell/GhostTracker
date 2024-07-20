@@ -5,6 +5,7 @@ import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import cc.polyfrost.oneconfig.utils.dsl.mc
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import me.fireandice.ghosttracker.GhostTracker
 import net.minecraft.client.gui.Gui
 import net.minecraft.client.renderer.Tessellator
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats
@@ -13,7 +14,7 @@ val FONT_HEIGHT by lazy { UMinecraft.getFontRenderer().FONT_HEIGHT }
 val gson: Gson = GsonBuilder().setPrettyPrinting().create()
 val inGhostArea get() = ScoreboardUtils.inDwarvenMines && mc.thePlayer.posY <= 100
 
-fun String.stripControlCodes(): String = ChatColor.stripControlCodes(this) ?: ""
+fun String.stripControlCodes(): String = ChatColor.stripControlCodes(this) ?: this
 
 /**
  * Creates a new [StringBuilder], passes it as the block receiver, and returns it as a [String]
@@ -69,3 +70,6 @@ fun <T> Iterable<T>.reverseIterator(): Iterator<T> {
         override fun next() = list[--current]
     }
 }
+
+fun logError(message: String) = GhostTracker.logger.error(message)
+fun logInfo(message: String) = GhostTracker.logger.info(message)

@@ -6,6 +6,8 @@ import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.utils.logError
+import me.fireandice.ghosttracker.utils.logInfo
 
 object PriceData {
 
@@ -46,19 +48,19 @@ object PriceData {
 
         if (sorrowJson != null) {
             sorrowPrice = getAverage(sorrowJson).coerceAtLeast(SORROW_NPC)
-            GhostTracker.logger.info("Fetched sorrow price: $sorrowPrice")
+            logInfo("Fetched sorrow price: $sorrowPrice")
         }
-        else GhostTracker.logger.error("Failed to fetch sorrow price")
+        else logError("Failed to fetch sorrow price")
 
         if (voltaJson != null) {
             voltaPrice = getAverage(voltaJson).coerceAtLeast(VOLTA_NPC)
-            GhostTracker.logger.info("Fetched volta price: $voltaPrice")
+            logInfo("Fetched volta price: $voltaPrice")
         }
-        else GhostTracker.logger.error("Failed to fetch volta price")
+        else logError("Failed to fetch volta price")
 
         if (plasmaJson != null) {
             plasmaPrice = getAverage(plasmaJson).coerceAtLeast(PLASMA_NPC)
-            GhostTracker.logger.info("Fetched plasma price: $plasmaPrice")
+            logInfo("Fetched plasma price: $plasmaPrice")
         }
         else GhostTracker.logger.error("Failed to fetch plasma price")
     }
@@ -77,9 +79,9 @@ object PriceData {
                 false
             ).asJsonArray
         } catch (e: IllegalStateException) {
-            GhostTracker.logger.error("Failed to get json array from $url")
+            logError("Failed to get json array from $url")
         } catch (e: Exception) {
-            GhostTracker.logger.error("Unexpected error when fetching api data")
+            logError("Unexpected error when fetching api data")
         }
 
         return response
@@ -93,10 +95,10 @@ object PriceData {
             try {
                 total += (jsonElement as JsonObject)[PRICE_KEY].asFloat
             } catch (e: ClassCastException) {
-                GhostTracker.logger.error("Couldn't parse price data as a float")
+                logError("Couldn't parse price data as a float")
                 continue
             } catch (e: Exception) {
-                GhostTracker.logger.error("Unexpected error when parsing price data")
+                logError("Unexpected error when parsing price data")
                 continue
             }
             count++
