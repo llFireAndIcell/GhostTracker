@@ -7,7 +7,7 @@ pluginManagement {
         maven("https://repo.polyfrost.org/releases")
     }
     plugins {
-        val pgtVersion = "0.6.3" // Sets the default versions for Polyfrost Gradle Toolkit
+        val pgtVersion = "0.6.5" // Sets the default versions for Polyfrost Gradle Toolkit
         id("org.polyfrost.multi-version.root") version pgtVersion
     }
 }
