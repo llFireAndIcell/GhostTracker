@@ -69,7 +69,12 @@ repositories {
 }
 
 dependencies {
-    modCompileOnly("cc.polyfrost:oneconfig-$platform:0.2.2-alpha+")
+    val oneconfig = "1.0.0-alpha.19"
+    implementation("org.polyfrost.oneconfig:commands:$oneconfig")
+    implementation("org.polyfrost.oneconfig:config-impl:$oneconfig")
+    implementation("org.polyfrost.oneconfig:events:$oneconfig")
+    implementation("org.polyfrost.oneconfig:hud:$oneconfig")
+    implementation("org.polyfrost.oneconfig:utils:$oneconfig")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-${if (platform.isFabric) "fabric" else if (platform.isLegacyForge) "forge-legacy" else "forge-latest"}:1.2.0")
 
