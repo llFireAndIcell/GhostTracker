@@ -1,7 +1,7 @@
 @file:Suppress("UnstableApiUsage", "PropertyName")
 
-import org.polyfrost.gradle.util.noServerRunConfigs
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.polyfrost.gradle.util.noServerRunConfigs
 
 plugins {
     kotlin("jvm")
@@ -66,6 +66,7 @@ sourceSets {
 
 repositories {
     maven("https://repo.polyfrost.org/releases")
+    maven("https://repo.polyfrost.org/snapshots")
 }
 
 dependencies {
@@ -75,6 +76,9 @@ dependencies {
     implementation("org.polyfrost.oneconfig:events:$oneconfig")
     implementation("org.polyfrost.oneconfig:hud:$oneconfig")
     implementation("org.polyfrost.oneconfig:utils:$oneconfig")
+    modImplementation("org.polyfrost.oneconfig:$platform:$oneconfig")
+
+    implementation("org.polyfrost:universalcraft-${platform}:299")
 
     modRuntimeOnly("me.djtheredstoner:DevAuth-${if (platform.isFabric) "fabric" else if (platform.isLegacyForge) "forge-legacy" else "forge-latest"}:1.2.0")
 

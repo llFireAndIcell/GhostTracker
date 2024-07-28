@@ -1,39 +1,35 @@
 package me.fireandice.ghosttracker.config
 
-import cc.polyfrost.oneconfig.config.Config
-import cc.polyfrost.oneconfig.config.annotations.*
-import cc.polyfrost.oneconfig.config.annotations.Number
-import cc.polyfrost.oneconfig.config.core.OneColor
-import cc.polyfrost.oneconfig.config.core.OneKeyBind
-import cc.polyfrost.oneconfig.config.data.Mod
-import cc.polyfrost.oneconfig.config.data.ModType
-import cc.polyfrost.oneconfig.renderer.TextRenderer.TextType
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.hud.GhostHud
 import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
+import org.polyfrost.oneconfig.api.config.v1.KtConfig
+import org.polyfrost.oneconfig.api.config.v1.annotations.Button
+import org.polyfrost.oneconfig.api.config.v1.annotations.Color
+import org.polyfrost.oneconfig.api.config.v1.annotations.Keybind
+import org.polyfrost.oneconfig.api.config.v1.annotations.Number
+import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
+import org.polyfrost.oneconfig.api.ui.v1.keybind.KeybindHelper
+import org.polyfrost.polyui.input.KeyBinder
+import org.polyfrost.polyui.utils.rgba
 
 @Suppress("unused")
-object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConfig.json") {
+object GhostConfig : KtConfig("GhostConfig.json", GhostTracker.NAME, Category.HYPIXEL) {
 
     //<editor-fold desc="General settings">
     //<editor-fold> desc="General">
-    @Switch(
-        name = "Show everywhere",
-        description = "Show everywhere, instead of only in dwarven mines",
-        category = "General"
+    var showEverywhere by switch(
+        false,
+        "Show everywhere",
+        "Show everywhere, instead of only in dwarven mines"
     )
-    var showEverywhere = false
 
-    /**
-     * Don't use this one
-     */
-    @Dropdown(
-        name = "Shadow type",
-        options = ["None", "Shadow", "Full shadow"],
-        category = "General"
+    private val shadowOption by dropdown(
+        arrayOf("None", "Shadow", "Full shadow"),
+        1,
+        "Shadow type"
     )
-    var shadowOption = 1
 
     /**
      * Use this one
@@ -45,15 +41,10 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
             else -> TextType.NONE
         }
 
-    @Switch(
-        name = "Show icons",
-        description = "Show a small icon to the left of every hud line",
-        category = "General"
-    )
-    var showIcons = true
+    var showIcons by switch(true, "Show icons", "Show a small icon to the left of every hud line")
 
     @Switch(
-        name = "Abbreviate text",
+        title = "Abbreviate text",
         description = "Reduce text on each hud line",
         category = "General"
     )
@@ -65,7 +56,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     val showPrefixes get() = !abbreviate
 
     @Switch(
-        name = "Show margins",
+        title = "Show margins",
         description = "Show the percent difference between drops you've received and the mathematical average",
         category = "General"
     )
@@ -74,38 +65,31 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
 
     //<editor-fold> desc="Enchants">
     @Number(
-        name = "Looting level",
+        title = "Looting level",
         category = "General",
         subcategory = "Enchants",
         min = 0f,
         max = 10f,  // in case they add more levels or something idk
-        step = 1
     )
     var lootingLevel = 5
 
     @Number(
-        name = "Luck level",
+        title = "Luck level",
         category = "General",
         subcategory = "Enchants",
         min = 0f,
         max = 10f,  // in case they add more levels or something idk
-        step = 1
     )
     var luckLevel = 7
     //</editor-fold>
 
     //<editor-fold> desc="Price fetching">
-    /**
-     * Don't use this one
-     */
-    @Dropdown(
-        name = "Price timespan",
-        category = "General",
-        subcategory = "Price Fetching",
-        description = "The timespan of price data to use and average out",
-        options = ["Hour", "Day", "Week"]
+    private val priceTimespanOption by dropdown(
+        arrayOf("Hour", "Day", "Week"),
+        2,
+        "Price timespan",
+        "The timespan of price data to use and average out"
     )
-    var priceTimespanOption: Int = 2
 
     /**
      * Use this one
@@ -118,69 +102,58 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
         }
 
     @Number(
-        name = "Fetch frequency (minutes)",
+        title = "Fetch frequency (minutes)",
         category = "General",
         subcategory = "Price Fetching",
         description = "The frequency that api data is refreshed",
         min = 5f,
         max = 120f,
-        step = 1
     )
     var priceFrequency: Int = 20
     //</editor-fold>
 
     //<editor-fold> desc="Colors">
+    var killColor by color(rgba(85, 255, 255), "Kill color") // aqua
+
+    var dropColor by color(rgba(85, 85, 255), "Drop color") // blue
+
     @Color(
-        name = "Kill color",
+        title = "Percent difference color",
         category = "General",
         subcategory = "Colors"
     )
-    var killColor = OneColor(85, 255, 255)      // aqua
+    var marginColor = OneColor(85, 85, 85) // dark gray
 
     @Color(
-        name = "Drop color",
+        title = "Magic find color",
         category = "General",
         subcategory = "Colors"
     )
-    var dropColor = OneColor(85, 85, 255)       // blue
+    var mfColor = OneColor(255, 170, 0) // gold
 
     @Color(
-        name = "Percent difference color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var marginColor = OneColor(85, 85, 85)      // dark gray
-
-    @Color(
-        name = "Magic find color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var mfColor = OneColor(255, 170, 0)         // gold
-
-    @Color(
-        name = "Combat XP color",
+        title = "Combat XP color",
         category = "General",
         subcategory = "Colors"
     )
     var xpColor = OneColor(255, 85, 85)         // red
 
     @Color(
-        name = "Time color",
+        title = "Time color",
         category = "General",
         subcategory = "Colors"
     )
     var timeColor = OneColor(85, 255, 255)      // aqua
 
     @Color(
-        name = "Money color",
+        title = "Money color",
         category = "General",
         subcategory = "Colors"
     )
     var coinColor = OneColor(255, 170, 0)       // gold
 
     @Color(
-        name = "Pause indicator color",
+        title = "Pause indicator color",
         category = "General",
         subcategory = "Colors"
     )
@@ -191,94 +164,94 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     //<editor-fold desc="Stat tracker settings">
     //<editor-fold> desc="Control panel">
     @Button(
-        name = "Reset stats",
+        title = "Reset stats",
         text = "Reset",
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
     var tracker_resetButton = Runnable { GhostTracker.resetStats() }
 
-    @KeyBind(
-        name = "Stat reset keybind",
+    @Keybind(
+        title = "Stat reset keybind",
         category = "Stat Tracker",
         subcategory = "Control Panel"
     )
-    var tracker_resetKb = OneKeyBind()
+    var tracker_resetKb = KeybindHelper().does(GhostTracker::resetStats).register()
     //</editor-fold>
 
     //<editor-fold> desc="Display info">
     @Switch(
-        name = "Show kill count",
+        title = "Show kill count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_kills = true
 
     @Switch(
-        name = "Show sorrow count",
+        title = "Show sorrow count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_sorrow = true
 
     @Switch(
-        name = "Show volta count",
+        title = "Show volta count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_volta = true
 
     @Switch(
-        name = "Show plasma count",
+        title = "Show plasma count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_plasma = true
 
     @Switch(
-        name = "Show ghostly boots count",
+        title = "Show ghostly boots count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_boots = true
 
     @Switch(
-        name = "Show 1m coin drop count",
+        title = "Show 1m coin drop count",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_coins = true
 
     @Switch(
-        name = "Show average magic find",
+        title = "Show average magic find",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_mf = true
 
     @Switch(
-        name = "Show average combat XP",
+        title = "Show average combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_averageXp = true
 
     @Switch(
-        name = "Show total combat XP",
+        title = "Show total combat XP",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_totalXp = true
 
     @Switch(
-        name = "Show scavenger coins",
+        title = "Show scavenger coins",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
     var tracker_scavenger = true
 
     @Switch(
-        name = "Show total money",
+        title = "Show total money",
         category = "Stat Tracker",
         subcategory = "Display Information"
     )
@@ -296,37 +269,37 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     //<editor-fold desc="Session timer settings">
     //<editor-fold> desc="Control panel">
     @Button(
-        name = "Reset timer",
+        title = "Reset timer",
         text = "Reset",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
     var timer_resetButton = Runnable { GhostTimer.reset() }
 
-    @KeyBind(
-        name = "Reset timer keybind",
+    @Keybind(
+        title = "Reset timer keybind",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
     var timer_resetKb = OneKeyBind()
 
     @Button(
-        name = "Start/resume timer",
+        title = "Start/resume timer",
         text = "Start",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
     var startButton = Runnable { GhostTimer.start() }
 
-    @KeyBind(
-        name = "Start/pause timer keybind",
+    @Keybind(
+        title = "Start/pause timer keybind",
         category = "Session Timer",
         subcategory = "Control Panel"
     )
-    var pauseKb = OneKeyBind()
+    var pauseKb = KeyBinder
 
     @Button(
-        name = "Pause timer",
+        title = "Pause timer",
         text = "Pause",
         category = "Session Timer",
         subcategory = "Control Panel"
@@ -336,84 +309,84 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
 
     //<editor-fold> desc="Display info">
     @Switch(
-        name = "Show kills per hour",
+        title = "Show kills per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_kills = true
 
     @Switch(
-        name = "Show sorrows per hour",
+        title = "Show sorrows per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_sorrow = true
 
     @Switch(
-        name = "Show voltas per hour",
+        title = "Show voltas per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_volta = true
 
     @Switch(
-        name = "Show plasmas per hour",
+        title = "Show plasmas per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_plasma = true
 
     @Switch(
-        name = "Show ghostly boots per hour",
+        title = "Show ghostly boots per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_boots = true
 
     @Switch(
-        name = "Show 1m coins per hour",
+        title = "Show 1m coins per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_coins = true
 
     @Switch(
-        name = "Show average magic find",
+        title = "Show average magic find",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_mf = true
 
     @Switch(
-        name = "Show average combat XP",
+        title = "Show average combat XP",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_averageXp = true
 
     @Switch(
-        name = "Show combat XP per hour",
+        title = "Show combat XP per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_xpRate = true
 
     @Switch(
-        name = "Show scavenger coins",
+        title = "Show scavenger coins",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_scavenger = true
 
     @Switch(
-        name = "Show money per hour",
+        title = "Show money per hour",
         category = "Session Timer",
         subcategory = "Display Information"
     )
     var timer_moneyRate = true
 
     @Switch(
-        name = "Show session time",
+        title = "Show session time",
         category = "Session Timer",
         subcategory = "Display Information"
     )
@@ -421,7 +394,7 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     //</editor-fold>
 
     @HUD(
-        name = "Session timer HUD",
+        title = "Session timer HUD",
         category = "Session Timer",
         subcategory = "HUD Settings"
     )
@@ -429,7 +402,6 @@ object GhostConfig : Config(Mod(GhostTracker.NAME, ModType.SKYBLOCK), "GhostConf
     //</editor-fold>
 
     init {
-        initialize()
         registerKeyBind(tracker_resetKb, GhostTracker::resetStats)
         registerKeyBind(timer_resetKb, GhostTimer::reset)
         registerKeyBind(pauseKb) {

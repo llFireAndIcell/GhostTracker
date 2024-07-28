@@ -1,13 +1,14 @@
 package me.fireandice.ghosttracker.api
 
-import cc.polyfrost.oneconfig.utils.NetworkUtils
 import com.google.gson.JsonArray
 import com.google.gson.JsonElement
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.utils.gson
 import me.fireandice.ghosttracker.utils.logError
 import me.fireandice.ghosttracker.utils.logInfo
+import org.polyfrost.oneconfig.utils.v1.NetworkUtils
 
 object PriceData {
 
@@ -72,16 +73,16 @@ object PriceData {
         var response: JsonArray? = null
         val url = "$BASE_URL/$itemId/history/${GhostConfig.priceTimespan}"
         try {
-            response = NetworkUtils.getJsonElement(
+            response = NetworkUtils.getString(
                 url,
                 USER_AGENT,
                 TIMEOUT,
                 false
-            ).asJsonArray
+            ).let { gson.fromJson(it, JsonArray::class.java) }
         } catch (e: IllegalStateException) {
             logError("Failed to get json array from $url")
         } catch (e: Exception) {
-            logError("Unexpected error when fetching api data")
+            e.message?.let { logError(it) }
         }
 
         return response
