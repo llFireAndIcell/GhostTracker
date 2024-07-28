@@ -1,15 +1,14 @@
 package me.fireandice.ghosttracker
 
-import cc.polyfrost.oneconfig.libs.universal.ChatColor
-import cc.polyfrost.oneconfig.libs.universal.UChat
-import cc.polyfrost.oneconfig.libs.universal.UMinecraft
 import com.google.gson.JsonObject
 import me.fireandice.ghosttracker.command.MainCommand
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.logging.GhostTrackerMessageFactory
 import me.fireandice.ghosttracker.tracker.GhostStats
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import me.fireandice.ghosttracker.logging.GhostTrackerMessageFactory
 import me.fireandice.ghosttracker.utils.gson
+import me.fireandice.ghosttracker.utils.logError
+import net.minecraft.client.Minecraft
 import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
@@ -18,17 +17,19 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.polyfrost.universal.ChatColor
+import org.polyfrost.universal.UChat
 import java.io.File
 
 
-val MOD_DIR = File(File(UMinecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
+val MOD_DIR: File = File(File(Minecraft.getMinecraft().mcDataDir, "config"), "GhostTracker")
 const val PREFIX = "§b§lGhostTracker§r§8 »§r"
 
 @Mod(
     modid = GhostTracker.MODID,
     name = GhostTracker.NAME,
     version = GhostTracker.VERSION,
-    modLanguageAdapter = "cc.polyfrost.oneconfig.utils.KotlinLanguageAdapter"
+    modLanguageAdapter = "org.polyfrost.oneconfig.utils.v1.forge.KotlinLanguageAdapter"
 )
 object GhostTracker {
 
@@ -36,7 +37,7 @@ object GhostTracker {
     const val NAME = "@NAME@"
     const val VERSION = "@VER@"
 
-    private var statsFile = File(MOD_DIR, "GhostStats.json")
+    private val statsFile = File(MOD_DIR, "GhostStats.json")
     val ghostStats = GhostStats()
     val logger: Logger = LogManager.getLogger(GhostTrackerMessageFactory())
 
@@ -83,7 +84,8 @@ object GhostTracker {
         try {
             val jsonString = statsFile.bufferedReader().use { it.readText() }
             gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            e.message?.let { logError(it) }
         }
         logger.info("Tracker stats loaded")
     }
