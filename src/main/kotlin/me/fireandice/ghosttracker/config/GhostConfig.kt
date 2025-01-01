@@ -1,89 +1,47 @@
 package me.fireandice.ghosttracker.config
 
 import me.fireandice.ghosttracker.GhostTracker
-import me.fireandice.ghosttracker.hud.GhostHud
-import me.fireandice.ghosttracker.hud.TimerHud
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import org.polyfrost.oneconfig.api.config.v1.KtConfig
-import org.polyfrost.oneconfig.api.config.v1.annotations.Button
-import org.polyfrost.oneconfig.api.config.v1.annotations.Color
-import org.polyfrost.oneconfig.api.config.v1.annotations.Keybind
-import org.polyfrost.oneconfig.api.config.v1.annotations.Number
 import org.polyfrost.oneconfig.api.config.v1.annotations.Switch
-import org.polyfrost.oneconfig.api.ui.v1.keybind.KeybindHelper
-import org.polyfrost.polyui.input.KeyBinder
-import org.polyfrost.polyui.utils.rgba
+import org.polyfrost.polyui.color.rgba
+import org.polyfrost.polyui.input.KeybindHelper
+import org.polyfrost.universal.UKeyboard
 
-@Suppress("unused")
-object GhostConfig : KtConfig("GhostConfig.json", GhostTracker.NAME, Category.HYPIXEL) {
+@Suppress("unused", "MemberVisibilityCanBePrivate")
+object GhostConfig : KtConfigNotNull("GhostConfig.json", GhostTracker.NAME, Category.HYPIXEL) {
 
     //<editor-fold desc="General settings">
-    //<editor-fold> desc="General">
+
+    //<editor-fold desc="General">
     var showEverywhere by switch(
         false,
         "Show everywhere",
         "Show everywhere, instead of only in dwarven mines"
     )
 
-    private val shadowOption by dropdown(
-        arrayOf("None", "Shadow", "Full shadow"),
-        1,
-        "Shadow type"
-    )
+    var showIcons by switch(true, "Show icons", "Show a small icon to the left of every hud line")
+    var abbreviate by switch(false, "Abbreviate text", "Reduce text on each hud line")
 
     /**
-     * Use this one
+     * Originally `showPrefixes` was tied to the config option, but I updated the description of the config option and
+     * inverted the value to logically match the new description. Instead of changing it everywhere in the code, I just
+     * tied `abbreviate` to the config option and invert it
      */
-    val shadow: TextType
-        get() = when (shadowOption) {
-            1 -> TextType.SHADOW
-            2 -> TextType.FULL
-            else -> TextType.NONE
-        }
-
-    var showIcons by switch(true, "Show icons", "Show a small icon to the left of every hud line")
-
-    @Switch(
-        title = "Abbreviate text",
-        description = "Reduce text on each hud line",
-        category = "General"
-    )
-    var abbreviate = false
-
-    // originally `showPrefixes` was tied to the config option, but I updated the description of the config option and
-    // inverted the value to logically match the new description. Instead of changing it everywhere in the code, I just
-    // tied `abbreviate` to the config option and invert it
     val showPrefixes get() = !abbreviate
 
-    @Switch(
-        title = "Show margins",
-        description = "Show the percent difference between drops you've received and the mathematical average",
-        category = "General"
+    var showMargins by switch(
+        true,
+        "Show margins",
+        "Show the percent difference between drops you've received and the mathematical average"
     )
-    var showMargins = true
     //</editor-fold>
 
-    //<editor-fold> desc="Enchants">
-    @Number(
-        title = "Looting level",
-        category = "General",
-        subcategory = "Enchants",
-        min = 0f,
-        max = 10f,  // in case they add more levels or something idk
-    )
-    var lootingLevel = 5
-
-    @Number(
-        title = "Luck level",
-        category = "General",
-        subcategory = "Enchants",
-        min = 0f,
-        max = 10f,  // in case they add more levels or something idk
-    )
-    var luckLevel = 7
+    //<editor-fold desc="Enchants">
+    var lootingLevel by slider(0f, 10f, 5f, "Looting level")
+    var luckLevel by slider(0f, 10f, 7f, "Luck level")
     //</editor-fold>
 
-    //<editor-fold> desc="Price fetching">
+    //<editor-fold desc="Price fetching">
     private val priceTimespanOption by dropdown(
         arrayOf("Hour", "Day", "Week"),
         2,
@@ -101,213 +59,93 @@ object GhostConfig : KtConfig("GhostConfig.json", GhostTracker.NAME, Category.HY
             else -> "week"
         }
 
-    @Number(
-        title = "Fetch frequency (minutes)",
-        category = "General",
-        subcategory = "Price Fetching",
-        description = "The frequency that api data is refreshed",
-        min = 5f,
-        max = 120f,
-    )
-    var priceFrequency: Int = 20
+    var priceFrequency by slider(5f, 120f, 20f, "Fetch frequency (minutes)", "The frequency that api data is refreshed")
     //</editor-fold>
 
-    //<editor-fold> desc="Colors">
+    //<editor-fold desc="Colors">
     var killColor by color(rgba(85, 255, 255), "Kill color") // aqua
-
     var dropColor by color(rgba(85, 85, 255), "Drop color") // blue
-
-    @Color(
-        title = "Percent difference color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var marginColor = OneColor(85, 85, 85) // dark gray
-
-    @Color(
-        title = "Magic find color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var mfColor = OneColor(255, 170, 0) // gold
-
-    @Color(
-        title = "Combat XP color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var xpColor = OneColor(255, 85, 85)         // red
-
-    @Color(
-        title = "Time color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var timeColor = OneColor(85, 255, 255)      // aqua
-
-    @Color(
-        title = "Money color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var coinColor = OneColor(255, 170, 0)       // gold
-
-    @Color(
-        title = "Pause indicator color",
-        category = "General",
-        subcategory = "Colors"
-    )
-    var pauseColor = OneColor(85, 85, 85)       // dark gray
+    var marginColor by color(rgba(85, 85, 85), "Percent Difference Color") // dark gray
+    var mfColor by color(rgba(255, 170, 0), "Magic find color") // gold
+    var xpColor by color(rgba(255, 85, 85), "Combat XP color") // red
+    var timeColor by color(rgba(85, 255, 255), "Time color") // aqua
+    var coinColor by color(rgba(255, 170, 0), "Money color") // gold
+    var pauseColor by color(rgba(85, 85, 85), "Pause indicator color") // dark gray
     //</editor-fold>
+
     //</editor-fold>
 
     //<editor-fold desc="Stat tracker settings">
-    //<editor-fold> desc="Control panel">
-    @Button(
-        title = "Reset stats",
-        text = "Reset",
-        category = "Stat Tracker",
-        subcategory = "Control Panel"
-    )
-    var tracker_resetButton = Runnable { GhostTracker.resetStats() }
 
-    @Keybind(
-        title = "Stat reset keybind",
-        category = "Stat Tracker",
-        subcategory = "Control Panel"
+    //<editor-fold desc="Control panel">
+
+    // TODO: create an entirely separate gui for controls; it doesn't make sense in the config tbh. Have a keybind and
+    //  command to open that gui
+//    @Button(
+//        title = "Reset stats",
+//        text = "Reset",
+//        category = "Stat Tracker",
+//        subcategory = "Control Panel"
+//    )
+//    var tracker_resetButton = Runnable { GhostTracker.resetStats() }
+
+    var tracker_resetKb by keybind(
+        KeybindHelper.builder()
+            .keys(UKeyboard.KEY_NONE)
+            .does(GhostTracker::resetStats)
+            .build(),
+        "Reset stats"
     )
-    var tracker_resetKb = KeybindHelper().does(GhostTracker::resetStats).register()
     //</editor-fold>
 
-    //<editor-fold> desc="Display info">
-    @Switch(
-        title = "Show kill count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_kills = true
-
-    @Switch(
-        title = "Show sorrow count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_sorrow = true
-
-    @Switch(
-        title = "Show volta count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_volta = true
-
-    @Switch(
-        title = "Show plasma count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_plasma = true
-
-    @Switch(
-        title = "Show ghostly boots count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_boots = true
-
-    @Switch(
-        title = "Show 1m coin drop count",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_coins = true
-
-    @Switch(
-        title = "Show average magic find",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_mf = true
-
-    @Switch(
-        title = "Show average combat XP",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_averageXp = true
-
-    @Switch(
-        title = "Show total combat XP",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_totalXp = true
-
-    @Switch(
-        title = "Show scavenger coins",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_scavenger = true
-
-    @Switch(
-        title = "Show total money",
-        category = "Stat Tracker",
-        subcategory = "Display Information"
-    )
-    var tracker_totalMoney = true
+    //<editor-fold desc="Display info">
+    var tracker_kills by switch(true, "Show kill count")
+    var tracker_sorrow by switch(true, "Show sorrow count")
+    var tracker_volta by switch(true, "Show volta count")
+    var tracker_plasma by switch(true, "Show plasma count")
+    var tracker_boots by switch(true, "Show ghostly boots count")
+    var tracker_coins by switch(true, "Show 1m coin drop count")
+    var tracker_mf by switch(true, "Show average magic find")
+    var tracker_averageXp by switch(true, "Show average combat XP")
+    var tracker_totalXp by switch(true, "Show total combat XP")
+    var tracker_scavenger by switch(true, "Show scavenger coins")
+    var tracker_totalMoney by switch(true, "Show total money")
     //</editor-fold>
 
-    @HUD(
-        name = "Stats HUD",
-        category = "Stat Tracker",
-        subcategory = "HUD Settings"
-    )
-    var tracker_hud = GhostHud()
+    // TODO: huds work completely different. They aren't part of the config anymore
+//    @HUD(
+//        name = "Stats HUD",
+//        category = "Stat Tracker",
+//        subcategory = "HUD Settings"
+//    )
+//    var tracker_hud = GhostHud()
     //</editor-fold>
 
     //<editor-fold desc="Session timer settings">
-    //<editor-fold> desc="Control panel">
-    @Button(
-        title = "Reset timer",
-        text = "Reset",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var timer_resetButton = Runnable { GhostTimer.reset() }
 
-    @Keybind(
-        title = "Reset timer keybind",
-        category = "Session Timer",
-        subcategory = "Control Panel"
+    //<editor-fold desc="Control panel">
+    var timer_resetKb by keybind(
+        KeybindHelper.builder()
+            .keys(UKeyboard.KEY_NONE)
+            .does(GhostTimer::reset)
+            .build(),
+        "Reset timer keybind"
     )
-    var timer_resetKb = OneKeyBind()
 
-    @Button(
-        title = "Start/resume timer",
-        text = "Start",
-        category = "Session Timer",
-        subcategory = "Control Panel"
+    var pauseKb by keybind(
+        KeybindHelper.builder()
+            .keys(UKeyboard.KEY_NONE)
+            .does {
+                if (GhostTimer.isTracking) GhostTimer.pause()
+                else GhostTimer.start()
+            }
+            .build(),
+        "Start/pause timer keybind"
     )
-    var startButton = Runnable { GhostTimer.start() }
-
-    @Keybind(
-        title = "Start/pause timer keybind",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var pauseKb = KeyBinder
-
-    @Button(
-        title = "Pause timer",
-        text = "Pause",
-        category = "Session Timer",
-        subcategory = "Control Panel"
-    )
-    var pauseButton = Runnable { GhostTimer.pause() }
     //</editor-fold>
 
-    //<editor-fold> desc="Display info">
+    //<editor-fold desc="Display info">
+    // TODO: migrate the rest of these
     @Switch(
         title = "Show kills per hour",
         category = "Session Timer",
@@ -393,20 +231,5 @@ object GhostConfig : KtConfig("GhostConfig.json", GhostTracker.NAME, Category.HY
     var timer_time = true
     //</editor-fold>
 
-    @HUD(
-        title = "Session timer HUD",
-        category = "Session Timer",
-        subcategory = "HUD Settings"
-    )
-    var timer_hud = TimerHud()
     //</editor-fold>
-
-    init {
-        registerKeyBind(tracker_resetKb, GhostTracker::resetStats)
-        registerKeyBind(timer_resetKb, GhostTimer::reset)
-        registerKeyBind(pauseKb) {
-            if (GhostTimer.isTracking) GhostTimer.pause()
-            else GhostTimer.start()
-        }
-    }
 }

@@ -9,7 +9,6 @@ import me.fireandice.ghosttracker.tracker.GhostTimer
 import me.fireandice.ghosttracker.utils.gson
 import me.fireandice.ghosttracker.utils.logError
 import net.minecraft.client.Minecraft
-import net.minecraftforge.client.ClientCommandHandler
 import net.minecraftforge.common.MinecraftForge
 import net.minecraftforge.fml.common.Mod
 import net.minecraftforge.fml.common.Mod.EventHandler
@@ -17,6 +16,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent
 import org.apache.logging.log4j.LogManager
 import org.apache.logging.log4j.Logger
+import org.polyfrost.oneconfig.api.commands.v1.CommandManager
 import org.polyfrost.universal.ChatColor
 import org.polyfrost.universal.UChat
 import java.io.File
@@ -38,7 +38,7 @@ object GhostTracker {
     const val VERSION = "@VER@"
 
     private val statsFile = File(MOD_DIR, "GhostStats.json")
-    val ghostStats = GhostStats()
+    var ghostStats = GhostStats()
     val logger: Logger = LogManager.getLogger(GhostTrackerMessageFactory())
 
     @EventHandler
@@ -61,7 +61,7 @@ object GhostTracker {
             EventListener
         ).forEach { MinecraftForge.EVENT_BUS.register(it) }
 
-        ClientCommandHandler.instance.registerCommand(MainCommand)
+        CommandManager.registerCommand(MainCommand)
 
         Runtime.getRuntime().addShutdownHook(Thread {
             this.save()
@@ -83,9 +83,9 @@ object GhostTracker {
     private fun load() {
         try {
             val jsonString = statsFile.bufferedReader().use { it.readText() }
-            gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats.fromJson(it) }
+            gson.fromJson(jsonString, JsonObject::class.java).also { ghostStats = GhostStats.fromJson(it) }
         } catch (e: Exception) {
-            e.message?.let { logError(it) }
+            logError("Error loading tracker stats", e)
         }
         logger.info("Tracker stats loaded")
     }

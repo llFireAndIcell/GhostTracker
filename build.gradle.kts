@@ -1,171 +1,57 @@
 @file:Suppress("UnstableApiUsage", "PropertyName")
 
-import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
-import org.polyfrost.gradle.util.noServerRunConfigs
+import dev.deftu.gradle.utils.GameSide
 
 plugins {
-    kotlin("jvm")
-    id("org.polyfrost.multi-version")
-    id("org.polyfrost.defaults.repo")
-    id("org.polyfrost.defaults.java")
-    id("org.polyfrost.defaults.loom")
-    id("com.github.johnrengelman.shadow")
-    id("net.kyori.blossom") version "1.3.2"
-    id("signing")
     java
+    kotlin("jvm")
+    id("dev.deftu.gradle.multiversion")
+    id("dev.deftu.gradle.tools")
+    id("dev.deftu.gradle.tools.resources")
+    id("dev.deftu.gradle.tools.bloom")
+    id("dev.deftu.gradle.tools.shadow")
+    id("dev.deftu.gradle.tools.minecraft.loom")
 }
 
-val mod_name: String by project
-val mod_version: String by project
-val mod_id: String by project
-val mod_archives_name: String by project
+toolkitLoomHelper {
+    // Adds OneConfig to our project
+    useOneConfig(mcData, "commands", "config", "config-impl", "events", "internal", "ui")
+    useDevAuth()
 
-blossom {
-    replaceToken("@VER@", mod_version)
-    replaceToken("@NAME@", mod_name)
-    replaceToken("@ID@", mod_id)
-}
+    // Removes the server configs from IntelliJ IDEA, leaving only client runs.
+    // If you're developing a server-side mod, you can remove this line.
+    disableRunConfigs(GameSide.SERVER)
 
-version = mod_version
-group = "me.fireandice"
-
-base {
-    archivesName.set("$mod_archives_name-$platform")
-}
-
-loom {
-    noServerRunConfigs()
-    if (project.platform.isLegacyForge) {
-        runConfigs {
-            "client" {
-                programArgs("--tweakClass", "cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker")
-//                property("mixin.debug.export", "true")
-            }
-        }
+    // Sets up our Mixin refmap naming
+    if (!mcData.isNeoForge) {
+        useMixinRefMap(modData.id)
     }
-//    if (project.platform.isForge) {
-//        forge {
-//            mixinConfig("mixins.${mod_id}.json")
-//        }
-//    }
-//    mixin.defaultRefmapName.set("mixins.${mod_id}.refmap.json")
+
+    // Adds the tweak class if we are building legacy version of forge as per the documentation (https://docs.polyfrost.org)
+    if (mcData.isLegacyForge) {
+        useTweaker("org.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker", GameSide.CLIENT)
+        useForgeMixin(modData.id) // Configures the mixins if we are building for forge, useful for when we are dealing with cross-platform projects.
+    }
 }
 
-val shade: Configuration by configurations.creating {
-    configurations.implementation.get().extendsFrom(this)
-}
-val modShade: Configuration by configurations.creating {
-    configurations.modImplementation.get().extendsFrom(this)
-}
-
+// Configures the output directory for when building from the `src/resources` directory.
 sourceSets {
     main {
         output.setResourcesDir(java.classesDirectory)
     }
 }
 
+// Adds the Polyfrost maven repository so that we can get the libraries necessary to develop the mod.
 repositories {
+    mavenLocal()
     maven("https://repo.polyfrost.org/releases")
     maven("https://repo.polyfrost.org/snapshots")
 }
 
+// Configures the libraries/dependencies for your mod.
 dependencies {
-    val oneconfig = "1.0.0-alpha.19"
-    implementation("org.polyfrost.oneconfig:commands:$oneconfig")
-    implementation("org.polyfrost.oneconfig:config-impl:$oneconfig")
-    implementation("org.polyfrost.oneconfig:events:$oneconfig")
-    implementation("org.polyfrost.oneconfig:hud:$oneconfig")
-    implementation("org.polyfrost.oneconfig:utils:$oneconfig")
-    modImplementation("org.polyfrost.oneconfig:$platform:$oneconfig")
-
-    implementation("org.polyfrost:universalcraft-${platform}:299")
-
-    modRuntimeOnly("me.djtheredstoner:DevAuth-${if (platform.isFabric) "fabric" else if (platform.isLegacyForge) "forge-legacy" else "forge-latest"}:1.2.0")
-
-    if (platform.isLegacyForge) {
-//        compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
-        shade("cc.polyfrost:oneconfig-wrapper-launchwrapper:1.0.0-beta17")
-    }
-}
-
-tasks {
-    processResources {
-        inputs.property("id", mod_id)
-        inputs.property("name", mod_name)
-        val java = if (project.platform.mcMinor >= 18) {
-            17
-        } else {
-            if (project.platform.mcMinor == 17)
-                16
-            else
-                8
-        }
-        val compatLevel = "JAVA_${java}"
-        inputs.property("java", java)
-        inputs.property("java_level", compatLevel)
-        inputs.property("version", mod_version)
-        inputs.property("mcVersionStr", project.platform.mcVersionStr)
-        filesMatching(listOf("mcmod.info", /* "mixins.${mod_id}.json" , */ "mods.toml")) {
-            expand(
-                mapOf(
-                    "id" to mod_id,
-                    "name" to mod_name,
-                    "java" to java,
-                    "java_level" to compatLevel,
-                    "version" to mod_version,
-                    "mcVersionStr" to project.platform.mcVersionStr
-                )
-            )
-        }
-        filesMatching("fabric.mod.json") {
-            expand(
-                mapOf(
-                    "id" to mod_id,
-                    "name" to mod_name,
-                    "java" to java,
-                    "java_level" to compatLevel,
-                    "version" to mod_version,
-                    "mcVersionStr" to project.platform.mcVersionStr.substringBeforeLast(".") + ".x"
-                )
-            )
-        }
-    }
-
-    withType(Jar::class.java) {
-        if (project.platform.isFabric) {
-            exclude("mcmod.info", "mods.toml")
-        } else {
-            exclude("fabric.mod.json")
-            if (project.platform.isLegacyForge) {
-                exclude("mods.toml")
-            } else {
-                exclude("mcmod.info")
-            }
-        }
-    }
-    named<ShadowJar>("shadowJar") {
-        archiveClassifier.set("dev")
-        configurations = listOf(shade, modShade)
-        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-    }
-
-    remapJar {
-        inputFile.set(shadowJar.get().archiveFile)
-        archiveClassifier.set("")
-    }
-
-    jar {
-        if (platform.isLegacyForge) {
-            manifest.attributes += mapOf(
-                "ModSide" to "CLIENT",
-                "ForceLoadAsMod" to true,
-                "TweakOrder" to "0",
-//                "MixinConfigs" to "mixins.${mod_id}.json",
-                "TweakClass" to "cc.polyfrost.oneconfig.loader.stage0.LaunchWrapperTweaker"
-            )
-        }
-        dependsOn(shadowJar)
-        archiveClassifier.set("")
-        enabled = false
+    // If we are building for legacy forge, includes the launch wrapper with `shade` as we configured earlier.
+    if (mcData.isLegacyForge) {
+        compileOnly("org.spongepowered:mixin:0.7.11-SNAPSHOT")
     }
 }

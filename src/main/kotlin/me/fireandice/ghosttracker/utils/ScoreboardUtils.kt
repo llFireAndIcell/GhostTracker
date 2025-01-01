@@ -1,8 +1,9 @@
 package me.fireandice.ghosttracker.utils
 
-import cc.polyfrost.oneconfig.utils.dsl.mc
+import me.fireandice.ghosttracker.EventListener
 import net.minecraft.scoreboard.Score
 import net.minecraft.scoreboard.ScorePlayerTeam
+import org.polyfrost.oneconfig.utils.v1.dsl.mc
 
 /**
  * Modified from https://github.com/inglettronald/DulkirMod under the GNU Affero General Public License v3.0
@@ -19,7 +20,7 @@ object ScoreboardUtils {
      */
     var inDwarvenMines = false
 
-    private val locations: Array<String> = arrayOf(
+    private val locations: List<String> = listOf(
         "Dwarven Village", "Miner's Guild", "Palace Bridge", "Royal Palace", "Puzzler", "Grand Library",
         "Barracks of Heroes", "Royal Mines", "Cliffside Veins", "Forge Basin", "The Forge", "Rampart's Quarry",
         "Far Reserve", "Upper Mines", "Goblin Burrows", "Great Ice Wall", "Aristocrat Passage", "Hanging Court",
@@ -51,12 +52,13 @@ object ScoreboardUtils {
             || mc.isSingleplayer
             || mc.thePlayer.clientBrand?.contains("hypixel", true) == false
         ) return false
+
         val objective = mc.thePlayer.worldScoreboard.getObjectiveInDisplaySlot(1) ?: return false
         return objective.displayName.stripControlCodes().contains("skyblock", true)
     }
 
     /**
-     * Called in `EventListener.onTickStart()`
+     * Called in [EventListener]`.onTickStart()`
      */
     fun checkLocations() {
         if (!inSkyblock()) {

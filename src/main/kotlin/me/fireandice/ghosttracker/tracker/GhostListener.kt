@@ -1,32 +1,33 @@
 package me.fireandice.ghosttracker.tracker
 
-import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.tracker.GhostDrops.*
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import me.fireandice.ghosttracker.utils.inGhostArea
 import me.fireandice.ghosttracker.utils.stripControlCodes
 import net.minecraftforge.client.event.ClientChatReceivedEvent
+import org.polyfrost.universal.wrappers.UPlayer
 import java.text.NumberFormat
 import java.util.*
 import kotlin.math.roundToInt
 
 object GhostListener {
 
-    private val RARE_DROP_PATTERN = "§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r".toPattern()
+    private val RARE_DROP_PATTERN =
+        "§r§6§lRARE DROP! §r§9(?<drop>[A-Za-z ]+) §r§b\\(\\+§r§b(?<mf>\\d+)% §r§b✯ Magic Find§r§b\\)§r".toPattern()
     private const val COIN_DROP_MESSAGE = "§r§eThe ghost's death materialized §r§61,000,000 coins §r§efrom the mists!§r"
     private val COMBAT_XP_PATTERN = "\\+(?<gained>[\\d.]+) Combat \\((?<progress>.+)\\)".toPattern()
     private val numberFormat: NumberFormat = NumberFormat.getInstance(Locale.US)
     private var previousXp = -1f
 
     /**
-     * Called in `EventListener.onChat()`
+     * Called in [EventListener]`.onChat()`
      */
     fun onChat(event: ClientChatReceivedEvent) {
         if (!ScoreboardUtils.inDwarvenMines ||
-            mc.thePlayer.posY > 100 ||
-            !(event.type == 0.toByte() ||
-            event.type == 1.toByte())) return
+            UPlayer.getPlayer()?.let { it.posY > 100 } == true ||
+            event.type != 0.toByte() && event.type != 1.toByte()
+        ) return
 
         val message = event.message.formattedText
 
@@ -49,7 +50,7 @@ object GhostListener {
 
     /**
      * Some logic was taken from https://www.chattriggers.com/modules/v/GhostCounterV3.
-     * Called in `EventListener.onChat()`
+     * Called in [EventListener]`.onChat()`
      */
     fun onActionBar(event: ClientChatReceivedEvent) {
         if (event.type != 2.toByte()) return
@@ -87,40 +88,43 @@ object GhostListener {
     }
 
     private fun trackDrops(drop: GhostDrops, magicFind: Int) {
-        val ghostStats = GhostTracker.ghostStats
-        val timerStats = GhostTimer.stats
-
         // coin drops are already handled before this method is called
-        when (drop) {
-            Sorrow -> ghostStats.sorrowCount++
-            Volta -> ghostStats.voltaCount++
-            Plasma -> ghostStats.plasmaCount++
-            Boots -> ghostStats.bootsCount++
-            else -> {}
-        }
-        ghostStats.totalMf += magicFind
-        ghostStats.mfDropCount++
-
-        if (GhostTimer.isTracking) {
+        GhostTracker.ghostStats.apply {
             when (drop) {
-                Sorrow -> timerStats.sorrowCount++
-                Volta -> timerStats.voltaCount++
-                Plasma -> timerStats.plasmaCount++
-                Boots -> timerStats.bootsCount++
+                Sorrow -> sorrowCount++
+                Volta -> voltaCount++
+                Plasma -> plasmaCount++
+                Boots -> bootsCount++
                 else -> {}
             }
-            timerStats.totalMf += magicFind
-            timerStats.mfDropCount++
+            totalMf += magicFind
+            mfDropCount++
+        }
+
+        if (GhostTimer.isTracking) {
+            GhostTimer.stats.apply {
+                when (drop) {
+                    Sorrow -> sorrowCount++
+                    Volta -> voltaCount++
+                    Plasma -> plasmaCount++
+                    Boots -> bootsCount++
+                    else -> {}
+                }
+                totalMf += magicFind
+                mfDropCount++
+            }
         }
     }
 
     private fun trackKills(killsGained: Int, xpGained: Float) {
-        GhostTracker.ghostStats.kills += killsGained
-        GhostTracker.ghostStats.totalXp += xpGained
+        GhostTracker.ghostStats.apply {
+            kills += killsGained
+            totalXp += xpGained
+        }
 
-        if (GhostTimer.isTracking) {
-            GhostTimer.stats.kills += killsGained
-            GhostTimer.stats.totalXp += xpGained
+        if (GhostTimer.isTracking) GhostTimer.stats.apply {
+            kills += killsGained
+            totalXp += xpGained
         }
     }
 }

@@ -23,7 +23,7 @@ object PurseListener {
         try {
             purse = split[0].toInt()
         } catch (e: NumberFormatException) {
-            logError("Couldn't parse purse string as int")
+            logError("Couldn't parse purse string as int", e)
             return
         }
 
@@ -32,7 +32,7 @@ object PurseListener {
             if (split.size > 1) scavenger = split[1].toInt()
             else return
         } catch (e: NumberFormatException) {
-            logError("Couldn't parse scavenger string as int")
+            logError("Couldn't parse scavenger string as int", e)
             return
         }
 

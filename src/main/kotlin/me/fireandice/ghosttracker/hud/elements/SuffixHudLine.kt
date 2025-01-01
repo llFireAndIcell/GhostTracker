@@ -1,10 +1,11 @@
 package me.fireandice.ghosttracker.hud.elements
 
-import cc.polyfrost.oneconfig.renderer.TextRenderer
-import cc.polyfrost.oneconfig.utils.dsl.mc
 import me.fireandice.ghosttracker.config.GhostConfig
-import me.fireandice.ghosttracker.utils.drawTexturedRect
-import net.minecraft.util.ResourceLocation
+import org.polyfrost.polyui.data.PolyImage
+import org.polyfrost.polyui.dsl.DrawableDSL
+import org.polyfrost.polyui.dsl.polyUI
+import org.polyfrost.polyui.unit.Align
+import org.polyfrost.polyui.unit.Vec2
 import kotlin.reflect.KProperty0
 
 /**
@@ -13,7 +14,7 @@ import kotlin.reflect.KProperty0
  * @param prefix The prefix text. This is not a [ColoredText] because it will always be the same color as [main]
  * @param main The main text that displays the relevant tracker stat
  * @param suffix Text after the main text that may be hidden by the user
- * @param image The icon that may display before the hud line
+ * @param icon The icon that may display before the hud line
  * @param visible The backing property of the config option that decides if the line is shown
  * @param suffixVisible An expression to calculate if the suffix should be shown
  */
@@ -21,7 +22,7 @@ class SuffixHudLine(
     var prefix: String? = null,
     var main: ColoredText,
     var suffix: ColoredText,
-    private val image: ResourceLocation,
+    private val icon: PolyImage,
     val visible: KProperty0<Boolean>,
     val suffixVisible: () -> Boolean
 ) : HudLine {
@@ -29,7 +30,8 @@ class SuffixHudLine(
     override var width: Float = 0f
     override var height: Float = 0f
 
-    override fun draw(x: Float, y: Float, scale: Float): Boolean {
+    @Suppress("UnstableApiUsage")
+    override fun draw(polyUI: DrawableDSL.Master, x: Float, y: Float, scale: Float): Boolean {
         if (!visible.get()) {
             width = 0f
             height = 0f
@@ -37,43 +39,36 @@ class SuffixHudLine(
         }
         height = 9f
 
-        var currentX = x
-        var currentWidth = 0f
+        polyUI {
+            group(alignment = Align(pad = Vec2.of(2f, 2f))) {
+                if (GhostConfig.showIcons) {
+                    image(icon) {
+                        width = 8 * scale
+                        height = 8 * scale
+                    }
+                }
 
-        if (GhostConfig.showIcons) {
-            mc.textureManager.bindTexture(image)
-            drawTexturedRect(
-                x = currentX.toDouble(),
-                y = y.toDouble(),
-                u = 0f,
-                v = 0f,
-                width = 8 * scale.toDouble(),
-                height = 8 * scale.toDouble(),
-                textureWidth = 8f * scale,
-                textureHeight = 8f * scale
-            )
-            currentX += 10 * scale
-            currentWidth += 10
+                if (GhostConfig.showPrefixes) {
+                    text(prefix.orEmpty()) {
+                        color = main.color
+                        height = 9f
+                    }
+                }
+
+                text(main.text) {
+                    color = main.color
+                    height = 9f
+                }
+
+                if (suffixVisible()) {
+                    text(suffix.text) {
+                        color = suffix.color
+                        height = 9f
+                    }
+                }
+            }
         }
 
-        if (GhostConfig.showPrefixes) {
-            TextRenderer.drawScaledString(prefix, currentX, y, main.color, GhostConfig.shadow, scale)
-            val prefixWidth = mc.fontRendererObj.getStringWidth(prefix)
-            currentX += prefixWidth * scale
-            currentWidth += prefixWidth
-        }
-
-        TextRenderer.drawScaledString(main.text, currentX, y, main.color, GhostConfig.shadow, scale)
-        val textWidth = mc.fontRendererObj.getStringWidth(main.text)
-        currentWidth += textWidth
-
-        if (suffixVisible()) {
-            currentX += textWidth * scale
-            TextRenderer.drawScaledString(suffix.text, currentX, y, suffix.color, GhostConfig.shadow, scale)
-            currentWidth += mc.fontRendererObj.getStringWidth(suffix.text)
-        }
-
-        width = currentWidth
         return true
     }
 }

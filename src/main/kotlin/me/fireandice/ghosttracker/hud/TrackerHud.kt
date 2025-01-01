@@ -2,7 +2,7 @@ package me.fireandice.ghosttracker.hud
 
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.hud.elements.HudLine
-import me.fireandice.ghosttracker.hud.model.TimerViewModel
+import me.fireandice.ghosttracker.hud.model.TrackerViewModel
 import me.fireandice.ghosttracker.utils.ScoreboardUtils
 import org.polyfrost.oneconfig.api.hud.v1.Hud
 import org.polyfrost.oneconfig.api.hud.v1.LegacyHud
@@ -11,10 +11,10 @@ import org.polyfrost.polyui.dsl.polyUI
 import org.polyfrost.polyui.unit.Align
 import org.polyfrost.universal.UMatrixStack
 
-class TimerHud : LegacyHud() {
+class TrackerHud : LegacyHud() {
 
     @Transient
-    private lateinit var vm: TimerViewModel
+    lateinit var vm: TrackerViewModel
 
     @Transient
     override var width = 0f
@@ -28,11 +28,11 @@ class TimerHud : LegacyHud() {
                 && (GhostConfig.showEverywhere || ScoreboardUtils.inDwarvenMines) // always show if 'show everywhere' is enabled, always show if in dwarven mines
     }
 
-    override fun title(): String = "Ghost Timer HUD"
+    override fun title(): String = "Ghost Tracker HUD"
     override fun category(): Category = Category.COMBAT
 
     override fun create(): Drawable {
-        vm = TimerViewModel()
+        vm = TrackerViewModel()
         return super.create()
     }
 
@@ -47,16 +47,13 @@ class TimerHud : LegacyHud() {
     }
 
     override fun clone(): Hud<Drawable> {
-        return (super.clone() as TimerHud).also { it.vm = this.vm.clone() }
+        return (super.clone() as TrackerHud).also { it.vm = this.vm.clone() }
     }
 
     private fun drawLines(linesToDraw: ArrayList<HudLine>, x: Float, y: Float) {
-        // TODO: add scaleX and scaleY support
         polyUI {
             group(alignment = Align(mode = Align.Mode.Vertical)) {
-                for (line in linesToDraw) {
-                    !line.draw(this@polyUI, x, y, 1f)
-                }
+                for (line in linesToDraw) !line.draw(this@polyUI, x, y, 1f)
             }
         }.also {
             width = it.size.x

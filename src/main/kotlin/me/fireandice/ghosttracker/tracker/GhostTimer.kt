@@ -1,22 +1,22 @@
 package me.fireandice.ghosttracker.tracker
 
-import cc.polyfrost.oneconfig.libs.universal.ChatColor
-import cc.polyfrost.oneconfig.libs.universal.UChat
 import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
+import com.google.gson.JsonParser
 import com.google.gson.JsonSyntaxException
 import me.fireandice.ghosttracker.MOD_DIR
 import me.fireandice.ghosttracker.PREFIX
 import me.fireandice.ghosttracker.utils.gson
 import me.fireandice.ghosttracker.utils.logError
 import me.fireandice.ghosttracker.utils.logInfo
+import org.polyfrost.universal.ChatColor
+import org.polyfrost.universal.UChat
 import java.io.File
 
 object GhostTimer {
 
     private var startTime = -1L     // stores the time of the last start or unpause
     private var totalTime = 0L      // stores elapsed time up to the last pause
-    val elapsedTime: Long           // "stores" the real elapsed time of the timed session
+    val elapsedTime: Long           // elapsed time of the timed session
         get() = totalTime + if (isTracking) System.currentTimeMillis() - startTime else 0
 
     var isTracking = false
@@ -24,7 +24,8 @@ object GhostTimer {
         get() = !isTracking && totalTime != 0L
 
     var stats = GhostStats()
-    var file = File(MOD_DIR, "GhostTimer.json")
+    const val FILE_NAME = "GhostTimer.json"
+    var file = File(MOD_DIR, FILE_NAME)
 
     fun start(message: Boolean = true) {
         if (isTracking) {
@@ -55,9 +56,10 @@ object GhostTimer {
     }
 
     fun save() {
-        val jsonObj = stats.toJson().apply { add("time", JsonPrimitive(elapsedTime)) }
-        val jsonString = gson.toJson(jsonObj)
-        file.bufferedWriter().use { it.write(jsonString) }
+        val jsonObject = JsonParser().parse(stats.toJson()).asJsonObject.apply {
+            addProperty("time", elapsedTime)
+        }
+        file.bufferedWriter().use { it.write(gson.toJson(jsonObject)) }
         logInfo("Timer stats saved")
     }
 
@@ -67,13 +69,14 @@ object GhostTimer {
             val jsonString = file.bufferedReader().use { it.readText() }
             val jsonObject: JsonObject = gson.fromJson(jsonString, JsonObject::class.java)
 
-            stats.fromJson(jsonObject)
+            stats = GhostStats.fromJson(jsonObject)
             totalTime = jsonObject["time"].asLong
-        } catch (e: JsonSyntaxException) {
+        } catch (_: JsonSyntaxException) {
             logError("Couldn't parse timer stats file")
-        } catch (e: ClassCastException) {
+        } catch (_: ClassCastException) {
             logError("Time couldn't be cast to long")
-        } catch (_: Exception) {
+        } catch (e: Exception) {
+            logError("Error parsing timer stats", e)
         }
 
         logInfo("Timer stats loaded")

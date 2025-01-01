@@ -3,24 +3,25 @@ package me.fireandice.ghosttracker.command
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.config.GhostConfig
 import me.fireandice.ghosttracker.tracker.GhostTimer
-import net.minecraft.command.ICommandSender
+import org.polyfrost.oneconfig.api.commands.v1.factories.annotated.Command
+import org.polyfrost.oneconfig.utils.v1.dsl.openUI
 
-object MainCommand : AbstractCommand("ghost") {
+@Command("ghost")
+object MainCommand {
 
-    override fun processCommand(sender: ICommandSender?, args: Array<String>?) {
-        if (args.isNullOrEmpty()) {
-            GhostConfig.openGui()
-            return
-        }
+    @Command
+    fun main() {
+        GhostConfig.openUI()
+        return
+    }
 
-        when (args[0]) {
+    @Command(greedy = true)
+    fun controlTimer(action: Array<String>) {
+        when (action.joinToString(" ")) {
             "start" -> GhostTimer.start()
             "pause", "stop" -> GhostTimer.pause()
             "reset", "clear" -> GhostTimer.reset()
-            "stats" -> if (args.size >= 2) when (args[1]) {
-                "reset", "clear" -> GhostTracker.resetStats()
-            }
-            else -> GhostConfig.openGui()
+            "stats reset" -> GhostTracker.resetStats()
         }
     }
 }

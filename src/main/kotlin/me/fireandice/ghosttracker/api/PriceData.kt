@@ -13,6 +13,7 @@ import org.polyfrost.oneconfig.utils.v1.NetworkUtils
 object PriceData {
 
     private const val USER_AGENT: String = "GhostTracker/${GhostTracker.VERSION}"
+
     // example url: https://sky.coflnet.com/api/bazaar/SORROW/history/day
     private const val BASE_URL: String = "https://sky.coflnet.com/api/bazaar"
     private const val TIMEOUT = 5_000
@@ -29,6 +30,7 @@ object PriceData {
     var sorrowPrice: Float = SORROW_NPC
     var voltaPrice: Float = VOLTA_NPC
     var plasmaPrice: Float = PLASMA_NPC
+
     @Suppress("ConstPropertyName") // I want the name to be consistent with the others
     const val bootsPrice = 77_777f
 
@@ -50,20 +52,17 @@ object PriceData {
         if (sorrowJson != null) {
             sorrowPrice = getAverage(sorrowJson).coerceAtLeast(SORROW_NPC)
             logInfo("Fetched sorrow price: $sorrowPrice")
-        }
-        else logError("Failed to fetch sorrow price")
+        } else logError("Failed to fetch sorrow price")
 
         if (voltaJson != null) {
             voltaPrice = getAverage(voltaJson).coerceAtLeast(VOLTA_NPC)
             logInfo("Fetched volta price: $voltaPrice")
-        }
-        else logError("Failed to fetch volta price")
+        } else logError("Failed to fetch volta price")
 
         if (plasmaJson != null) {
             plasmaPrice = getAverage(plasmaJson).coerceAtLeast(PLASMA_NPC)
             logInfo("Fetched plasma price: $plasmaPrice")
-        }
-        else GhostTracker.logger.error("Failed to fetch plasma price")
+        } else GhostTracker.logger.error("Failed to fetch plasma price")
     }
 
     /**
@@ -80,9 +79,9 @@ object PriceData {
                 false
             ).let { gson.fromJson(it, JsonArray::class.java) }
         } catch (e: IllegalStateException) {
-            logError("Failed to get json array from $url")
+            logError("Failed to get json array from $url", e)
         } catch (e: Exception) {
-            e.message?.let { logError(it) }
+            logError("Error getting response from $url", e)
         }
 
         return response
@@ -96,10 +95,10 @@ object PriceData {
             try {
                 total += (jsonElement as JsonObject)[PRICE_KEY].asFloat
             } catch (e: ClassCastException) {
-                logError("Couldn't parse price data as a float")
+                logError("Couldn't parse price data as a float", e)
                 continue
             } catch (e: Exception) {
-                logError("Unexpected error when parsing price data")
+                logError("Unexpected error when parsing price data", e)
                 continue
             }
             count++

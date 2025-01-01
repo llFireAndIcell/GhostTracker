@@ -1,22 +1,22 @@
-package me.fireandice.ghosttracker.hud
+package me.fireandice.ghosttracker.hud.model
 
-import cc.polyfrost.oneconfig.hud.BasicHud
-import cc.polyfrost.oneconfig.libs.universal.UMatrixStack
 import me.fireandice.ghosttracker.GhostTracker
 import me.fireandice.ghosttracker.config.GhostConfig
+import me.fireandice.ghosttracker.hud.Images
 import me.fireandice.ghosttracker.hud.elements.BasicHudLine
 import me.fireandice.ghosttracker.hud.elements.HudLine
 import me.fireandice.ghosttracker.hud.elements.SuffixHudLine
 import me.fireandice.ghosttracker.hud.elements.withColor
 import me.fireandice.ghosttracker.tracker.GhostDrops
-import me.fireandice.ghosttracker.utils.FONT_HEIGHT
-import me.fireandice.ghosttracker.utils.ScoreboardUtils
-import net.minecraftforge.common.MinecraftForge
 import java.text.DecimalFormat
 
-class GhostHud : BasicHud(true) {
+data class TrackerViewModel(
+    val lines: MutableMap<String, HudLine> = mutableMapOf(),
+    val exampleLines: MutableMap<String, HudLine> = mutableMapOf(),
+    var dirty: Boolean = false
+) : Cloneable {
 
-    @Transient private val lineKeys: ArrayList<String> = arrayListOf(
+    private val lineKeys: ArrayList<String> = arrayListOf(
         "kills",
         "sorrow",
         "volta",
@@ -30,19 +30,10 @@ class GhostHud : BasicHud(true) {
         "total-coins"
     )
 
-    @Transient private val lines: MutableMap<String, HudLine> = mutableMapOf()
-    @Transient private val exampleLines: MutableMap<String, HudLine> = mutableMapOf()
-
-    @Transient private var width = 0f
-    @Transient private var height = 0f
-
-    @Transient private val intFormat = DecimalFormat("#,###")
-    @Transient private val decimalFormat = DecimalFormat("#,##0.##")
-    @Transient private val marginFormat = DecimalFormat("0.00")
-
+    /**
+     * Sets up the text lines
+     */
     init {
-        MinecraftForge.EVENT_BUS.register(this)
-
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
@@ -85,6 +76,7 @@ class GhostHud : BasicHud(true) {
             Images.Boots,
             config::tracker_boots
         ) { config.showMargins && stats.bootsCount != 0 }
+
         lines["1m-coins"] = SuffixHudLine(
             "1m Coins: ",
             intFormat.format(stats.coinsCount) withColor config::dropColor,
@@ -107,6 +99,7 @@ class GhostHud : BasicHud(true) {
             Images.CombatXp,
             config::tracker_averageXp
         )
+
         lines["total-xp"] = BasicHudLine(
             "Total XP: ",
             decimalFormat.format(stats.totalXp) withColor config::xpColor,
@@ -214,32 +207,12 @@ class GhostHud : BasicHud(true) {
         //</editor-fold>
     }
 
-    override fun getWidth(scale: Float, example: Boolean): Float = width
-    override fun getHeight(scale: Float, example: Boolean): Float = height
-    override fun shouldShow(): Boolean = isEnabled && (GhostConfig.showEverywhere || ScoreboardUtils.inDwarvenMines)
-
-    override fun draw(matrices: UMatrixStack?, x: Float, y: Float, scale: Float, example: Boolean) {
-        var drawnLines = 0
-        var textY = y
-        var longestLine = 0f
-
-        for (key in lineKeys) {
-            val line = if (example) exampleLines[key] else lines[key]
-            if (line == null) continue
-
-            if (!line.draw(x, textY, scale)) continue
-            drawnLines++
-            textY += FONT_HEIGHT * scale
-            longestLine = longestLine.coerceAtLeast(line.width)
-        }
-        height = (drawnLines * FONT_HEIGHT - 1) * scale
-        width = longestLine * scale
-    }
-
     /**
-     * Called in `EventListener.onTickStart()`
+     * Recalculates text only if the model has been marked as dirty. Automatically sets dirty to `false` upon completion
+     * @return Whether the data has been updated
      */
-    fun refreshLines() {
+    fun update(): Boolean {
+        if (!dirty) return false
         val config = GhostConfig
         val stats = GhostTracker.ghostStats
 
@@ -298,5 +271,18 @@ class GhostHud : BasicHud(true) {
         if (config.tracker_totalMoney) {
             (lines["total-coins"] as BasicHudLine).main.text = intFormat.format(stats.totalValue)
         }
+
+        dirty = false
+        return true
+    }
+
+    public override fun clone(): TrackerViewModel {
+        return TrackerViewModel(lines, exampleLines, dirty)
+    }
+
+    companion object {
+        private val intFormat = DecimalFormat("#,###")
+        private val decimalFormat = DecimalFormat("#,##0.##")
+        private val marginFormat = DecimalFormat("0.00")
     }
 }
