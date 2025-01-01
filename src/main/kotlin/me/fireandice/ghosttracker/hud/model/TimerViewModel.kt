@@ -29,6 +29,7 @@ data class TimerViewModel(
         var seconds: Int = (millis / 1000).toInt()
 
         //<editor-fold desc="initializing lines">
+        // KILLS PER HOUR
         val killRate = if (millis == 0.toLong()) "-"
         else decimalFormat.format(stats.kills.toFloat() / seconds * 3600)
         lines[0] = BasicHudLine(
@@ -38,6 +39,7 @@ data class TimerViewModel(
             config::timer_kills
         )
 
+        // SORROWS PER HOUR
         val sorrowRate = if (seconds == 0) "-"
         else decimalFormat.format(stats.sorrowCount.toFloat() / seconds * 3600)
         lines[1] = SuffixHudLine(
@@ -48,6 +50,7 @@ data class TimerViewModel(
             config::timer_sorrow,
         ) { config.showMargins && stats.sorrowCount != 0 }
 
+        // VOLTA PER HOUR
         val voltaRate = if (seconds == 0) "-"
         else decimalFormat.format(stats.voltaCount.toFloat() / seconds * 3600)
         lines[2] = SuffixHudLine(
@@ -58,6 +61,7 @@ data class TimerViewModel(
             config::timer_volta,
         ) { config.showMargins && stats.voltaCount != 0 }
 
+        // PLASMA PER HOUR
         val plasmaRate = if (seconds == 0) "-"
         else decimalFormat.format(stats.plasmaCount.toFloat() / seconds * 3600)
         lines[3] = SuffixHudLine(
@@ -68,6 +72,7 @@ data class TimerViewModel(
             config::timer_plasma,
         ) { config.showMargins && stats.plasmaCount != 0 }
 
+        // GHOSTLY BOOTS PER HOUR
         val bootsRate = if (seconds == 0) "-"
         else decimalFormat.format(stats.bootsCount.toFloat() / seconds * 3600)
         lines[4] = SuffixHudLine(
@@ -78,6 +83,7 @@ data class TimerViewModel(
             config::timer_boots,
         ) { config.showMargins && stats.bootsCount != 0 }
 
+        // 1M COIN DROPS PER HOUR
         val coinsRate = if (seconds == 0) "-"
         else decimalFormat.format(stats.coinsCount.toFloat() / seconds * 3600)
         lines[5] = SuffixHudLine(
@@ -88,6 +94,7 @@ data class TimerViewModel(
             config::timer_coins,
         ) { config.showMargins && stats.coinsCount != 0 }
 
+        // AVERAGE MAGIC FIND
         lines[6] = BasicHudLine(
             "Average MF: ",
             stats.getAverageMf(decimalFormat) withColor config::mfColor,
@@ -95,6 +102,7 @@ data class TimerViewModel(
             config::timer_mf
         )
 
+        // AVERAGE XP PER KILL
         val averageXp = stats.getAverageXp(decimalFormat)
         lines[7] = BasicHudLine(
             "Average XP: ",
@@ -103,6 +111,7 @@ data class TimerViewModel(
             config::timer_averageXp
         )
 
+        // XP PER HOUR
         val xpRate: String = if (seconds == 0) "-"
         else decimalFormat.format(stats.totalXp / seconds * 3600)
         lines[8] = BasicHudLine(
@@ -112,6 +121,7 @@ data class TimerViewModel(
             config::timer_xpRate
         )
 
+        // SCAVENGER COINS PER HOUR
         val scavRate: String = if (seconds == 0) "-"
         else decimalFormat.format(stats.scavenger / seconds * 3600)
         lines[9] = BasicHudLine(
@@ -121,6 +131,7 @@ data class TimerViewModel(
             config::timer_scavenger,
         )
 
+        // TOTAL COINS PER HOUR
         val moneyRate: String = if (seconds == 0) "-"
         else decimalFormat.format((stats.totalValue) / seconds * 3600)
         lines[10] = BasicHudLine(
@@ -130,6 +141,7 @@ data class TimerViewModel(
             config::timer_moneyRate
         )
 
+        // TIME
         val hours: Int = (seconds / 3600f).toInt()
         seconds %= 3600
         val minutes: Int = (seconds / 60f).toInt()

@@ -6,7 +6,6 @@ import org.polyfrost.polyui.dsl.DrawableDSL
 import org.polyfrost.polyui.dsl.polyUI
 import org.polyfrost.polyui.unit.Align
 import org.polyfrost.polyui.unit.Vec2
-import kotlin.reflect.KProperty0
 
 /**
  * A hud line that two different colored text components. Used for drops and time hud lines. Note: prefix should
@@ -15,29 +14,21 @@ import kotlin.reflect.KProperty0
  * @param main The main text that displays the relevant tracker stat
  * @param suffix Text after the main text that may be hidden by the user
  * @param icon The icon that may display before the hud line
- * @param visible The backing property of the config option that decides if the line is shown
- * @param suffixVisible An expression to calculate if the suffix should be shown
+ * @param visible A getter to decide of the whole line should be visible
+ * @param suffixVisible A getter to decide of the suffix should be visible
  */
 class SuffixHudLine(
     var prefix: String? = null,
     var main: ColoredText,
     var suffix: ColoredText,
     private val icon: PolyImage,
-    val visible: KProperty0<Boolean>,
+    val visible: () -> Boolean,
     val suffixVisible: () -> Boolean
 ) : HudLine {
 
-    override var width: Float = 0f
-    override var height: Float = 0f
-
     @Suppress("UnstableApiUsage")
     override fun draw(polyUI: DrawableDSL.Master, x: Float, y: Float, scale: Float): Boolean {
-        if (!visible.get()) {
-            width = 0f
-            height = 0f
-            return false
-        }
-        height = 9f
+        if (!visible()) return false
 
         polyUI {
             group(alignment = Align(pad = Vec2.of(2f, 2f))) {

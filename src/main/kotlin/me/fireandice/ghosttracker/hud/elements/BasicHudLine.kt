@@ -5,7 +5,6 @@ import org.polyfrost.polyui.data.PolyImage
 import org.polyfrost.polyui.dsl.DrawableDSL
 import org.polyfrost.polyui.unit.Align
 import org.polyfrost.polyui.unit.Vec2
-import kotlin.reflect.KProperty0
 
 /**
  * A general hud line that only uses one color. This is used for kills, magic find, and all xp displays. Note: the
@@ -13,29 +12,20 @@ import kotlin.reflect.KProperty0
  * @param prefix The prefix text. This is not a [ColoredText] because it will always be the same color as [main]
  * @param main The main text that displays the relevant tracker stat
  * @param icon The icon that may display before the hud line
- * @param visible The backing property of the config option that decides if the line is shown
+ * @param visible A getter to decide of the whole line should be visible
  */
 class BasicHudLine(
     var prefix: String? = null,
     var main: ColoredText,
     private val icon: PolyImage,
-    private var visible: KProperty0<Boolean>
+    private var visible: () -> Boolean
 ) : HudLine {
-
-    override var width: Float = 0f
-    override var height: Float = 0f
 
     @Suppress("UnstableApiUsage")
     override fun draw(polyUI: DrawableDSL.Master, x: Float, y: Float, scale: Float): Boolean {
-        if (!visible.get()) {
-            width = 0f
-            height = 0f
-            return false
-        }
-        height = 9f
+        if (!visible()) return false
 
         polyUI.group(alignment = Align(pad = Vec2.of(2f, 2f))) {
-
             if (GhostConfig.showIcons) {
                 image(icon) {
                     width = 8 * scale
